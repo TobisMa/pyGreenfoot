@@ -36,8 +36,11 @@ class Application:
         self.__running = True
         self.__update_screen()
         
+    def stop(self) -> None:
+        self.__running = False
+        
     def __update_screen(self) -> None:
-        self.__screen = pygame.display.set_mode((Application.__sw, Application.__sh), pygame.RESIZABLE)
+        self.__screen = pygame.display.set_mode((Application.__sw // 2, Application.__sh // 2), pygame.RESIZABLE)
         
         
     @property
@@ -72,14 +75,13 @@ class Application:
                 
         self.__handled_events = True
                 
-    def get_events(self) -> Generator[pygame.event.Event, None, str]:
+    def get_events(self) -> Generator[Event, None, None]:
         for event in pygame.event.get():
-            e = Event.to_event(event)
+            e = Event(event)
             if e.type is None:
                 print(event)
-            yield event
+            yield e
         self.__handled_events = True
-        return "Lol"
         
         
     def update(self) -> None:
@@ -87,3 +89,6 @@ class Application:
             self.__handle_events()
         self.__handled_events = False
         pygame.display.update()
+        
+    def __del__(self) -> None:
+        pygame.quit()
