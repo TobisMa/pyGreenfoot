@@ -23,9 +23,15 @@ class EventType(Enum):
 
 
 class Event():
+    def __init__(self, event: pygame.event.Event) -> None:
+        for name in dir(event):
+            if name == "type" or name.startswith("_"):
+                continue
+            setattr(self, name, getattr(event, name))
+        setattr(self, "_orig_type", getattr(event, "type"))
     
     def __repr__(self) -> str:
-        return "Event(" + str({name: getattr(self, name) for name in dir(self) if not name.startswith("_")}) + ")"
+        return "<Event(type=%s)>" % (self.type,)
     
     @property
     def type(self) -> Optional[EventType]:
@@ -33,14 +39,4 @@ class Event():
         
     @property
     def orig_type(self) -> int:
-        return self._orig_type
-    
-    @classmethod
-    def to_event(cls, event: pygame.event.Event) -> "Event":
-        res_event = Event()
-        for name in dir(event):
-            if name == "type" or name.startswith("_"):
-                continue
-            setattr(res_event, name, getattr(event, name))
-        setattr(res_event, "_orig_type", getattr(event, "type"))
-        return res_event
+        return self._orig_type   # type: ignore
