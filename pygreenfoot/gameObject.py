@@ -25,5 +25,9 @@ class GameObject(Transform, metaclass=ABCMeta):
         """
         pass
     
-    def __hash__(self):
+    def __hash__(self) -> int:
         return self.__id
+    
+    @abstractmethod
+    def act(self) -> None:
+        raise NotImplementedError("act method needs to be implemented")

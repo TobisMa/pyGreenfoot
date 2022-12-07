@@ -1,5 +1,5 @@
 import os
-from typing import Iterator, Optional, Set, Type, Generator
+from typing import DefaultDict, Iterator, Optional, Set, Type, Generator,  TypeVar
 
 import pygame
 from pygreenfoot.event import Event
@@ -11,7 +11,7 @@ pygame.init()
 
 class Application:
     
-    __slots__ = ("__scene", "__screen", "__scenes", "__running", "__handled_events")
+    __slots__ = ("__scene", "__screen", "__scenes", "__running", "__handled_events", "__keys")
     
     __instance: "Application" = None
     __pygame_info = pygame.display.Info()
@@ -29,6 +29,7 @@ class Application:
         self.__scene: Optional[Scene] = None
         self.__scenes: Set[Type[Scene]] = set() 
         self.__screen: pygame.Surface = None
+        self.__keys: DefaultDict[int, bool] = DefaultDict(bool)
         
     def start(self) -> None:
         if self.__scene is None:
@@ -69,24 +70,16 @@ class Application:
     def __handle_events(self) -> None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.__running = False
+                self.stop()
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                self.__running = False
+                self.stop()
                 
-        self.__handled_events = True
-                
-    def get_events(self) -> Generator[Event, None, None]:
-        for event in pygame.event.get():
-            e = Event(event)
-            if e.type is None:
-                print(event)
-            yield e
-        self.__handled_events = True
-        
+        self.__handled_events = True        
         
     def update(self) -> None:
         if not self.__handled_events:
             self.__handle_events()
+        self.current_scene._calc_frame()
         self.__handled_events = False
         pygame.display.update()
         
