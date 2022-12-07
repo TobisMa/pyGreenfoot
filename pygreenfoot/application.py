@@ -1,5 +1,5 @@
 import os
-from typing import DefaultDict, Iterator, Optional, Set, Type, Generator,  TypeVar
+from typing import DefaultDict, Iterator, Optional, Set, Tuple, Type, Generator,  TypeVar, NewType
 
 import pygame
 from pygreenfoot.event import Event
@@ -8,6 +8,9 @@ from pygreenfoot.scene import Scene
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.init()
+
+_Key =  NewType("_Key", int)
+
 
 class Application:
     
@@ -29,7 +32,7 @@ class Application:
         self.__scene: Optional[Scene] = None
         self.__scenes: Set[Type[Scene]] = set() 
         self.__screen: pygame.Surface = None
-        self.__keys: DefaultDict[int, bool] = DefaultDict(bool)
+        self.__keys: DefaultDict[_Key, bool] = DefaultDict(bool)
         
     def start(self) -> None:
         if self.__scene is None:
@@ -85,3 +88,7 @@ class Application:
         
     def __del__(self) -> None:
         pygame.quit()
+        
+    def get_key_states(self, *keys: _Key) -> Tuple[bool, ...]:
+        return tuple(self.__keys[k] for k in keys)
+            
