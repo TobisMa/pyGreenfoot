@@ -3,9 +3,9 @@ from typing import DefaultDict, Optional, Tuple
 
 import pygame
 
+from .__types import _Key, _MouseButtonStates
+from .mouse_info import MouseInfo
 from .world import World
-
-from .__types import _Key
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.init()
@@ -14,7 +14,7 @@ pygame.init()
 class Application:
     
     __slots__ = ("__screen", "__world", "__running", "__handled_events", "__keys", 
-                 "__clock", "__fps_limit")
+                 "__clock", "__fps_limit", "__mouse_wheel")
     
     __instance: "Application" = None
     __pygame_info = pygame.display.Info()
@@ -29,7 +29,6 @@ class Application:
         raise RuntimeError("No new instances of Application are allowed")
     
     def __init__(self) -> None:
-        print("__init__")
         self.__handled_events: bool = False 
         self.__running: bool = False
         self.__world: Optional[World] = None
@@ -37,6 +36,7 @@ class Application:
         self.__clock = pygame.time.Clock()
         self.__fps_limit = 60
         self.__keys: DefaultDict[_Key, bool] = DefaultDict(bool)
+        self.__mouse_wheel: int = 0
         
     def start(self) -> None:
         if self.__world is None:
@@ -71,33 +71,39 @@ class Application:
         return self.__running
     
     def __handle_events(self) -> None:
+        self.__mouse_wheel = 0
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                print("Quit")
                 self.stop()
+                
             elif event.type == pygame.KEYDOWN:
-                print("down")
                 self.__keys[event.key] = True
                 
             elif event.type == pygame.KEYUP:
-                print("up")
                 self.__keys[event.key] = False
                 
+            elif event.type == pygame.MOUSEWHEEL:
+                self.__mouse_wheel = event.y
+                                
         self.__handled_events = True        
         
     def update(self) -> None:
         if not self.__handled_events:
             self.__handle_events()
+            
         self.current_world._calc_frame()
         self.__handled_events = False
         
         if self.__running:
             pygame.display.update()
         
-        self.__clock.tick(60)
+        self.__clock.tick(self.__fps_limit)
         
     def get_key_states(self, *keys: _Key) -> Tuple[bool, ...]:
         return tuple(self.__keys[k] for k in keys)
+    
+    def get_mouse_states(self) -> "MouseInfo":
+        return MouseInfo(self.__mouse_wheel)
     
     @staticmethod
     def get_app() -> "Application":
