@@ -7,6 +7,9 @@ class MyActor(Actor):
             print(".")
         elif PyGreenfoot.is_key_pressed(keys.K_0):
             print(0)
+        
+        if PyGreenfoot.get_mouse_wheel():
+            print(PyGreenfoot.get_mouse_wheel())
             
 
 class TestScene(World):
