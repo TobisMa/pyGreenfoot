@@ -1,13 +1,14 @@
 from abc import ABCMeta, abstractmethod
 from typing import TYPE_CHECKING
 
+
 if TYPE_CHECKING:
-    from pygreenfoot.scene import Scene
+    from pygreenfoot.world import World
 
 from pygreenfoot.transform import Transform
 
 
-class GameObject(Transform, metaclass=ABCMeta):
+class Actor(Transform, metaclass=ABCMeta):
     
     __slots__ = ("__id")
     __game_object_count = 0
@@ -15,9 +16,9 @@ class GameObject(Transform, metaclass=ABCMeta):
     def __init__(self) -> None:
         Transform.__init__(self)
         self.__id = self.__game_object_count
-        GameObject.__game_object_count += 1
+        Actor.__game_object_count += 1
         
-    def on_scene_add(self, scene: "Scene") -> None:
+    def on_world_add(self, world: "World") -> None:
         """Called when object is added to scene
 
         Args:
@@ -31,3 +32,7 @@ class GameObject(Transform, metaclass=ABCMeta):
     @abstractmethod
     def act(self) -> None:
         raise NotImplementedError("act method needs to be implemented")
+    
+    def get_world(self) -> "World":
+        from pygreenfoot.application import Application
+        return Application().current_world
