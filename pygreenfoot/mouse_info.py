@@ -13,6 +13,12 @@ class MouseInfo:
         
     @property
     def mouse_wheel(self) -> int:
+        """an integer indicating the amount of the mouse wheel moves were made.
+        Negative values mean downwards, positive values mean upwards
+
+        Returns:
+            int: how far the mouse wheel was moved between the last and current frame
+        """
         return self.__mouse_wheel
     
     @property

@@ -7,13 +7,13 @@ from pygreenfoot.actor import Actor
 
 class World(metaclass=ABCMeta):
     
-    __slots__ = ("__size", "world_bounding", "__field_size", "__objects", "__existing_object_types", \
-        "__render_order")
+    __slots__ = ("__size", "world_bounding", "__cell_size", "__objects", 
+                 "__existing_object_types", "__render_order")
     
     
     def __init__(self, width: int, height: int, field_size: int, world_bounding: bool = True) -> None:
         self.__size = Vector2Array(width, height)
-        self.__field_size = field_size
+        self.__cell_size = field_size
         self.world_bounding = world_bounding
         self.__render_order: List[Type[Actor]] = []
         self.__objects: DefaultDict[Type[Actor], Set[Actor]] = DefaultDict(set)
@@ -36,15 +36,30 @@ class World(metaclass=ABCMeta):
         
     @property
     def width(self) -> int:
+        """width of this world instance
+
+        Returns:
+            int: the world width in cells
+        """
         return int(self.__size.x)
     
     @property
     def height(self) -> int:
+        """height of this world instance
+
+        Returns:
+            int: the world height in cells
+        """
         return int(self.__size.y)
     
     @property
-    def field_size(self) -> int:
-        return self.__field_size
+    def cell_size(self) -> int:
+        """how large one cell (always quadratic) is in pixel
+
+        Returns:
+            int: the width and height of the cell
+        """
+        return self.__cell_size
     
     def _calc_frame(self) -> None:
         self.act()
@@ -62,14 +77,17 @@ class World(metaclass=ABCMeta):
     
     @abstractmethod
     def act(self) -> None:
+        """Called once per frame by the main application"""
         raise NotImplementedError("act method needs to be implemented")
     
-    
-    @classmethod
-    def set_render_order(cls, render_order: Iterable) -> None:
-        cls.__render_order = list(render_order)
+    def set_render_order(self, render_order: Iterable[Type[Actor]]) -> None:
+        """Sets the order in which actors are being *calculated*
+
+        Args:
+            render_order (Iterable): _description_
+        """
+        self.__render_order = list(render_order)
         
-    @classmethod
-    def get_render_order(cls) -> List[Type[Actor]]:
-        return cls.__render_order
+    def get_render_order(self) -> List[Type[Actor]]:
+        return self.__render_order
     

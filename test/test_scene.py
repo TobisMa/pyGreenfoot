@@ -1,7 +1,7 @@
-from pygreenfoot import World, Actor, PyGreenfoot, keys
+from pygreenfoot import World, Actor, PyGreenfoot, keys, Application
 
 
-class MyActor(Actor):
+class MyActor(Actor):        
     def act(self) -> None:
         if PyGreenfoot.is_key_pressed("."):
             print(".")

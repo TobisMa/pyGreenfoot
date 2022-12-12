@@ -6,6 +6,14 @@ from . import keys
 class PyGreenfoot:
     @staticmethod
     def is_key_pressed(key: _Key) -> bool:  # sourcery skip: low-code-quality
+        """Is the given key pressed?
+
+        Args:
+            key (_Key): the key to check for. can be either a specific string or a pygreenfoot.keys constant
+
+        Returns:
+            bool: True if the given key is pressed, otherwise False
+        """
         app = Application.get_app()
         if isinstance(key, str):
             if len(key) == 1:
@@ -41,7 +49,7 @@ class PyGreenfoot:
                     return app.get_key_states(keys.K_LALT)[0]
                 elif key == "alt gr":
                     return app.get_key_states(keys.K_RALT)[0]
-                elif key == "backspace":
+                elif key == "backspace": # FIXME not recognized
                     return app.get_key_states(keys.K_BACKSPACE)[0]
                 elif key == "delete":
                     return app.get_key_states(keys.K_DELETE)[0]
@@ -55,11 +63,26 @@ class PyGreenfoot:
                     return app.get_key_states(keys.K_PRINT)[0]
                 elif key == "escape":
                     return app.get_key_states(keys.K_ESCAPE)[0]
+                
+            if not isinstance(key, int):
+                raise ValueError("invalid key: %s" % key)
         
         return app.get_key_states(key)[0]
     
     @staticmethod
     def is_mouse_button_pressed(button: _MouseButton) -> bool:
+        """Returns if the given mouse button is pressed.
+        Existing values are 1 (left), 2 (mouse wheel click), 3 (right).
+
+        Args:
+            button (_MouseButton): A Mousebutton value 1, 2 or 3.
+
+        Raises:
+            ValueError: if the given mouse button is not existing
+
+        Returns:
+            bool: True if the given mouse button is pressed, otherwise False.
+        """
         button -= 1
         if button not in range(3):
             raise ValueError("The only valid mouse buttons are: 1, 2, 3")
@@ -70,4 +93,21 @@ class PyGreenfoot:
     
     @staticmethod
     def get_mouse_wheel() -> int:
+        """How far the mouse wheel was moved between the current and last frame.
+        Negative values mean the mouse wheel was moved downwards, positive values 
+        mean the mouse wheel was moved upwards
+
+        Returns:
+            int: an integer indicating whether the mouse wheel was moved and how far
+        """
         return Application.get_app().get_mouse_states().mouse_wheel
+    
+    @staticmethod
+    def set_game_frames(fps: int) -> None:
+        """sets the fps limit for the application
+
+        Args:
+            fps (int): the new limit (defaults to 60)
+        """
+        Application.get_app().fps = fps
+        
