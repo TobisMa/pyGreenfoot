@@ -3,7 +3,6 @@ from .application import Application
 from .actor import Actor
 from .world import World
 from . import keys
-from .event import Event, EventType
 from .pygreenfoot import PyGreenfoot
 
 # assigning the values to the key elements in keys

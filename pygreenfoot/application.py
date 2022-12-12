@@ -13,7 +13,7 @@ pygame.init()
 
 class Application:
     
-    __slots__ = ("__screen", "__world", "__running", "__handled_events", "__keys", 
+    __slots__ = ("__screen", "__world", "__running", "__keys", 
                  "__clock", "__fps_limit", "__mouse_wheel")
     
     __instance: "Application" = None
@@ -29,7 +29,6 @@ class Application:
         raise RuntimeError("No new instances of Application are allowed")
     
     def __init__(self) -> None:
-        self.__handled_events: bool = False 
         self.__running: bool = False
         self.__world: Optional[World] = None
         self.__screen: pygame.Surface = None
@@ -39,12 +38,20 @@ class Application:
         self.__mouse_wheel: int = 0
         
     def start(self) -> None:
+        """Initialize the application
+
+        Raises:
+            RuntimeError: When no starting scene is given
+        """
         if self.__world is None:
             raise RuntimeError("Scene has to be set before running the application")
         self.__running = True
         self.__update_screen()
         
     def stop(self) -> None:
+        """
+        Stops the application and clean ups pygame
+        """
         self.__running = False
         pygame.quit()
         
@@ -53,6 +60,14 @@ class Application:
         
     @property
     def current_world(self) -> World:
+        """the world which is displayed in the window
+
+        Raises:
+            ValueError: if current world is None (only before setting this for once)
+
+        Returns:
+            World: the world currently being simulated
+        """
         if self.__world is None:
             raise ValueError("No scene set")
         return self.__world
@@ -67,10 +82,33 @@ class Application:
         self.__world = world
         self.__update_screen()
         
+    @property
+    def fps(self) -> int:
+        """The fps limit for the game
+
+        Returns:
+            int: the current set limit
+        """
+        return self.__fps_limit
+    
+    @fps.setter
+    def fps(self, fps_limit: int) -> None:
+        if fps_limit <= 0:
+            raise ValueError("fps limit must be greater than 0")
+        self.__fps_limit = fps_limit
+        
     def is_running(self) -> bool:
+        """An boolean indicating if the application is simulating a world
+
+        Returns:
+            bool: True if the application is running, otherwise False
+        """
         return self.__running
     
     def __handle_events(self) -> None:
+        """
+        Handle close, key and mouse events as needed to provide data to the user
+        """
         self.__mouse_wheel = 0
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -83,23 +121,30 @@ class Application:
                 self.__keys[event.key] = False
                 
             elif event.type == pygame.MOUSEWHEEL:
-                self.__mouse_wheel = event.y
+                self.__mouse_wheel += event.y
                                 
-        self.__handled_events = True        
-        
     def update(self) -> None:
-        if not self.__handled_events:
-            self.__handle_events()
-            
+        """
+        Needs to be called once for frame
+        Handles the pygame events (and thus, prevents pygame from freezing) as well as updating screen
+        """
+        self.__handle_events()
         self.current_world._calc_frame()
-        self.__handled_events = False
         
         if self.__running:
             pygame.display.update()
         
         self.__clock.tick(self.__fps_limit)
         
-    def get_key_states(self, *keys: _Key) -> Tuple[bool, ...]:
+    def get_key_states(self, *keys: int) -> Tuple[bool, ...]:
+        """Return a series of boolean indictating if the given key at index is pressed (True) or released (False)
+
+        Args:
+            *keys: a series of keys value args
+
+        Returns:
+            Tuple[bool, ...]: a tuple with the same length as the input data
+        """
         return tuple(self.__keys[k] for k in keys)
     
     def get_mouse_states(self) -> "MouseInfo":
@@ -119,6 +164,4 @@ class Application:
         
         while app.is_running():
             app.update()
-        
-        
         

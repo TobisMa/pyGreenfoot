@@ -10,7 +10,7 @@ from pygreenfoot.transform import Transform
 
 class Actor(Transform, metaclass=ABCMeta):
     
-    __slots__ = ("__id")
+    __slots__ = ("__id", )
     __game_object_count = 0
     
     def __init__(self) -> None:
@@ -31,8 +31,16 @@ class Actor(Transform, metaclass=ABCMeta):
     
     @abstractmethod
     def act(self) -> None:
+        """
+        Method executed once per frame when the/a world with this actor is currently set
+        """
         raise NotImplementedError("act method needs to be implemented")
     
     def get_world(self) -> "World":
+        """Get the current set world
+
+        Returns:
+            World: thw world which is currently loaded
+        """
         from pygreenfoot.application import Application
         return Application().current_world
