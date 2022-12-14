@@ -129,12 +129,14 @@ class Application:
         Handles the pygame events (and thus, prevents pygame from freezing) as well as updating screen
         """
         self.__handle_events()
-        self.current_world._calc_frame()
+        self.current_world._calc_frame(self.__screen)
         
         if self.__running:
             pygame.display.update()
         
         self.__clock.tick(self.__fps_limit)
+        
+        self.__screen.fill([0] * 3)
         
     def get_key_states(self, *keys: int) -> Tuple[bool, ...]:
         """Return a series of boolean indictating if the given key at index is pressed (True) or released (False)

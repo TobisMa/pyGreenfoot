@@ -1,7 +1,11 @@
 from pygreenfoot import World, Actor, PyGreenfoot, keys, Application
 
 
-class MyActor(Actor):        
+class MyActor(Actor):
+    def __init__(self):
+        Actor.__init__(self)
+        self.image = "actor.png"
+      
     def act(self) -> None:
         if PyGreenfoot.is_key_pressed("."):
             print(".")
@@ -10,6 +14,9 @@ class MyActor(Actor):
         
         if PyGreenfoot.get_mouse_wheel():
             print(PyGreenfoot.get_mouse_wheel())
+            
+        if PyGreenfoot.is_key_pressed("a"):
+            self.x += 4
             
 
 class TestScene(World):

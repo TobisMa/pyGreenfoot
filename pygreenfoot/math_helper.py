@@ -1,4 +1,4 @@
 from math import pi as PI
 
 
-FULL_RADIAN_ANGLE = 2 * PI
+FULL_DEGREES_ANGLE = 360.0
