@@ -56,7 +56,9 @@ class Application:
         pygame.quit()
         
     def __update_screen(self) -> None:
-        self.__screen = pygame.display.set_mode((Application.__sw // 2, Application.__sh // 2), pygame.RESIZABLE)
+        w = self.current_world.width * self.current_world.cell_size if self.current_world else Application.__sw // 2
+        h = self.current_world.height * self.current_world.cell_size if self.current_world else Application.__sh // 2
+        self.__screen = pygame.display.set_mode((w, h), pygame.RESIZABLE)
         
     @property
     def current_world(self) -> World:
@@ -164,6 +166,7 @@ class Application:
     @staticmethod
     def main(first_world: World) -> None:
         app = Application.get_app()
+        app.fps = 20
         app.current_world = first_world
         app.start()
         

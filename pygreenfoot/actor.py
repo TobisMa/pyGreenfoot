@@ -1,9 +1,11 @@
+import math
 import os
-import pygame
 from abc import ABCMeta, abstractmethod
 from typing import TYPE_CHECKING, Optional, Union
-from .math_helper import FULL_DEGREES_ANGLE
 
+import pygame
+
+from .math_helper import FULL_DEGREES_ANGLE, limit_value
 
 if TYPE_CHECKING:
     from pygreenfoot.world import World
@@ -47,7 +49,7 @@ class Actor(metaclass=ABCMeta):
             World: thw world which is currently loaded
         """
         from pygreenfoot.application import Application
-        return Application().current_world
+        return Application.get_app().current_world
     
     @property
     def image(self) -> Optional[pygame.Surface]:
@@ -59,15 +61,14 @@ class Actor(metaclass=ABCMeta):
     
     def set_image(self, filename_or_image: Union[str, pygame.Surface]) -> None:  # type: ignore
         if isinstance(filename_or_image, str):
-            filename_or_image = os.path.join("images", filename_or_image)
-            if not os.access(filename_or_image, os.F_OK):
-                raise FileNotFoundError("File \"" + filename_or_image + "\" does not exist")
-            filename_or_image: pygame.Surface = pygame.image.load(filename_or_image)
+            path = os.path.join("images", filename_or_image)
+            if not os.access(path, os.F_OK):
+                raise FileNotFoundError("File \"" + path + "\" does not exist")
+            filename_or_image: pygame.Surface = pygame.image.load(path)
         
         else:
             filename_or_image = pygame.Surface((self.x, self.y), surface=filename_or_image)
         
-        # filename_or_image = pygame.transform.smoothscale(filename_or_image, (self.width, self.height))
         filename_or_image = pygame.transform.rotate(filename_or_image, self.rot)
         self.__image = filename_or_image
         
@@ -81,6 +82,7 @@ class Actor(metaclass=ABCMeta):
     @x.setter
     def x(self, value: int) -> None:  # sourcery skip: remove-unnecessary-cast
         self.__pos[0] = int(value)
+        self.__check_boundary()
     
     @property
     def y(self) -> int:
@@ -92,6 +94,13 @@ class Actor(metaclass=ABCMeta):
     @y.setter
     def y(self, value: int) -> None:  # sourcery skip: remove-unnecessary-cast
         self.__pos[1] = int(value)
+        self.__check_boundary()
+        
+    def __check_boundary(self) -> None:
+        world = self.get_world()
+        if world.world_bounding:
+            self.__pos[0] = limit_value(self.__pos[0], 0, world.width - 1)
+            self.__pos[1] = limit_value(self.__pos[1], 0, world.height - 1)
         
     @property
     def rot(self) -> float:
@@ -126,11 +135,11 @@ class Actor(metaclass=ABCMeta):
             self.__pos_delta = [x // 2 for x in self.__size]
             self.__image = pygame.transform.smooth_scale(self.image, self.__size)
         
-    def repaint(self, screen: pygame.Surface) -> None:
+    def repaint(self, screen: pygame.Surface, world: "World") -> None:
         if self.__image:
             pos = [
-                self.__pos_delta[0] + self.x,
-                self.__pos_delta[1] + self.y
+                self.__pos_delta[0] + self.x * world.cell_size,
+                self.__pos_delta[1] + self.y * world.cell_size
             ]
             screen.blit(self.__image, pos)
     
