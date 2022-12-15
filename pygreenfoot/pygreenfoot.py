@@ -20,7 +20,7 @@ class PyGreenfoot:
                 if key.isdigit() or key.islower():
                     key = getattr(keys, "K_" + key)
                 elif key.isupper():
-                    shift = all(app.get_key_states(keys.K_LSHIFT, keys.K_RSHIFT))
+                    shift = any(app.get_key_states(keys.K_LSHIFT, keys.K_RSHIFT))
                     return shift and app.get_key_states(getattr(keys, "K_" + key.lower()))[0]
                 elif key == ".":
                     return app.get_key_states(keys.K_PERIOD)[0]
