@@ -15,7 +15,7 @@ class MyActor(Actor):
         if PyGreenfoot.get_mouse_wheel():
             print(PyGreenfoot.get_mouse_wheel())
             
-        if PyGreenfoot.is_key_pressed("a"):
+        if PyGreenfoot.is_key_pressed("A"):
             self.x += 4
             
 
