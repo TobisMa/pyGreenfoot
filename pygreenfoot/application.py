@@ -22,7 +22,6 @@ class Application:
     __sh = __pygame_info.current_h
     
     def __new__(cls) -> "Application":
-        print("__new__")
         if Application.__instance is None:
             Application.__instance = super().__new__(cls)
             return Application.__instance
