@@ -7,16 +7,15 @@ class MyActor(Actor):
         self.image = "hase.png"
       
     def act(self) -> None:
-        if PyGreenfoot.is_key_pressed("."):
-            print(".")
-        elif PyGreenfoot.is_key_pressed(keys.K_0):
-            print(0)
-        
-        if PyGreenfoot.get_mouse_wheel():
-            print(PyGreenfoot.get_mouse_wheel())
-            
-        if PyGreenfoot.is_key_pressed("backspace"):
+        if PyGreenfoot.is_key_pressed("a"):
+            self.x -= 1
+        if PyGreenfoot.is_key_pressed("d"):
             self.x += 1
+        
+        if PyGreenfoot.is_key_pressed("w"):
+            self.y -= 1
+        if PyGreenfoot.is_key_pressed("s"):
+            self.y += 1
             
 
 class TestScene(World):
