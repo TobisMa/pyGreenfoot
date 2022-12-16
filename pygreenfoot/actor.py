@@ -1,3 +1,4 @@
+from asyncio import get_child_watcher
 import math
 import os
 from abc import ABCMeta, abstractmethod
@@ -6,23 +7,22 @@ from typing import TYPE_CHECKING, Optional, Union
 import pygame
 
 from .math_helper import FULL_DEGREES_ANGLE, limit_value
+from .image import Image
 
 if TYPE_CHECKING:
     from pygreenfoot.world import World
 
 class Actor(metaclass=ABCMeta):
     
-    __slots__ = ("__id", "__image", "__pos", "__rot", "__size", "__pos_delta")
+    __slots__ = ("__id", "__image", "__pos", "__rot", "__size")
     __game_object_count = 0
     
     def __init__(self, x: int = 0, y: int = 0, rotation: int = 0) -> None:
         self.__id = self.__game_object_count
         Actor.__game_object_count += 1
-        self.__image: Optional[pygame.Surface] = None
+        self.__image: Optional[Image] = Image(pygame.Surface((1,1)))
         self.__pos = [x, y]
-        self.__size = [0, 0]
         self.__rot = rotation % FULL_DEGREES_ANGLE
-        self.__pos_delta = [0, 0]
         
     def on_world_add(self, world: "World") -> None:
         """Called when object is added to scene
@@ -52,12 +52,12 @@ class Actor(metaclass=ABCMeta):
         return Application.get_app().current_world
     
     @property
-    def image(self) -> Optional[pygame.Surface]:
+    def image(self) -> "Image":
         return self.__image
     
     @image.setter
-    def image(self, img) -> None:
-        self.set_image(img)
+    def image(self, img: Union["Image", str]) -> None:
+        self.set_image(img if isinstance(img, str) else img._surface)
     
     def set_image(self, filename_or_image: Union[str, pygame.Surface]) -> None:  # type: ignore
         if isinstance(filename_or_image, str):
@@ -70,7 +70,8 @@ class Actor(metaclass=ABCMeta):
             filename_or_image = pygame.Surface((self.x, self.y), surface=filename_or_image)
         
         filename_or_image = pygame.transform.rotate(filename_or_image, self.rot)
-        self.__image = filename_or_image
+        image = Image(filename_or_image)
+        self.__image = image
         
     @property
     def x(self) -> int:
@@ -112,34 +113,11 @@ class Actor(metaclass=ABCMeta):
             pygame.transform.rotate(self.__image, value)
         self.__rot = value % FULL_DEGREES_ANGLE
         
-    @property
-    def width(self) -> int:
-        return self.__size[0]
-    
-    @width.setter
-    def width(self, value: int) -> None:
-        self.set_size(value, self.height)
-    
-    @property
-    def height(self) -> int:
-        return self.__size[1]
-    
-    @height.setter
-    def height(self, value: int) -> None:
-        self.set_size(self.width, value)
-        
-    def set_size(self, width: int, height: int) -> None:
-        # sourcery skip: remove-unnecessary-cast
-        self.__size = [int(width), int(height)]
-        if self.image is not None:
-            self.__pos_delta = [x // 2 for x in self.__size]
-            self.__image = pygame.transform.smooth_scale(self.image, self.__size)
-        
     def repaint(self, screen: pygame.Surface, world: "World") -> None:
-        if self.__image:
+        if self.image is not None:
             pos = [
-                self.__pos_delta[0] + self.x * world.cell_size,
-                self.__pos_delta[1] + self.y * world.cell_size
+                max(0, world.cell_size - self.image.width) // 2 + self.x * world.cell_size,
+                max(0, world.cell_size - self.image.height) // 2 + self.y * world.cell_size
             ]
-            screen.blit(self.__image, pos)
+            screen.blit(self.image._surface, pos)
     

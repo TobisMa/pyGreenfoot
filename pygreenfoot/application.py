@@ -57,7 +57,7 @@ class Application:
     def __update_screen(self) -> None:
         w = self.current_world.width * self.current_world.cell_size if self.current_world else Application.__sw // 2
         h = self.current_world.height * self.current_world.cell_size if self.current_world else Application.__sh // 2
-        self.__screen = pygame.display.set_mode((w, h), pygame.RESIZABLE)
+        self.__screen = pygame.display.set_mode((w, h), pygame.RESIZABLE | pygame.SRCALPHA)
         
     @property
     def current_world(self) -> World:
