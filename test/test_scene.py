@@ -5,6 +5,7 @@ class MyActor(Actor):
     def __init__(self):
         Actor.__init__(self)
         self.image = "hase.png"
+        self.image.draw_text("Hello World", 0, 0)
       
     def act(self) -> None:
         if PyGreenfoot.is_key_pressed("a"):
@@ -16,6 +17,10 @@ class MyActor(Actor):
             self.y -= 1
         if PyGreenfoot.is_key_pressed("s"):
             self.y += 1
+            
+        if PyGreenfoot.is_key_pressed("space"):
+            self.image.alpha -= 1
+            print(self.image.alpha)
             
 
 class TestScene(World):

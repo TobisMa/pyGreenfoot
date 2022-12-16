@@ -39,12 +39,18 @@ class PyGreenfoot:
                     return app.get_key_states(getattr(keys, "K_" + key.upper()))[0]
                 
                 key = key.lower()
-                if key == "meta":
+                if key == "space":
+                    return app.get_key_states(keys.K_SPACE)[0]
+                elif key == "shift":
+                    return any(app.get_key_states(keys.K_LSHIFT, keys.K_RSHIFT))
+                elif key == "escape":
+                    return app.get_key_states(keys.K_ESCAPE)[0]
+                elif key == "enter":
+                    return app.get_key_states(keys.K_RETURN)[0]
+                elif key == "meta":
                     return any(app.get_key_states(keys.K_LMETA, keys.K_RMETA))
                 elif key in ("ctrl", "strg"):
                     return any(app.get_key_states(keys.K_LCTRL, keys.K_RCTRL))
-                elif key == "shift":
-                    return any(app.get_key_states(keys.K_LSHIFT, keys.K_RSHIFT))
                 elif key == "alt":
                     return app.get_key_states(keys.K_LALT)[0]
                 elif key == "alt gr":
@@ -57,12 +63,8 @@ class PyGreenfoot:
                     return app.get_key_states(keys.K_INSERT)[0]
                 elif key == "tab":
                     return app.get_key_states(keys.K_TAB)[0]
-                elif key == "enter":
-                    return app.get_key_states(keys.K_RETURN)[0]
                 elif key == "print":
                     return app.get_key_states(keys.K_PRINT)[0]
-                elif key == "escape":
-                    return app.get_key_states(keys.K_ESCAPE)[0]
                 
             if not isinstance(key, int):
                 raise ValueError("invalid key: %s" % key)
