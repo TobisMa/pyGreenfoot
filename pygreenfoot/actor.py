@@ -1,4 +1,4 @@
-from math import degrees, atan2, radians
+from math import cos, degrees, atan2, radians, sin
 import os
 from abc import ABCMeta, abstractmethod
 from typing import TYPE_CHECKING, Generator, Optional, Tuple, Type, Union
@@ -237,4 +237,7 @@ class Actor(metaclass=ABCMeta):
     def set_position(self, x: int, y: int) -> None:
         self.__pos = [x, y]
         self.__check_boundary()
-        
+    
+    def move(self, steps: int = 1) -> None:
+        self.x += round(steps * cos(self.__rot))
+        self.y += round(steps * sin(self.__rot))
