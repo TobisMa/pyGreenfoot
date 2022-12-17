@@ -51,6 +51,7 @@ class Actor(metaclass=ABCMeta):
         from pygreenfoot.application import Application
         return Application.get_app().current_world
     
+    # TODO property or function     
     @property
     def image(self) -> "Image":
         return self.__image
