@@ -42,8 +42,14 @@ class MyActor(Actor):
         if PyGreenfoot.is_key_pressed("right"):
             self.rot += 5
             
+        if PyGreenfoot.is_key_pressed("up"):
+            self.move(1)
+        if PyGreenfoot.is_key_pressed("down"):
+            self.move(-1)
+        
+            
 class MyActor2(Actor):
-    def __init__(self):
+    def __init__(self) -> None:
         Actor.__init__(self)
         self.image = "wizard.png"
     
