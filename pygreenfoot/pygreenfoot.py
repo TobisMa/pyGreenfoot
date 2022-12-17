@@ -1,6 +1,10 @@
+from typing import Optional, Tuple
+
+import pygame
+
+from . import keys
 from .__types import _Key, _MouseButton
 from .application import Application
-from . import keys
 
 
 class PyGreenfoot:
@@ -47,10 +51,18 @@ class PyGreenfoot:
                     return app.get_key_states(keys.K_ESCAPE)[0]
                 elif key == "enter":
                     return app.get_key_states(keys.K_RETURN)[0]
-                elif key == "meta":
-                    return any(app.get_key_states(keys.K_LMETA, keys.K_RMETA))
                 elif key in ("ctrl", "strg"):
                     return any(app.get_key_states(keys.K_LCTRL, keys.K_RCTRL))
+                elif key == "left":
+                    return app.get_key_states(keys.K_LEFT)[0]
+                elif key == "right":
+                    return app.get_key_states(keys.K_RIGHT)[0]
+                elif key == "up":
+                    return app.get_key_states(keys.K_UP)[0]
+                elif key == "down":
+                    return app.get_key_states(keys.K_DOWN)[0]
+                elif key == "meta":
+                    return any(app.get_key_states(keys.K_LMETA, keys.K_RMETA))
                 elif key == "alt":
                     return app.get_key_states(keys.K_LALT)[0]
                 elif key == "alt gr":
@@ -103,6 +115,15 @@ class PyGreenfoot:
             int: an integer indicating whether the mouse wheel was moved and how far
         """
         return Application.get_app().get_mouse_states().mouse_wheel
+    
+    @staticmethod
+    def get_mouse_position() -> Tuple[int, int]:
+        return pygame.mouse.get_pos()
+    
+    @staticmethod
+    def is_mouse_in_window() -> bool:
+        # TODO implement properly
+        return True or Application.get_app().is_mouse_in_window()
     
     @staticmethod
     def set_game_frames(fps: int) -> None:
