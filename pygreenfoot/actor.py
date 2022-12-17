@@ -10,25 +10,35 @@ from .math_helper import FULL_DEGREES_ANGLE, limit_value
 from .image import Image
 
 if TYPE_CHECKING:
-    from pygreenfoot.world import World
+    from .world import World
+    from .application import Application
 
 class Actor(metaclass=ABCMeta):
     
-    __slots__ = ("__id", "__image", "__pos", "__rot", "__size")
+    __slots__ = ("__id", "__image", "__pos", "__rot", "__size", "__mask", "__app")
     __game_object_count = 0
     
     def __init__(self, x: int = 0, y: int = 0, rotation: int = 0) -> None:
+        from .application import Application  # prevent circular import
         self.__id = self.__game_object_count
         Actor.__game_object_count += 1
         self.__image: Optional[Image] = Image(pygame.Surface((1,1)))
         self.__pos = [x, y]
         self.__rot = rotation % FULL_DEGREES_ANGLE
+        self.__mask: pygame.mask.Mask = None
+        self.__app: "Application" = Application.get_app()
         
     def on_world_add(self, world: "World") -> None:
         """Called when object is added to scene
 
         Args:
             scene (Scene): the scene the object is added to
+        """
+        pass
+    
+    def on_world_remove(self) -> None:
+        """
+        TODO making comment
         """
         pass
     
@@ -49,7 +59,7 @@ class Actor(metaclass=ABCMeta):
             World: thw world which is currently loaded
         """
         from pygreenfoot.application import Application
-        return Application.get_app().current_world
+        return self.__app.current_world
     
     # TODO property or function     
     @property
@@ -121,4 +131,14 @@ class Actor(metaclass=ABCMeta):
                 max(0, world.cell_size - self.image.height) // 2 + self.y * world.cell_size
             ]
             screen.blit(self.image._surface, pos)
+        
+    @property    
+    def _mask(self) -> pygame.mask.Mask:
+        return pygame.mask.from_surface(self.image._surface)
+    
+    @property
+    def _rect(self) -> pygame.Rect:
+        world = self.get_world()
+        return pygame.Rect(self.x * world.cell_size, self.y * world.cell_size, self.image.width, self.image.height)
+    
     

@@ -21,7 +21,16 @@ class MyActor(Actor):
         if PyGreenfoot.is_key_pressed("space"):
             self.image.alpha -= 1
             print(self.image.alpha)
+        
+        if PyGreenfoot.is_key_pressed("enter"):
+            print("enter")
+            print(self.get_world().get_objects_at(0, 0))
             
+        if PyGreenfoot.is_key_pressed("delete"):
+            if self.get_world().get_text_at(3, 3) is None:
+                self.get_world().show_text("My World", 3, 3)
+            else:
+                self.get_world().show_text(None, 3, 3)
 
 class TestScene(World):
     def __init__(self) -> None:
