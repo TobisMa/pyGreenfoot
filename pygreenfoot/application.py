@@ -3,7 +3,7 @@ from typing import DefaultDict, Optional, Tuple
 
 import pygame
 
-from .__types import _Key, _MouseButtonStates
+from .__types import _Key
 from .mouse_info import MouseInfo
 from .world import World
 
