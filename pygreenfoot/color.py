@@ -1,5 +1,4 @@
 import pygame
-from os import stat
 from typing import Tuple
 
 

@@ -1,5 +1,4 @@
 from typing import TypeVar
-from math import pi as PI
 
 __Number = TypeVar("__Number", int, float)
 
