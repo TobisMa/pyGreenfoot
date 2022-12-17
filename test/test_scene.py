@@ -1,4 +1,5 @@
 from pygreenfoot import World, Actor, PyGreenfoot, keys, Application
+import pygreenfoot
 
 
 class MyActor(Actor):
@@ -31,11 +32,29 @@ class MyActor(Actor):
                 self.get_world().show_text("My World", 3, 3)
             else:
                 self.get_world().show_text(None, 3, 3)
+                
+        if PyGreenfoot.is_mouse_button_pressed(1) and PyGreenfoot.is_mouse_in_window():
+            self.turn_towards(*PyGreenfoot.get_mouse_position())
+            
+        if PyGreenfoot.is_key_pressed("left"):
+            self.rot -= 5
+        
+        if PyGreenfoot.is_key_pressed("right"):
+            self.rot += 5
+            
+class MyActor2(Actor):
+    def __init__(self):
+        Actor.__init__(self)
+        self.image = "wizard.png"
+    
+    def act(self) -> None:
+        pass
 
 class TestScene(World):
     def __init__(self) -> None:
         World.__init__(self, 16, 16, 60)
-        self.add_to_world(MyActor())
+        self.add_to_world(MyActor(), 1, 1)
+        self.add_to_world(MyActor2(), 3, 3)
         self.set_background("cell.jpg")
         
     def act(self) -> None:

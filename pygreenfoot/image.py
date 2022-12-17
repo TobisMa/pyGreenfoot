@@ -87,7 +87,7 @@ class Image:
         return Image(pygame.Surface((width, height)))
     
     def scale(self, width: int, height: int) -> None:
-        pygame.transform.smoothscale(self.__image, (width, height))
+        self.__image = pygame.transform.smoothscale(self.__image, (width, height))
         
     def copy(self) -> "Image":
         image = Image(self.__image)

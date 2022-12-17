@@ -165,7 +165,7 @@ class Application:
     @staticmethod
     def main(first_world: World) -> None:
         app = Application.get_app()
-        app.fps = 20
+        app.fps = 15
         app.current_world = first_world
         app.start()
         

@@ -34,7 +34,7 @@ class World(metaclass=ABCMeta):
         self.__texts: Dict[Tuple[int, int], Tuple[pygame.Surface, Tuple[int, int], str]] = {}
         self.running = True
         
-    def add_to_world(self, game_object: "Actor") -> None:
+    def add_to_world(self, game_object: "Actor", x: int, y: int) -> None:
         """Adds an actor to this world instance
 
         Args:
@@ -47,6 +47,7 @@ class World(metaclass=ABCMeta):
             raise TypeError("Only subclasses of Actor can be added to world")
         self.__objects[type(game_object)].add(game_object)
         self.__existing_object_types.add(type(game_object))
+        game_object.set_position(x, y)
         game_object.on_world_add(self)
         
     @property
@@ -175,9 +176,9 @@ class World(metaclass=ABCMeta):
         )
     
     def get_actors(self, type_: Optional[Type[Actor]] = None) -> List[Actor]:
-        return list(self.get_actor_generator(type_))
+        return list(self.get_actors_generator(type_))
         
-    def get_actor_generator(self, type_: Optional[Type[Actor]] = None) -> Generator[Actor, None, None]:
+    def get_actors_generator(self, type_: Optional[Type[Actor]] = None) -> Generator[Actor, None, None]:
         if type_ is None:
             for actor_set in self.__objects.values():
                 yield from actor_set
@@ -221,3 +222,8 @@ class World(metaclass=ABCMeta):
     def get_text_at(self, x: int, y: int) -> Optional[str]:
         value = self.__texts.get((x, y))
         return None if value is None else value[2]
+    
+    
+    @property
+    def _rect(self) -> pygame.Rect:
+        return pygame.Rect(0, 0, self.width * self.cell_size, self.height * self.cell_size)
