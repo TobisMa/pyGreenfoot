@@ -13,7 +13,7 @@ class Image:
     
     def __init__(self, image: Union["Image", pygame.Surface]):
         self.__image = image.__image if isinstance(image, Image) else image
-        self.color: Color = Color(0, 0, 0) 
+        self.color: Color = Color(0, 0, 0)
         
     @property
     def width(self) -> int:
