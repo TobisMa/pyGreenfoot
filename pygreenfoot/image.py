@@ -11,8 +11,8 @@ class Image:
     
     __slots__ = ("__image", "color")
     
-    def __init__(self, image: Union["Image", pygame.Surface]):
-        self.__image = image.__image if isinstance(image, Image) else image
+    def __init__(self, image: Union["Image", pygame.Surface]) -> None:
+        self.__image = image.__image.copy() if isinstance(image, Image) else image.copy()
         self.color: Color = Color(0, 0, 0)
         
     @property

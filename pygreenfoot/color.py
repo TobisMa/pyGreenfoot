@@ -1,3 +1,5 @@
+import pygame
+from os import stat
 from typing import Tuple
 
 
@@ -10,6 +12,10 @@ class Color:
     @property
     def _pygame(self) -> Tuple[int, int, int]:
         return self.r, self.g, self.b
+    
+    @staticmethod
+    def from_pygame_color(color: pygame.Color) -> "Color":
+        return Color(color.r, color.g, color.b)
 
 
 BLACK = Color(0, 0, 0)

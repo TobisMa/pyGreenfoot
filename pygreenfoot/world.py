@@ -1,29 +1,38 @@
-import itertools
+import contextlib
 import os
 import pygame
 from abc import ABCMeta, abstractmethod
-from typing import TYPE_CHECKING, DefaultDict, Iterable, Iterator, List, Optional, Set, Type, Union
-from vectormath import Vector2Array
+from typing import DefaultDict, Dict, Generator, Iterable, List, Optional, Set, Tuple, Type, Union
+from collections import defaultdict
 
-from pygreenfoot.actor import Actor
+from .color import WHITE, Color
+from .actor import Actor
+from .image import Image
+from . import keys
 
 
 class World(metaclass=ABCMeta):
     
-    __slots__ = ("__size", "world_bounding", "__cell_size", "__objects", 
+    __slots__ = ("__size", "world_bounding", "__cell_size", "__objects", "__texts",
                  "__existing_object_types", "__act_order", "__paint_order",
-                 "__background")
+                 "__background", "__canvas", "__half_cell", "__app", "running")
     
     
     def __init__(self, width: int, height: int, cell_size: int, world_bounding: bool = True) -> None:
-        self.__size = Vector2Array(width, height)
+        from .application import Application
+        self.__size = (width, height)
         self.__cell_size: int = cell_size
         self.world_bounding: bool = world_bounding
         self.__act_order: List[Type[Actor]] = []
         self.__paint_order: List[Type[Actor]] = []
-        self.__objects: DefaultDict[Type[Actor], Set[Actor]] = DefaultDict(set)
+        self.__objects: DefaultDict[Type[Actor], Set[Actor]] = defaultdict(set)
         self.__existing_object_types = set()
-        self.__background: Optional[pygame.Surface] = None
+        self.__background: Optional[Image] = None
+        self.__canvas: pygame.Surface = pygame.Surface((width * cell_size, height * cell_size))
+        self.__half_cell: int = self.__cell_size // 2
+        self.__app = Application.get_app()
+        self.__texts: Dict[Tuple[int, int], Tuple[pygame.Surface, Tuple[int, int], str]] = {}
+        self.running = True
         
     def add_to_world(self, game_object: "Actor") -> None:
         """Adds an actor to this world instance
@@ -47,7 +56,7 @@ class World(metaclass=ABCMeta):
         Returns:
             int: the world width in cells
         """
-        return int(self.__size.x)
+        return int(self.__size[0])
     
     @property
     def height(self) -> int:
@@ -56,7 +65,7 @@ class World(metaclass=ABCMeta):
         Returns:
             int: the world height in cells
         """
-        return int(self.__size.y)
+        return int(self.__size[1])
     
     @property
     def cell_size(self) -> int:
@@ -67,25 +76,32 @@ class World(metaclass=ABCMeta):
         """
         return self.__cell_size
     
-    def _calc_frame(self, screen: pygame.Surface) -> None:                 
-        self.__act_cycle()
-        self.__draw_cycle(screen)
-        
-    def __draw_cycle(self, screen: pygame.Surface) -> None:
+    def _calc_frame(self, screen: pygame.Surface) -> None:
+        if self.running:
+            self.__act_cycle()
+            self.repaint()
+            screen.blit(self.__canvas, (0, 0))
+            
+        elif not self.running and self.__app.get_key_states(keys.K_SPACE)[0]:
+            self.running = True
+                
+    def repaint(self) -> None:
         if self.__background is not None:
-            screen.blit(self.__background, (0, 0))
+            self.__canvas.blit(self.__background._surface, (0, 0))
             
         done: Set[Type[Actor]] = set()
         for object_type in self.__paint_order:
             done.add(object_type)
             for game_object in self.__objects[object_type]:
-                game_object.repaint(screen, self)
+                game_object.repaint(self.__canvas, self)
         
         for object_type in set(self.__objects) - done:
             done.add(object_type)
             for game_object in self.__objects[object_type]:
-                game_object.repaint(screen, self)
-                
+                game_object.repaint(self.__canvas, self)
+        
+        for text_surface, pos, _ in self.__texts.values():
+            self.__canvas.blit(text_surface, pos)
                 
     def __act_cycle(self) -> None:
         self.act()
@@ -142,6 +158,66 @@ class World(metaclass=ABCMeta):
             for y in hr:
                 bg.blit(image.copy(), (x, y))
         
-        self.__background = bg
+        self.__background = Image(bg)
+        
+    def get_background_image(self) -> Image:
+        if self.__background is None:
+            s = pygame.Surface((self.__cell_size * self.width, self.__cell_size * self.height))
+            s.fill(WHITE._pygame)
+            return Image(s)
+        return self.__background
             
+    def get_color_at(self, x: int, y: int) -> Color:
+        return Color.from_pygame_color(
+            self.__canvas.get_at(  # type: ignore
+                (x * self.__cell_size + self.__half_cell, y * self.__cell_size + self.__half_cell)
+            )
+        )
     
+    def get_actors(self, type_: Optional[Type[Actor]] = None) -> List[Actor]:
+        return list(self.get_actor_generator(type_))
+        
+    def get_actor_generator(self, type_: Optional[Type[Actor]] = None) -> Generator[Actor, None, None]:
+        if type_ is None:
+            for actor_set in self.__objects.values():
+                yield from actor_set
+        else:
+            yield from self.__objects[type_]
+                
+    def get_objects_at(self, x: int, y: int, type_: Optional[Type[Actor]] = None) -> List[Actor]:
+        return list(self.get_objects_at_generator(x, y, type_))
+    
+    def get_objects_at_generator(self, x: int, y: int, type_: Optional[Type[Actor]] = None) -> Generator[Actor, None, None]:        
+        area = pygame.Rect(x * self.__cell_size, y * self.__cell_size, self.__cell_size, self.__cell_size)
+        if type_ is None:
+            for actor_type in self.__objects:
+                yield from self.get_objects_at_generator(x, y, actor_type)
+        else:
+            for actor in self.__objects[type_]:
+                if actor._rect.colliderect(area):
+                    yield actor
+                    
+    def remove_from_world(self, *actors: Actor) -> None:
+        for actor in actors:
+            actor.on_world_remove()
+            self.__objects[type(actor)].remove(actor)
+                        
+    def number_of_actors(self) -> int:
+        return sum(len(actor_set) for actor_set in self.__objects.values())
+
+    def show_text(self, text: Optional[str], x: int, y: int) -> None:
+        # if self.__texts.get((x, y)) is None:
+        if text is None:
+            self.__texts.pop((x, y), None)
+            return
+        
+        font = pygame.font.SysFont(pygame.font.get_default_font(), 26)
+        width, height = font.size(text)
+        px: int = x * self.__cell_size + self.__half_cell - width // 2
+        py: int = y * self.__cell_size + self.__half_cell - height // 2
+        font_surface: pygame.Surface = font.render(text, True, (0, 0, 0))
+        self.__texts[(x, y)] = font_surface, (px, py), text
+        
+    def get_text_at(self, x: int, y: int) -> Optional[str]:
+        value = self.__texts.get((x, y))
+        return None if value is None else value[2]
