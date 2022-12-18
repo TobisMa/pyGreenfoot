@@ -94,12 +94,12 @@ class World(metaclass=ABCMeta):
         for object_type in self.__paint_order:
             done.add(object_type)
             for game_object in self.__objects[object_type]:
-                game_object.repaint(self.__canvas, self)
+                game_object.repaint()
         
         for object_type in set(self.__objects) - done:
             done.add(object_type)
             for game_object in self.__objects[object_type]:
-                game_object.repaint(self.__canvas, self)
+                game_object.repaint()
         
         for text_surface, pos, _ in self.__texts.values():
             self.__canvas.blit(text_surface, pos)
@@ -227,3 +227,7 @@ class World(metaclass=ABCMeta):
     @property
     def _rect(self) -> pygame.Rect:
         return pygame.Rect(0, 0, self.width * self.cell_size, self.height * self.cell_size)
+    
+    @property
+    def _surface(self) -> pygame.Surface:
+        return self.__canvas

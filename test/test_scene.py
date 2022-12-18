@@ -37,10 +37,10 @@ class MyActor(Actor):
             self.turn_towards(*PyGreenfoot.get_mouse_position())
             
         if PyGreenfoot.is_key_pressed("left"):
-            self.rot -= 5
+            self.rot -= 90
         
         if PyGreenfoot.is_key_pressed("right"):
-            self.rot += 5
+            self.rot += 90
             
         if PyGreenfoot.is_key_pressed("up"):
             self.move(1)
