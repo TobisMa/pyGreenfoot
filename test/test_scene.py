@@ -3,7 +3,7 @@ import pygreenfoot
 
 
 class MyActor(Actor):
-    def __init__(self):
+    def __init__(self) -> None:
         Actor.__init__(self)
         self.image = "hase.png"
         self.image.draw_text("Hello World", 0, 0)
@@ -54,12 +54,13 @@ class MyActor2(Actor):
         self.image = "wizard.png"
     
     def act(self) -> None:
+        """"""
         pass
 
 class TestScene(World):
     def __init__(self) -> None:
         World.__init__(self, 16, 16, 60)
-        self.add_to_world(MyActor(), 1, 1)
+        self.add_to_world(MyActor(), 0, 0)
         self.add_to_world(MyActor2(), 3, 3)
         self.set_background("cell.jpg")
         

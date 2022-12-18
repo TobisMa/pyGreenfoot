@@ -13,7 +13,7 @@ pygame.init()
 
 class Application:
     
-    __slots__ = ("__screen", "__world", "__running", "__keys", 
+    __slots__ = ("__screen", "__world", "__running", "__keys", "__mouse_in_window",
                  "__clock", "__fps_limit", "__mouse_wheel")
     
     __instance: "Application" = None
@@ -30,11 +30,12 @@ class Application:
     def __init__(self) -> None:
         self.__running: bool = False
         self.__world: Optional[World] = None
-        self.__screen: pygame.Surface = None
+        self.__screen: pygame.surface.Surface = None
         self.__clock = pygame.time.Clock()
         self.__fps_limit = 60
         self.__keys: DefaultDict[_Key, bool] = DefaultDict(bool)
         self.__mouse_wheel: int = 0
+        self.__mouse_in_window: bool = pygame.mouse.get_focused()
         
     def start(self) -> None:
         """Initialize the application
@@ -57,7 +58,8 @@ class Application:
     def __update_screen(self) -> None:
         w = self.current_world.width * self.current_world.cell_size if self.current_world else Application.__sw // 2
         h = self.current_world.height * self.current_world.cell_size if self.current_world else Application.__sh // 2
-        self.__screen = pygame.display.set_mode((w, h), pygame.RESIZABLE | pygame.SRCALPHA)
+        self.__screen = pygame.display.set_mode((w, h), pygame.RESIZABLE | pygame.SRCALPHA)  # type: ignore
+        
         
     @property
     def current_world(self) -> World:
@@ -123,6 +125,15 @@ class Application:
                 
             elif event.type == pygame.MOUSEWHEEL:
                 self.__mouse_wheel += event.y
+            
+            elif event.type == pygame.WINDOWENTER:
+                self.__mouse_in_window = True
+            
+            elif event.type == pygame.WINDOWLEAVE:
+                self.__mouse_in_window = False
+            
+            elif event.type != pygame.MOUSEMOTION:
+                print(event)
                                 
     def update(self) -> None:
         """
@@ -171,4 +182,6 @@ class Application:
         
         while app.is_running():
             app.update()
-        
+    
+    def is_mouse_in_window(self):
+        return self.__mouse_in_window
