@@ -151,7 +151,7 @@ class Application:
         
         self.__clock.tick(self.__fps_limit)
         
-        self.__screen.fill([0] * 3)  # TODO background image
+        self.__screen.fill([0] * 3)
         
     def get_key_states(self, *keys: int) -> Tuple[bool, ...]:
         """Return a series of boolean indictating if the given key at index is pressed (True) or released (False)
