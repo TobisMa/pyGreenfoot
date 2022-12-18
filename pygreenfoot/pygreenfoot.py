@@ -118,12 +118,14 @@ class PyGreenfoot:
     
     @staticmethod
     def get_mouse_position() -> Tuple[int, int]:
-        return pygame.mouse.get_pos()
+        app = Application.get_app()
+        pos = pygame.mouse.get_pos()
+        return pos[0] // app.current_world.cell_size, pos[1] // app.current_world.cell_size
     
     @staticmethod
     def is_mouse_in_window() -> bool:
         # TODO implement properly
-        return True or Application.get_app().is_mouse_in_window()
+        return Application.get_app().is_mouse_in_window()
     
     @staticmethod
     def set_game_frames(fps: int) -> None:

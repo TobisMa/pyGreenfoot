@@ -25,7 +25,7 @@ class MouseInfo:
     def buttons(self) -> _MouseButtonStates:
         from .application import Application
         if Application.get_app().is_running():
-            return pygame.mouse.get_pressed(num_buttons=3)
+            return pygame.mouse.get_pressed(num_buttons=3)  # type: ignore
         return 0, 0, 0
         
     @property

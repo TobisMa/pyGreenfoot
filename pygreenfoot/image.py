@@ -9,12 +9,13 @@ from .color import Color
 
 class Image:
     
-    __slots__ = ("__base_image", "color", "__rot_image", "__rot_rect")
+    __slots__ = ("__base_image", "color", "__rot_image", "__rot_rect", "__rel_pos")
     
-    def __init__(self, image: Union["Image", pygame.Surface]) -> None:
-        self.__base_image: pygame.Surface = image.__base_image.copy() if isinstance(image, Image) else image.copy()  # type: ignore
-        self.__rot_image: pygame.Surface = self.__base_image.copy()  # type: ignore
+    def __init__(self, image: Union["Image", pygame.surface.Surface]) -> None:
+        self.__base_image: pygame.surface.Surface = image.__base_image.copy() if isinstance(image, Image) else image.copy()
+        self.__rot_image: pygame.surface.Surface = self.__base_image.copy()  # type: ignore
         self.color: Color = Color(0, 0, 0)
+        self.__rel_pos = [0, 0]
         
     @property
     def width(self) -> int:
@@ -42,7 +43,7 @@ class Image:
         if len(points) < 3:
             raise ValueError() # TODO
         w = 0 if fill else 1
-        pygame.draw.polygon(self.__base_image, self.color, w)
+        pygame.draw.polygon(self.__base_image, self.color._pygame, points, w)
     
     def fill_with_color(self, color: Color = ...) -> None:
         if color is ...:
@@ -94,21 +95,20 @@ class Image:
         image = Image(self.__base_image)
         return image
     
-    def _set_rot(self, angle: int) -> None:
+    def _set_rot(self, angle: float) -> None:
         # FIXME rotation
         if angle == 0:
             self.__rot_image = self.__base_image.copy() # type: ignore
             return
         
-        base_rect = self.__base_image.get_rect()
-        rot_surf = pygame.transform.rotate(self.__base_image, angle)
-        rot_rect = rot_surf.get_rect()
-        
-        surf = pygame.Surface((2 * rot_rect.x, 2 * rot_rect.y))
-        surf.fill(pygame.Color(0, 0, 0, 0))
-        surf.blit(rot_surf, (0, 0))
-        self.__rot_image = surf
+        self.__rot_image = pygame.transform.rotate(self.__base_image, -angle)
     
     @property
-    def _surface(self) -> pygame.Surface:
+    def _surface(self) -> pygame.surface.Surface:
         return self.__rot_image
+    
+    @property
+    def _rel_pos(self) -> Tuple[int, int]:
+        p = pygame.math.Vector2(self.__base_image.get_rect().size)
+        p = (p - pygame.math.Vector2(self.__rot_image.get_rect().size))
+        return int(p.x), int(p.y)

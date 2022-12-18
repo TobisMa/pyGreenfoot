@@ -1,4 +1,5 @@
 import contextlib
+from functools import cached_property
 import os
 import pygame
 from abc import ABCMeta, abstractmethod
@@ -28,10 +29,10 @@ class World(metaclass=ABCMeta):
         self.__objects: DefaultDict[Type[Actor], Set[Actor]] = defaultdict(set)
         self.__existing_object_types = set()
         self.__background: Optional[Image] = None
-        self.__canvas: pygame.Surface = pygame.Surface((width * cell_size, height * cell_size))
+        self.__canvas: pygame.surface.Surface = pygame.Surface((width * cell_size, height * cell_size))
         self.__half_cell: int = self.__cell_size // 2
         self.__app = Application.get_app()
-        self.__texts: Dict[Tuple[int, int], Tuple[pygame.Surface, Tuple[int, int], str]] = {}
+        self.__texts: Dict[Tuple[int, int], Tuple[pygame.surface.Surface, Tuple[int, int], str]] = {}
         self.running = True
         
     def add_to_world(self, game_object: "Actor", x: int, y: int) -> None:
@@ -50,7 +51,7 @@ class World(metaclass=ABCMeta):
         game_object.set_position(x, y)
         game_object.on_world_add(self)
         
-    @property
+    @cached_property
     def width(self) -> int:
         """width of this world instance
 
@@ -59,7 +60,7 @@ class World(metaclass=ABCMeta):
         """
         return int(self.__size[0])
     
-    @property
+    @cached_property
     def height(self) -> int:
         """height of this world instance
 
@@ -68,7 +69,7 @@ class World(metaclass=ABCMeta):
         """
         return int(self.__size[1])
     
-    @property
+    @cached_property
     def cell_size(self) -> int:
         """how large one cell (always quadratic) is in pixel
 
@@ -77,7 +78,7 @@ class World(metaclass=ABCMeta):
         """
         return self.__cell_size
     
-    def _calc_frame(self, screen: pygame.Surface) -> None:
+    def _calc_frame(self, screen: pygame.surface.Surface) -> None:
         if self.running:
             self.__act_cycle()
             self.repaint()
@@ -146,10 +147,10 @@ class World(metaclass=ABCMeta):
             if not os.access(path, os.F_OK):
                 raise FileNotFoundError("File \"" + path + "\" not found")
 
-            image: pygame.Surface = pygame.image.load(path)
+            image: pygame.surface.Surface = pygame.image.load(path)
             
         else:
-            image: pygame.Surface = filename_or_image
+            image: pygame.surface.Surface = filename_or_image
         
         bg = pygame.Surface((self.width * self.cell_size, self.height * self.cell_size))
         wr = range(0, self.cell_size * self.width + self.cell_size, self.cell_size)
@@ -216,7 +217,7 @@ class World(metaclass=ABCMeta):
         width, height = font.size(text)
         px: int = x * self.__cell_size + self.__half_cell - width // 2
         py: int = y * self.__cell_size + self.__half_cell - height // 2
-        font_surface: pygame.Surface = font.render(text, True, (0, 0, 0))
+        font_surface: pygame.surface.Surface = font.render(text, True, (0, 0, 0))
         self.__texts[(x, y)] = font_surface, (px, py), text
         
     def get_text_at(self, x: int, y: int) -> Optional[str]:
@@ -229,5 +230,5 @@ class World(metaclass=ABCMeta):
         return pygame.Rect(0, 0, self.width * self.cell_size, self.height * self.cell_size)
     
     @property
-    def _surface(self) -> pygame.Surface:
+    def _surface(self) -> pygame.surface.Surface:
         return self.__canvas

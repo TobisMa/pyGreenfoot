@@ -68,12 +68,12 @@ class Actor(metaclass=ABCMeta):
     def image(self, img: Union["Image", str]) -> None:
         self.set_image(img if isinstance(img, str) else img._surface)
     
-    def set_image(self, filename_or_image: Union[str, pygame.Surface]) -> None:  # type: ignore
+    def set_image(self, filename_or_image: Union[str, pygame.surface.Surface]) -> None:  # type: ignore
         if isinstance(filename_or_image, str):
             path = os.path.join("images", filename_or_image)
             if not os.access(path, os.F_OK):
                 raise FileNotFoundError("File \"" + path + "\" does not exist")
-            filename_or_image: pygame.Surface = pygame.image.load(path)
+            filename_or_image: pygame.surface.Surface = pygame.image.load(path)
         
         else:
             filename_or_image = pygame.Surface((self.x, self.y), surface=filename_or_image)
@@ -129,9 +129,11 @@ class Actor(metaclass=ABCMeta):
     def repaint(self) -> None:
         world = self.get_world()
         if self.image is not None:
+            rel_pos = self.image._rel_pos
             pos = [
-                (self.x + 1.5) * world.cell_size - world.cell_size - self.image.width // 2,
-                (self.y + 1.5) * world.cell_size - world.cell_size - self.image.height // 2
+                self.x * world.cell_size + max(0, (world.cell_size - self.image.width)) + rel_pos[0],
+                self.y * world.cell_size + max(0, (world.cell_size - self.image.height)) + rel_pos[1]
+                
             ]
             screen = world._surface
             screen.blit(self.image._surface, pos)
@@ -209,5 +211,5 @@ class Actor(metaclass=ABCMeta):
         self.__check_boundary()
     
     def move(self, steps: int = 1) -> None:
-        self.x += round(steps * cos(self.__rot))
-        self.y += round(steps * sin(self.__rot))
+        self.x += round(steps * cos(self.rot))
+        self.y += round(steps * sin(self.rot))
