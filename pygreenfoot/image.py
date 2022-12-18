@@ -1,6 +1,7 @@
 import os
 import pygame
-from typing import Optional, Tuple, Union
+from typing import Callable, Optional, Tuple, Union
+from functools import wraps as __wraps
 
 from .math_helper import limit_value
 
@@ -9,13 +10,14 @@ from .color import Color
 
 class Image:
     
-    __slots__ = ("__base_image", "color", "__rot_image", "__rot_rect", "__rel_pos")
+    __slots__ = ("__base_image", "color", "__rot_image", "__rot")
+    __hidden_color: Optional[pygame.color.Color] = pygame.color.Color(0, 0, 0)
     
     def __init__(self, image: Union["Image", pygame.surface.Surface]) -> None:
         self.__base_image: pygame.surface.Surface = image.__base_image.copy() if isinstance(image, Image) else image.copy()
         self.__rot_image: pygame.surface.Surface = self.__base_image.copy()  # type: ignore
+        self.__rot = 0
         self.color: Color = Color(0, 0, 0)
-        self.__rel_pos = [0, 0]
         
     @property
     def width(self) -> int:
@@ -30,6 +32,7 @@ class Image:
         
     def draw_line(self, x1: int, y1: int, x2: int, y2: int, width: int = 1) -> None:
         pygame.draw.line(self.__base_image, self.color._pygame, (x1, y1) , (x2, y2), width)
+        self._set_rot(self.__rot)
         
     def draw_oval(self, x: int, y: int, width: int, height: int, fill: bool = False) -> None:
         w = 0 if fill else 1
@@ -52,6 +55,9 @@ class Image:
         
     def clear(self) -> None:
         surface = pygame.Surface((self.width, self.height))
+        if Image.__hidden_color is not None:
+            surface.set_colorkey(Image.__hidden_color)
+            surface.fill(Image.__hidden_color)
         self.__base_image = surface
         
     def draw_text(self, text: str, x: int, y: int,
@@ -96,11 +102,12 @@ class Image:
         return image
     
     def _set_rot(self, angle: float) -> None:
-        # FIXME rotation
+        self.__rot = angle % 360
+        
+        # TODO better rotation / positioning
         if angle == 0:
             self.__rot_image = self.__base_image.copy() # type: ignore
             return
-        
         self.__rot_image = pygame.transform.rotate(self.__base_image, -angle)
     
     @property
@@ -112,3 +119,11 @@ class Image:
         p = pygame.math.Vector2(self.__base_image.get_rect().size)
         p = (p - pygame.math.Vector2(self.__rot_image.get_rect().size))
         return int(p.x), int(p.y)
+
+    @staticmethod
+    def set_hidden_color(color: Optional[pygame.color.Color] = None) -> None:
+        Image.__hidden_color = color
+        
+    @staticmethod
+    def get_hidden_color() -> Optional[pygame.color.Color]:
+        return Image.__hidden_color
