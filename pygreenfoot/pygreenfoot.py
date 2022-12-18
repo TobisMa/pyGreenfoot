@@ -124,7 +124,6 @@ class PyGreenfoot:
     
     @staticmethod
     def is_mouse_in_window() -> bool:
-        # TODO implement properly
         return Application.get_app().is_mouse_in_window()
     
     @staticmethod

@@ -36,7 +36,7 @@ class Actor(metaclass=ABCMeta):
     
     def on_world_remove(self) -> None:
         """
-        TODO making comment
+        Called when this actor is removed from the world it is in
         """
         pass
     
@@ -203,7 +203,6 @@ class Actor(metaclass=ABCMeta):
             raise RuntimeError("Not touching ")
         
     def turn_towards(self, x: int, y: int) -> None:
-        # TODO check math
         self.rot = degrees(atan2(y - self.y, x - self.x))
         
     def set_position(self, x: int, y: int) -> None:

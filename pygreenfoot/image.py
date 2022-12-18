@@ -44,7 +44,7 @@ class Image:
         
     def draw_polygon(self, points: Tuple[Tuple[int, int], ...], fill: bool = False) -> None:
         if len(points) < 3:
-            raise ValueError() # TODO
+            raise ValueError("Polygon needs at least 3 points")
         w = 0 if fill else 1
         pygame.draw.polygon(self.__base_image, self.color._pygame, points, w)
     
@@ -104,7 +104,7 @@ class Image:
     def _set_rot(self, angle: float) -> None:
         self.__rot = angle % 360
         
-        # TODO better rotation / positioning
+        # TODO fix rot positioning
         if angle == 0:
             self.__rot_image = self.__base_image.copy() # type: ignore
             return
