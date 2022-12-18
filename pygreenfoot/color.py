@@ -1,6 +1,7 @@
 import pygame
 from typing import Tuple
 
+__all__ = ("Color", "BLUE", "GREEN", "RED", "BLACK", "YELLOW", "VIOLET", "CYAN", "WHITE")
 
 class Color:
     def __init__(self, r: int, g: int, b: int):

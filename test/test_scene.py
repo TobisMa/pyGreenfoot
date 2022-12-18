@@ -1,5 +1,5 @@
-from pygreenfoot import World, Actor, PyGreenfoot, keys, Application
-import pygreenfoot
+from pygreenfoot import World, Actor, PyGreenfoot, BLACK
+from pygreenfoot.color import CYAN, WHITE
 
 
 class MyActor(Actor):
@@ -33,9 +33,6 @@ class MyActor(Actor):
             else:
                 self.get_world().show_text(None, 3, 3)
                 
-        if PyGreenfoot.is_mouse_button_pressed(1) and PyGreenfoot.is_mouse_in_window():
-            self.turn_towards(*PyGreenfoot.get_mouse_position())
-            
         if PyGreenfoot.is_key_pressed("left"):
             self.rot -= 90
         
@@ -51,11 +48,17 @@ class MyActor(Actor):
 class MyActor2(Actor):
     def __init__(self) -> None:
         Actor.__init__(self)
-        self.image = "wizard.png"
+        self.image.clear()
+        self.image.scale(60, 60)
+        self.image.color = CYAN
+        self.image.draw_oval(0, 0, 60, 60, True)
+        self.image.color = WHITE
+        self.image.draw_line(30, 30, 60, 30, 3)
     
     def act(self) -> None:
-        """"""
-        pass
+        if PyGreenfoot.is_mouse_button_pressed(1) and PyGreenfoot.is_mouse_in_window():
+            self.turn_towards(*PyGreenfoot.get_mouse_position())
+        
 
 class TestScene(World):
     def __init__(self) -> None:
