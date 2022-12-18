@@ -9,48 +9,49 @@ from .color import Color
 
 class Image:
     
-    __slots__ = ("__image", "color")
+    __slots__ = ("__base_image", "color", "__rot_image", "__rot_rect")
     
     def __init__(self, image: Union["Image", pygame.Surface]) -> None:
-        self.__image = image.__image.copy() if isinstance(image, Image) else image.copy()
+        self.__base_image: pygame.Surface = image.__base_image.copy() if isinstance(image, Image) else image.copy()  # type: ignore
+        self.__rot_image: pygame.Surface = self.__base_image.copy()  # type: ignore
         self.color: Color = Color(0, 0, 0)
         
     @property
     def width(self) -> int:
-        return self.__image.get_width()
+        return self.__base_image.get_width()
     
     @property
     def height(self) -> int:
-        return self.__image.get_height()
+        return self.__base_image.get_height()
     
     def draw_image(self, image: "Image", x: int, y: int) -> None:
-        self.__image.blit(image.__image, (x, y))
+        self.__base_image.blit(image.__base_image, (x, y))
         
     def draw_line(self, x1: int, y1: int, x2: int, y2: int, width: int = 1) -> None:
-        pygame.draw.line(self.__image, self.color._pygame, (x1, y1) , (x2, y2), width)
+        pygame.draw.line(self.__base_image, self.color._pygame, (x1, y1) , (x2, y2), width)
         
     def draw_oval(self, x: int, y: int, width: int, height: int, fill: bool = False) -> None:
         w = 0 if fill else 1
-        pygame.draw.ellipse(self.__image, self.color._pygame, [x, y, width, height], w)
+        pygame.draw.ellipse(self.__base_image, self.color._pygame, [x, y, width, height], w)
         
     def draw_rect(self, x: int, y: int, width: int, height: int, fill: bool = False) -> None:
         w = 0 if fill else 1
-        pygame.draw.rect(self.__image, self.color._pygame, [x, y, width, height], w)
+        pygame.draw.rect(self.__base_image, self.color._pygame, [x, y, width, height], w)
         
     def draw_polygon(self, points: Tuple[Tuple[int, int], ...], fill: bool = False) -> None:
         if len(points) < 3:
             raise ValueError() # TODO
         w = 0 if fill else 1
-        pygame.draw.polygon(self.__image, self.color, w)
+        pygame.draw.polygon(self.__base_image, self.color, w)
     
     def fill_with_color(self, color: Color = ...) -> None:
         if color is ...:
             color = self.color
-        pygame.draw.rect(self.__image, color._pygame, [0, 0, self.width, self.height])
+        pygame.draw.rect(self.__base_image, color._pygame, [0, 0, self.width, self.height])
         
     def clear(self) -> None:
         surface = pygame.Surface((self.width, self.height))
-        self.__image = surface
+        self.__base_image = surface
         
     def draw_text(self, text: str, x: int, y: int,
                   font: Optional[Union[pygame.font.Font, str]] = None, font_size: int = 26, 
@@ -63,16 +64,16 @@ class Image:
             font_obj = font
             
         rendered_text = font_obj.render(text, True, self.color._pygame)
-        self.__image.blit(rendered_text, (x, y))
+        self.__base_image.blit(rendered_text, (x, y))
         
     @property
     def alpha(self) -> int:
-        alpha = self.__image.get_alpha()
+        alpha = self.__base_image.get_alpha()
         return 255 if alpha is None else alpha
     
     @alpha.setter
     def alpha(self, alpha: int) -> None:
-        self.__image.set_alpha(limit_value(alpha, 0, 255))
+        self.__base_image.set_alpha(limit_value(alpha, 0, 255))
         
     @staticmethod
     def from_filename(filename: str) -> "Image":
@@ -87,12 +88,27 @@ class Image:
         return Image(pygame.Surface((width, height)))
     
     def scale(self, width: int, height: int) -> None:
-        self.__image = pygame.transform.smoothscale(self.__image, (width, height))
+        self.__base_image = pygame.transform.smoothscale(self.__base_image, (width, height))
         
     def copy(self) -> "Image":
-        image = Image(self.__image)
+        image = Image(self.__base_image)
         return image
+    
+    def _set_rot(self, angle: int) -> None:
+        # FIXME rotation
+        if angle == 0:
+            self.__rot_image = self.__base_image.copy() # type: ignore
+            return
+        
+        base_rect = self.__base_image.get_rect()
+        rot_surf = pygame.transform.rotate(self.__base_image, angle)
+        rot_rect = rot_surf.get_rect()
+        
+        surf = pygame.Surface((2 * rot_rect.x, 2 * rot_rect.y))
+        surf.fill(pygame.Color(0, 0, 0, 0))
+        surf.blit(rot_surf, (0, 0))
+        self.__rot_image = surf
     
     @property
     def _surface(self) -> pygame.Surface:
-        return self.__image
+        return self.__rot_image
