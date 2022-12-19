@@ -2,6 +2,7 @@ import os
 from abc import ABCMeta, abstractmethod
 from collections import defaultdict
 from functools import cached_property
+from time import time
 from typing import (DefaultDict, Dict, Generator, Iterable, List, Optional,
                     Set, Tuple, Type, Union)
 
@@ -16,8 +17,8 @@ from .image import Image
 class World(metaclass=ABCMeta):
     
     __slots__ = ("__size", "world_bounding", "__cell_size", "__objects", "__texts",
-                 "__existing_object_types", "__act_order", "__paint_order",
-                 "__background", "__canvas", "__half_cell", "__app", "running")
+                 "__existing_object_types", "__act_order", "__paint_order", "__world_speed"
+                 "__background", "__canvas", "__half_cell", "__app", "running", "__last_time")
     
     
     def __init__(self, width: int, height: int, cell_size: int, world_bounding: bool = True) -> None:
@@ -35,6 +36,8 @@ class World(metaclass=ABCMeta):
         self.__app = Application.get_app()
         self.__texts: Dict[Tuple[int, int], Tuple[pygame.surface.Surface, Tuple[int, int], str]] = {}
         self.running = True
+        self.world_speed = 0
+        self.__last_time = time()
         
     def add_to_world(self, game_object: "Actor", x: int, y: int) -> None:
         """Adds an actor to this world instance
@@ -80,7 +83,11 @@ class World(metaclass=ABCMeta):
         return self.__cell_size
     
     def _calc_frame(self, screen: pygame.surface.Surface) -> None:
-        if self.running:
+        cur_time = time()
+        if cur_time - self.__last_time <= self.world_speed:
+            return
+        
+        elif self.running:
             self.__act_cycle()
             self.repaint()
             screen.blit(self.__canvas, (0, 0))
