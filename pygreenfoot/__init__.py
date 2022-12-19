@@ -14,3 +14,7 @@ from .image import Image
 from .pygreenfoot import PyGreenfoot
 from .sound import Sound
 from .world import World
+
+__version__ = "1.0.0"
+
+del pygame
