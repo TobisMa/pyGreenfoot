@@ -85,14 +85,11 @@ else:
 # del cnf, start_world, app
 
 # generate default script
-filenames = ["run.py", "start.py", "scenario.py"]
 filename = "main.py"
-while os.access(filename, os.F_OK):
-    filename = filenames.pop(0)
-    
-start_world = "" if cnf["start_world"] is None else cnf["start_world"].split(".")[-1]
-importstr = "" if cnf["start_world"] is None else "from " + '.'.join(cnf["start_world"].split(".")[:-1]) + " import " + cnf["start_world"].split(".")[-1]
-with open(filename, "w") as f:
-    f.write(f"from pygreenfoot import Application\n{importstr}\nif __name__ == '__main__':\tApplication.main({start_world}())")
+if not os.access(filename, os.F_OK):
+    start_world = "" if cnf["start_world"] is None else cnf["start_world"].split(".")[-1]
+    importstr = "" if cnf["start_world"] is None else "from " + '.'.join(cnf["start_world"].split(".")[:-1]) + " import " + cnf["start_world"].split(".")[-1]
+    with open(filename, "w") as f:
+        f.write(f"from pygreenfoot import Application\n{importstr}\nif __name__ == '__main__':\tApplication.main({start_world}())")
 
 del pygame, os, builtins
