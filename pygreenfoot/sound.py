@@ -1,3 +1,4 @@
+import os
 from typing import IO, Union
 
 import pygame
@@ -8,6 +9,10 @@ class Sound(pygame.mixer.Sound):
     def __init__(self, filename_or_buffer: Union[IO, str]) -> None:
         if pygame.mixer.get_init() is None:
             pygame.mixer.init()
+        
+        if isinstance(filename_or_buffer, str):
+            filename_or_buffer = os.path.join("sounds", filename_or_buffer)
+            
         pygame.mixer.Sound.__init__(self, filename_or_buffer)
         
     @staticmethod
