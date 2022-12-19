@@ -1,7 +1,7 @@
-from math import cos, degrees, atan2, radians, sin
+from math import cos, degrees, atan2, sin
 import os
 from abc import ABCMeta, abstractmethod
-from typing import TYPE_CHECKING, Generator, Optional, Tuple, Type, Union
+from typing import TYPE_CHECKING, Generator, List, Optional, Type, Union
 
 import pygame
 
@@ -56,7 +56,6 @@ class Actor(metaclass=ABCMeta):
         Returns:
             World: thw world which is currently loaded
         """
-        from pygreenfoot.application import Application
         return self.__app.current_world
     
     # TODO property or function     
@@ -143,13 +142,20 @@ class Actor(metaclass=ABCMeta):
         world = self.get_world()
         return pygame.Rect(self.x * world.cell_size, self.y * world.cell_size, self.image.width, self.image.height)
     
-    def get_intersecting_actors(self, type_: Optional[Type["Actor"]]) -> Generator["Actor", None, None]:
+    
+    def get_intersecting_actors(self, type_: Optional[Type["Actor"]]) -> List["Actor"]:
+        return list(self.get_intersecting_actors_generator(type_))
+
+    def get_intersecting_actors_generator(self, type_: Optional[Type["Actor"]]) -> Generator["Actor", None, None]:
         actors = self.get_world().get_actors_generator(type_)
         for a in actors:
             if a._rect.colliderect(self._rect):
                 yield a
     
-    def get_actors_in_range(self, radius: int, type_: Optional[Type["Actor"]] = None) -> Generator["Actor", None, None]:
+    def get_actors_in_range(self, radius: int, type_: Optional[Type["Actor"]] = None) -> List["Actor"]:
+        return list(self.get_actors_in_range_generator(radius, type_))
+        
+    def get_actors_in_range_generator(self, radius: int, type_: Optional[Type["Actor"]] = None) -> Generator["Actor", None, None]:
         actors = self.get_world().get_actors_generator(type_)
         for a in actors:
             dx = a.x - self.x
@@ -158,11 +164,17 @@ class Actor(metaclass=ABCMeta):
             dy *= dy
             if dx + dy <= radius ** 2:
                 yield a
-                
-    def get_actors_at_offset(self, dx: int, dy: int, type_: Optional[Type["Actor"]]) -> Generator["Actor", None, None]:
+    
+    def get_actors_at_offset(self, dx: int, dy: int, type_: Optional[Type["Actor"]]) -> List["Actor"]:
+        return list(self.get_actors_at_offset_generator(dx, dy, type_))        
+    
+    def get_actors_at_offset_generator(self, dx: int, dy: int, type_: Optional[Type["Actor"]]) -> Generator["Actor", None, None]:
         yield from self.get_world().get_objects_at_generator(self.x + dx, self.y + dy, type_)
     
-    def get_neighbours(self, cells: int, diagonal: bool = False, type_: Optional[Type["Actor"]] = None) -> Generator["Actor", None, None]:
+    def get_neighbours(self, cells: int, diagonal: bool = False, type_: Optional[Type["Actor"]] = None) -> List["Actor"]:
+        return list(self.get_neighbours(cells, diagonal, type_))
+    
+    def get_neighbours_generator(self, cells: int, diagonal: bool = False, type_: Optional[Type["Actor"]] = None) -> Generator["Actor", None, None]:
         if diagonal:
             yield from self.get_actors_in_range(cells * self.get_world().cell_size, type_)
         else:
