@@ -62,7 +62,7 @@ class MyActor2(Actor):
 
 class TestScene(World):
     def __init__(self) -> None:
-        World.__init__(self, 16, 16, 60)
+        World.__init__(self, 26, 26, 60)
         self.add_to_world(MyActor(), 0, 0)
         self.add_to_world(MyActor2(), 3, 3)
         self.set_background("cell.jpg")

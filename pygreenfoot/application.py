@@ -1,4 +1,5 @@
 import os
+from turtle import width
 from typing import DefaultDict, Optional, Tuple
 
 import pygame
@@ -15,7 +16,7 @@ pygame.init()
 class Application:
     
     __slots__ = ("__screen", "__world", "__running", "__keys", "__mouse_in_window",
-                 "__clock", "__fps_limit", "__mouse_wheel")
+                 "__clock", "__fps_limit", "__mouse_wheel", "__width_diff", "__height_diff",)
     
     __instance: Optional["Application"] = None
     __pygame_info = pygame.display.Info()
@@ -37,6 +38,8 @@ class Application:
         self.__keys: DefaultDict[_Key, bool] = DefaultDict(bool)
         self.__mouse_wheel: int = 0
         self.__mouse_in_window: bool = pygame.mouse.get_focused()
+        self.__width_diff: int = 0
+        self.__height_diff: int = 0
         
     def start(self) -> None:
         """Initialize the application
@@ -147,6 +150,11 @@ class Application:
             return
         
         self.current_world._calc_frame(self.__screen)
+        world_surf = self.current_world._surface
+        self.__width_diff = self.__screen.get_width() - world_surf.get_width()
+        self.__height_diff = self.__screen.get_height() - world_surf.get_height()
+
+        self.__screen.blit(world_surf, (self.__width_diff // 2, self.__height_diff // 2))
 
         pygame.display.update()
         
@@ -186,10 +194,13 @@ class Application:
         
         app.quit()
     
-    def is_mouse_in_window(self):
+    def is_mouse_in_window(self) -> bool:
         return self.__mouse_in_window
     
-    def quit(self):
+    def quit(self) -> None:
         Sound.stop_all()
         self.stop()
         
+    @property
+    def delta_pos(self) -> Tuple[int, int]:
+        return self.__width_diff // 2, self.__height_diff // 2
