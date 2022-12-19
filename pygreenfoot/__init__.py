@@ -1,4 +1,12 @@
+import builtins
+import os
+
+# block message of pygame
+__orig_print = print
+builtins.print = lambda *args, **kwargs : None
 import pygame
+builtins.print = __orig_print
+
 
 from . import keys
 
@@ -17,4 +25,11 @@ from .world import World
 
 __version__ = "1.0.0"
 
-del pygame
+# check for folder
+if not os.access("./images", os.F_OK):
+    os.mkdir("./images", 0o444)
+
+if not os.access("./sounds", os.F_OK):
+    os.mkdir("./sounds", 0o444)
+
+del pygame, os, builtins
