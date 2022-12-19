@@ -1,16 +1,16 @@
-from math import cos, degrees, atan2, sin
 import os
 from abc import ABCMeta, abstractmethod
+from math import atan2, cos, degrees, sin
 from typing import TYPE_CHECKING, Generator, List, Optional, Type, Union
 
 import pygame
 
-from .math_helper import FULL_DEGREES_ANGLE, limit_value
 from .image import Image
+from .math_helper import FULL_DEGREES_ANGLE, limit_value
 
 if TYPE_CHECKING:
-    from .world import World
     from .application import Application
+    from .world import World
 
 class Actor(metaclass=ABCMeta):
     

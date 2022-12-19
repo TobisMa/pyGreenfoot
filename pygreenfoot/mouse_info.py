@@ -1,5 +1,6 @@
-import pygame
 from typing import Tuple
+
+import pygame
 
 from .__types import _MouseButtonStates
 

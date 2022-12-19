@@ -1,4 +1,4 @@
-from pygreenfoot import World, Actor, PyGreenfoot, BLACK
+from pygreenfoot import BLACK, Actor, PyGreenfoot, World
 from pygreenfoot.color import CYAN, WHITE
 
 
