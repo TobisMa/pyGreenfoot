@@ -71,6 +71,7 @@ class Image:
             
         rendered_text = font_obj.render(text, True, self.color._pygame)
         self.__base_image.blit(rendered_text, (x, y))
+        self._set_rot(self.__rot)
         
     @property
     def alpha(self) -> int:

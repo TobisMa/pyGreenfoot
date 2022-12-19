@@ -26,6 +26,8 @@ class MyActor(Actor):
         if PyGreenfoot.is_key_pressed("enter"):
             print("enter")
             print(self.get_world().get_objects_at(0, 0))
+        
+        print(self.my_value)
             
         if PyGreenfoot.is_key_pressed("delete"):
             if self.get_world().get_text_at(3, 3) is None:
@@ -44,7 +46,7 @@ class MyActor(Actor):
         if PyGreenfoot.is_key_pressed("down"):
             self.move(-1)
         
-            
+
 class MyActor2(Actor):
     def __init__(self) -> None:
         Actor.__init__(self)
