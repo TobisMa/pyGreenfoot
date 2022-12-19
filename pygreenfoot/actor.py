@@ -172,7 +172,7 @@ class Actor(metaclass=ABCMeta):
         yield from self.get_world().get_objects_at_generator(self.x + dx, self.y + dy, type_)
     
     def get_neighbours(self, cells: int, diagonal: bool = False, type_: Optional[Type["Actor"]] = None) -> List["Actor"]:
-        return list(self.get_neighbours(cells, diagonal, type_))
+        return list(self.get_neighbours_generator(cells, diagonal, type_))
     
     def get_neighbours_generator(self, cells: int, diagonal: bool = False, type_: Optional[Type["Actor"]] = None) -> Generator["Actor", None, None]:
         if diagonal:

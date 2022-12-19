@@ -3,6 +3,8 @@ from typing import DefaultDict, Optional, Tuple
 
 import pygame
 
+from .sound import Sound
+
 from .__types import _Key
 from .mouse_info import MouseInfo
 from .world import World
@@ -182,6 +184,13 @@ class Application:
         
         while app.is_running():
             app.update()
+        
+        app.quit()
     
     def is_mouse_in_window(self):
         return self.__mouse_in_window
+    
+    def quit(self):
+        Sound.stop_all()
+        self.stop()
+        

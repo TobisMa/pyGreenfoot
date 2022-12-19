@@ -5,6 +5,7 @@ from .world import World
 from . import keys
 from .pygreenfoot import PyGreenfoot
 from .image import Image
+from .sound import Sound
 from .color import *
 
 # assigning the values to the key elements in keys
