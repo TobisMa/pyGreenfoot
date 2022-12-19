@@ -94,6 +94,8 @@ class World(metaclass=ABCMeta):
             
         elif not self.running and self.__app.get_key_states(keys.K_SPACE)[0]:
             self.running = True
+        
+        self.__last_time = time()
                 
     def repaint(self) -> None:
         if self.__background is not None:
