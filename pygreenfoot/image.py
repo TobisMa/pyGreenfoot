@@ -133,6 +133,6 @@ class Image:
             raise ValueError("Pixel coordinates out of image range")
         return Color.from_pygame_color(self.__base_image.get_at((x, y)))  # type: ignore
     
-    def set_color_at(self, x: int, y: int) -> Color:
+    def set_color_at(self, x: int, y: int) -> None:
         self.__base_image.set_at((x, y), self.color._pygame)
         self._set_rot(self.__rot)

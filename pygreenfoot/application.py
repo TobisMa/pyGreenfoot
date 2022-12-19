@@ -17,7 +17,7 @@ class Application:
     __slots__ = ("__screen", "__world", "__running", "__keys", "__mouse_in_window",
                  "__clock", "__fps_limit", "__mouse_wheel")
     
-    __instance: "Application" = None
+    __instance: Optional["Application"] = None
     __pygame_info = pygame.display.Info()
     __sw = __pygame_info.current_w
     __sh = __pygame_info.current_h
@@ -31,7 +31,7 @@ class Application:
     def __init__(self) -> None:
         self.__running: bool = False
         self.__world: Optional[World] = None
-        self.__screen: pygame.surface.Surface = None
+        self.__screen: pygame.surface.Surface = None  # type: ignore
         self.__clock = pygame.time.Clock()
         self.__fps_limit = 60
         self.__keys: DefaultDict[_Key, bool] = DefaultDict(bool)
