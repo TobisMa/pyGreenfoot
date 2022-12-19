@@ -20,7 +20,6 @@ class World(metaclass=ABCMeta):
                  "__existing_object_types", "__act_order", "__paint_order", "__world_speed"
                  "__background", "__canvas", "__half_cell", "__app", "running", "__last_time")
     
-    
     def __init__(self, width: int, height: int, cell_size: int, world_bounding: bool = True) -> None:
         from .application import Application
         self.__size = (width, height)
