@@ -11,4 +11,5 @@ setup(
         "pygame >= 2.1.2",
         "typing"
     ],
+    platforms=["linux", "mac", "win32"]
 )
