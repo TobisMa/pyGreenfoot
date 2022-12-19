@@ -1,5 +1,6 @@
-import pygame
 from typing import Tuple
+
+import pygame
 
 __all__ = ("Color", "BLUE", "GREEN", "RED", "BLACK", "YELLOW", "VIOLET", "CYAN", "WHITE")
 

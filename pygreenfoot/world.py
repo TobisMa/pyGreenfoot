@@ -1,15 +1,16 @@
-import contextlib
-from functools import cached_property
 import os
-import pygame
 from abc import ABCMeta, abstractmethod
-from typing import DefaultDict, Dict, Generator, Iterable, List, Optional, Set, Tuple, Type, Union
 from collections import defaultdict
+from functools import cached_property
+from typing import (DefaultDict, Dict, Generator, Iterable, List, Optional,
+                    Set, Tuple, Type, Union)
 
-from .color import WHITE, Color
-from .actor import Actor
-from .image import Image
+import pygame
+
 from . import keys
+from .actor import Actor
+from .color import WHITE, Color
+from .image import Image
 
 
 class World(metaclass=ABCMeta):

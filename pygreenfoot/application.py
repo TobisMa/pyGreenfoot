@@ -3,10 +3,9 @@ from typing import DefaultDict, Optional, Tuple
 
 import pygame
 
-from .sound import Sound
-
 from .__types import _Key
 from .mouse_info import MouseInfo
+from .sound import Sound
 from .world import World
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'

@@ -1,8 +1,9 @@
 import sys
+
 sys.path.append(".")
 
-from pygreenfoot import Application
 from test_scene import TestScene
 
+from pygreenfoot import Application
 
 Application.main(TestScene())

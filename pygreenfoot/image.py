@@ -1,11 +1,10 @@
 import os
-import pygame
-from typing import Callable, Optional, Tuple, Union
-from functools import wraps as __wraps
+from typing import Optional, Tuple, Union
 
-from .math_helper import limit_value
+import pygame
 
 from .color import Color
+from .math_helper import limit_value
 
 
 class Image:
