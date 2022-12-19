@@ -120,6 +120,8 @@ class PyGreenfoot:
     def get_mouse_position() -> Tuple[int, int]:
         app = Application.get_app()
         pos = pygame.mouse.get_pos()
+        dp = app.delta_pos
+        pos = (pos[0] - dp[0], pos[1] - dp[1])
         return pos[0] // app.current_world.cell_size, pos[1] // app.current_world.cell_size
     
     @staticmethod

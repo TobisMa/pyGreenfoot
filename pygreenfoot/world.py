@@ -89,7 +89,6 @@ class World(metaclass=ABCMeta):
         elif self.running:
             self.__act_cycle()
             self.repaint()
-            screen.blit(self.__canvas, (0, 0))
             
         elif not self.running and self.__app.get_key_states(keys.K_SPACE)[0]:
             self.running = True
