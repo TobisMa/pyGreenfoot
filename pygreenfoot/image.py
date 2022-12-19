@@ -127,3 +127,12 @@ class Image:
     @staticmethod
     def get_hidden_color() -> Optional[pygame.color.Color]:
         return Image.__hidden_color
+    
+    def get_color_at(self, x: int, y: int) -> Color:
+        if x < 0 or x > self.width or y < 0 or y > self.height:
+            raise ValueError("Pixel coordinates out of image range")
+        return Color.from_pygame_color(self.__base_image.get_at((x, y)))  # type: ignore
+    
+    def set_color_at(self, x: int, y: int) -> Color:
+        self.__base_image.set_at((x, y), self.color._pygame)
+        self._set_rot(self.__rot)
