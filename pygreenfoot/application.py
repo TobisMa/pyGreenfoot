@@ -253,7 +253,6 @@ class Application:
             
             self.__delta_move.x = -vr.x / xmax * (world_surf.get_width() - screen_width)
             
-            print(f"{fraction_width=}")
     
     def __make_scrollbar_y(self, world_surf: pygame.surface.Surface, screen_height: int) -> None:
         if self.__scrollbar[1] and self.show_scrollbar[1]:
@@ -271,10 +270,7 @@ class Application:
             hr.y = limit_value(hr.y, 0, ymax)
             
             self.__delta_move.y = -hr.y / ymax * (world_surf.get_height() - screen_height)
-
-            print(f"{fraction_height=}")
     
-        print(self.__delta_move)
                     
     def get_key_states(self, *keys: int) -> Tuple[bool, ...]:
         """Return a series of boolean indictating if the given key at index is pressed (True) or released (False)
