@@ -12,3 +12,4 @@ def limit_value(value: __Number, min_: __Number, max_: __Number) -> __Number:
     elif value > max_:
         return max_
     return value
+
