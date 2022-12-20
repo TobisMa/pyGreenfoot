@@ -86,6 +86,7 @@ class Actor(metaclass=ABCMeta):
         """
         x-coordinate of the object using transform
         """
+        self.__check_boundary()
         return self.__pos[0]
     
     @x.setter
@@ -98,6 +99,7 @@ class Actor(metaclass=ABCMeta):
         """
         y-coordinate of the object using transform
         """
+        self.__check_boundary()
         return self.__pos[1]
     
     @y.setter
@@ -105,15 +107,16 @@ class Actor(metaclass=ABCMeta):
         self.__pos[1] = int(value)
         self.__check_boundary()
         
+        
     def __check_boundary(self) -> None:
         try:
             world = self.get_world()
         except ValueError:
-            pass
-        else:
-            if world.world_bounding:
-                self.__pos[0] = limit_value(self.__pos[0], 0, world.width - 1)
-                self.__pos[1] = limit_value(self.__pos[1], 0, world.height - 1)
+            return
+        
+        if world.world_bounding:
+            self.__pos[0] = limit_value(self.__pos[0], 0, world.width - 1)
+            self.__pos[1] = limit_value(self.__pos[1], 0, world.height - 1)
         
     @property
     def rot(self) -> float:
@@ -126,6 +129,7 @@ class Actor(metaclass=ABCMeta):
             self.__image._set_rot(self.__rot)
         
     def repaint(self) -> None:
+        self.__check_boundary()
         world = self.get_world()
         if self.image is not None:
             rel_pos = self.image._rel_pos
