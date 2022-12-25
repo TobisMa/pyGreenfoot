@@ -34,10 +34,10 @@ class MyActor(Actor):
                 self.get_world().show_text(None, 3, 3)
                 
         if PyGreenfoot.is_key_pressed("left"):
-            self.rot -= 90
+            self.rotation -= 90
         
         if PyGreenfoot.is_key_pressed("right"):
-            self.rot += 90
+            self.rotation += 90
             
         if PyGreenfoot.is_key_pressed("up"):
             self.move(1)
@@ -70,7 +70,7 @@ class TestScene(World):
         self.set_background("cell.jpg")
         
     def act(self) -> None:
-        print(self.down.x, self.down.y)
+        ... # print(self.down.x, self.down.y)
         # print("W")
     
     
