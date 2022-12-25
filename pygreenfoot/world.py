@@ -96,6 +96,9 @@ class World(metaclass=ABCMeta):
         self.__last_time = time()
                 
     def repaint(self) -> None:
+        """
+        Redraws the whole world
+        """
         if self.__background is not None:
             self.__canvas.blit(self.__background._surface, (0, 0))
             
@@ -129,27 +132,56 @@ class World(metaclass=ABCMeta):
     
     @abstractmethod
     def act(self) -> None:
-        """Called once per frame by the main application"""
+        """
+        Called once per frame by the main application.
+        Subclasses must override this method
+        """
         raise NotImplementedError("act method needs to be implemented")
     
     def set_act_order(self, act_order: Iterable[Type[Actor]]) -> None:
         """Sets the order in which the actor's act methods are called
 
         Args:
-            act_order (Iterable): _description_
+            act_order (Iterable): an iterable of types of actors to specify in which order they should be drawn.
+                It is not possible to influence the draw order of two actors with the same type.
         """
         self.__act_order = list(act_order)
         
     def get_act_order(self) -> List[Type[Actor]]:
+        """Returns the current set act order
+
+        Returns:
+            List[Type[Actor]]: the order the objects will be sorted. Types of actors which are not within the returned list will be drawn in an random order.
+        """
         return self.__act_order
     
     def set_paint_order(self, paint_order: Iterable[Type[Actor]]) -> None:
+        """Sets the paint order of actor types. It is not possible to influence the draw order of two actors with the same type
+
+        Args:
+            paint_order (Iterable[Type[Actor]]): an iterable of types of actors
+        """
         self.__paint_order = list(paint_order)
         
     def get_paint_order(self) -> List[Type[Actor]]:
+        """Returns the paint order
+
+        Returns:
+            List[Type[Actor]]: the current paint order. If a type of actor is missing within this list this type of actor will
+                be drawn after all listed types at an certain point within each frame
+        """
         return self.__paint_order
     
     def set_background(self, filename_or_image: Union[str, pygame.Surface]) -> None:
+        """Set an background image for the world. If the image is too small for the world it will be repeated in vertical 
+        and horizontal direction until it covers all cells of the world.
+
+        Args:
+            filename_or_image (Union[str, pygame.Surface]): a str used as path (default directory is 'images') or an pygame.Surface object
+
+        Raises:
+            FileNotFoundError: if the argument is a string, but an invalid filename
+        """
         if isinstance(filename_or_image, str):
             path = os.path.join("images", filename_or_image)
             if not os.access(path, os.F_OK):
@@ -171,6 +203,11 @@ class World(metaclass=ABCMeta):
         self.__background = Image(bg)
         
     def get_background_image(self) -> Image:
+        """Returns the rendered background image
+
+        Returns:
+            Image: the background image drawn on the surface
+        """
         if self.__background is None:
             s = pygame.Surface((self.__cell_size * self.width, self.__cell_size * self.height))
             s.fill(WHITE._pygame)
@@ -178,6 +215,15 @@ class World(metaclass=ABCMeta):
         return self.__background
             
     def get_color_at(self, x: int, y: int) -> Color:
+        """Return the color at the center of the cell (x, y). Objects drawn on the background are considered.
+
+        Args:
+            x (int): the x coordinate of the cell
+            y (int): the y coordinate of the cell
+
+        Returns:
+            Color: the color at the center of the cell
+        """
         return Color.from_pygame_color(
             self.__canvas.get_at(  # type: ignore
                 (x * self.__cell_size + self.__half_cell, y * self.__cell_size + self.__half_cell)
@@ -185,9 +231,20 @@ class World(metaclass=ABCMeta):
         )
     
     def get_actors(self, type_: Optional[Type[Actor]] = None) -> List[Actor]:
+        """Return all actors currently existing in the world
+
+        Args:
+            type_ (Optional[Type[Actor]], optional): an argument to filter for a specific type of actors. Defaults to None.
+
+        Returns:
+            List[Actor]: the actors having type type_ or all actors within the world in case type_=None
+        """
         return list(self.get_actors_generator(type_))
         
     def get_actors_generator(self, type_: Optional[Type[Actor]] = None) -> Generator[Actor, None, None]:
+        """
+        the same as get_actors but returns a generator object
+        """
         if type_ is None:
             for actor_set in self.__objects.values():
                 yield from actor_set
@@ -195,9 +252,22 @@ class World(metaclass=ABCMeta):
             yield from self.__objects[type_]
                 
     def get_objects_at(self, x: int, y: int, type_: Optional[Type[Actor]] = None) -> List[Actor]:
+        """Return all objects at the position (x, y) having the type type_
+
+        Args:
+            x (int): the x coorindate of the actor
+            y (int): the y coordinate of the actor
+            type_ (Optional[Type[Actor]], optional): the type the actor must have. Defaults to None.
+
+        Returns:
+            List[Actor]: a list of all actors at the position (x, y) having the type type_ or just all types if type_ is None
+        """
         return list(self.get_objects_at_generator(x, y, type_))
     
     def get_objects_at_generator(self, x: int, y: int, type_: Optional[Type[Actor]] = None) -> Generator[Actor, None, None]:        
+        """
+        The same as get_objects_at but returns a generator
+        """
         area = pygame.Rect(x * self.__cell_size, y * self.__cell_size, self.__cell_size, self.__cell_size)
         if type_ is None:
             for actor_type in self.__objects:
@@ -208,15 +278,29 @@ class World(metaclass=ABCMeta):
                     yield actor
                     
     def remove_from_world(self, *actors: Actor) -> None:
+        """
+        Removes the given actor(s) from the world
+        """
         for actor in actors:
             actor.on_world_remove()
             self.__objects[type(actor)].remove(actor)
                         
     def number_of_actors(self) -> int:
+        """Counts the actors existing currently in this world
+
+        Returns:
+            int: the amount of actors in the world
+        """
         return sum(len(actor_set) for actor_set in self.__objects.values())
 
     def show_text(self, text: Optional[str], x: int, y: int) -> None:
-        # if self.__texts.get((x, y)) is None:
+        """Adds the text to the cell (x, y)
+
+        Args:
+            text (Optional[str]): the text to be shown at cell (x, y). If the text is None it will be removed
+            x (int): the x position of the cell
+            y (int): the y position of the cell
+        """
         if text is None:
             self.__texts.pop((x, y), None)
             return
@@ -226,9 +310,18 @@ class World(metaclass=ABCMeta):
         px: int = x * self.__cell_size + self.__half_cell - width // 2
         py: int = y * self.__cell_size + self.__half_cell - height // 2
         font_surface: pygame.surface.Surface = font.render(text, True, (0, 0, 0))
-        self.__texts[(x, y)] = font_surface, (px, py), text
+        self.__texts[(x, y)] = font_surface, (px, py), text  # TODO introduce new class
         
     def get_text_at(self, x: int, y: int) -> Optional[str]:
+        """Returns the text at the cell (x, y)
+
+        Args:
+            x (int): the x position of the cell
+            y (int): the y position of the cell
+
+        Returns:
+            Optional[str]: the text at the cell or if no text is found, this function will return None
+        """
         value = self.__texts.get((x, y))
         return None if value is None else value[2]
     
