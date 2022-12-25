@@ -118,6 +118,12 @@ class PyGreenfoot:
     
     @staticmethod
     def get_mouse_position() -> Tuple[int, int]:
+        """Return the mouse position (in cells). This function might return odd numbers if the cursor has left the window.
+        To ensure that the mouse position is correct you can check that using PyGreenfoot.is_mouse_in_window().
+
+        Returns:
+            Tuple[int, int]: the coordinates of the mouse cursor in the form (x, y)
+        """
         app = Application.get_app()
         pos = pygame.mouse.get_pos()
         dp = app.delta_pos
@@ -126,6 +132,11 @@ class PyGreenfoot:
     
     @staticmethod
     def is_mouse_in_window() -> bool:
+        """Checks whether the mouse is within the window or not.
+
+        Returns:
+            bool: True if the mouse is hovering over the window, otherwise False.
+        """
         return Application.get_app().is_mouse_in_window()
     
     @staticmethod
