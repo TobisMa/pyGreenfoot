@@ -54,7 +54,7 @@ class Font:
         return Font(self.__fontname, self.size, self.bold, self.italic, self.underline)
     
     def get_text(self, text: str, color: Color = BLACK, antialias: bool = True) -> "Text":
-        return Text(self, text, color)
+        return Text(self, text, color, antialias)
     
     @property
     def _pygame(self) -> pygame.font.Font:
