@@ -17,7 +17,7 @@ class Actor(metaclass=ABCMeta):
     __slots__ = ("__id", "__image", "__pos", "__rot", "__size", "__app")
     __game_object_count = 0
     
-    def __init__(self, rotation: int = 0) -> None:
+    def __init__(self, rotation: int = 0, image: Optional[Image] = None) -> None:
         """Construct an Actor. The object will have a default image.
 
         Args:
@@ -26,7 +26,7 @@ class Actor(metaclass=ABCMeta):
         from .application import Application  # prevent circular import
         self.__id = self.__game_object_count
         Actor.__game_object_count += 1
-        self.__image: Image = Image(pygame.Surface((10, 10)))
+        self.__image: Image = Image(pygame.Surface((10, 10))) if image is None else image
         self.__pos: List[int] = [0, 0]
         self.__rot = rotation % FULL_DEGREES_ANGLE
         self.__app: "Application" = Application.get_app()
