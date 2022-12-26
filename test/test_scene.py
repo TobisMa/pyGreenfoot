@@ -5,8 +5,8 @@ from pygreenfoot.color import CYAN, WHITE
 class MyActor(Actor):
     def __init__(self) -> None:
         Actor.__init__(self)
-        self.image = "hase.png"
-        self.image.draw_text("Hello World", 0, 0)
+        self.set_image("hase.png")
+        self.get_image().draw_text("Hello World", 0, 0)
       
     def act(self) -> None:
         if PyGreenfoot.is_key_pressed("a"):
@@ -48,12 +48,12 @@ class MyActor(Actor):
 class MyActor2(Actor):
     def __init__(self) -> None:
         Actor.__init__(self)
-        self.image.clear()
-        self.image.scale(60, 60)
-        self.image.color = CYAN
-        self.image.draw_oval(0, 0, 60, 60, True)
-        self.image.color = WHITE
-        self.image.draw_line(30, 30, 60, 30, 3)
+        self.get_image().clear()
+        self.get_image().scale(60, 60)
+        self.get_image().color = CYAN
+        self.get_image().draw_oval(0, 0, 60, 60, True)
+        self.get_image().color = WHITE
+        self.get_image().draw_line(30, 30, 60, 30, 3)
     
     def act(self) -> None:
         if PyGreenfoot.is_mouse_button_pressed(1) and PyGreenfoot.is_mouse_in_window():

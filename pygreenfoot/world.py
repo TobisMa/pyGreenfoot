@@ -12,6 +12,7 @@ from . import keys
 from .actor import Actor
 from .color import WHITE, Color
 from .image import Image
+from .font import Font, Text
 
 
 class World(metaclass=ABCMeta):
@@ -33,7 +34,7 @@ class World(metaclass=ABCMeta):
         self.__canvas: pygame.surface.Surface = pygame.Surface((width * cell_size, height * cell_size))
         self.__half_cell: int = self.__cell_size // 2
         self.__app = Application.get_app()
-        self.__texts: Dict[Tuple[int, int], Tuple[pygame.surface.Surface, Tuple[int, int], str]] = {}
+        self.__texts: Dict[Tuple[int, int], Tuple[Text, Tuple[int, int]]] = {}
         self.running = True
         self.world_speed = 0
         self.__last_time = time()
@@ -113,8 +114,8 @@ class World(metaclass=ABCMeta):
             for game_object in self.__objects[object_type]:
                 game_object.repaint()
         
-        for text_surface, pos, _ in self.__texts.values():
-            self.__canvas.blit(text_surface, pos)
+        for text, pos in self.__texts.values():
+            self.__canvas.blit(text._surface, pos)
                 
     def __act_cycle(self) -> None:
         self.act()
@@ -293,7 +294,7 @@ class World(metaclass=ABCMeta):
         """
         return sum(len(actor_set) for actor_set in self.__objects.values())
 
-    def show_text(self, text: Optional[str], x: int, y: int) -> None:
+    def show_text(self, text: Optional[Union[str, Text]], x: int, y: int) -> None:
         """Adds the text to the cell (x, y)
 
         Args:
@@ -305,12 +306,21 @@ class World(metaclass=ABCMeta):
             self.__texts.pop((x, y), None)
             return
         
-        font = pygame.font.SysFont(pygame.font.get_default_font(), 26)
-        width, height = font.size(text)
+        if isinstance(text, str):
+            font = Font(Font.get_default_font(), 26)
+            width, height = font._pygame.size(text)
+        else:
+            width, height = text.font._pygame.size(text.display_text)
+            
         px: int = x * self.__cell_size + self.__half_cell - width // 2
         py: int = y * self.__cell_size + self.__half_cell - height // 2
-        font_surface: pygame.surface.Surface = font.render(text, True, (0, 0, 0))
-        self.__texts[(x, y)] = font_surface, (px, py), text  # TODO introduce new class
+        
+        if isinstance(text, str):
+            text: Text = font.get_text(text, Color(0, 0, 0), True)  # type: ignore
+            
+        self.__texts[(x, y)] = text, (px, py)
+            
+            
         
     def get_text_at(self, x: int, y: int) -> Optional[str]:
         """Returns the text at the cell (x, y)
@@ -323,7 +333,7 @@ class World(metaclass=ABCMeta):
             Optional[str]: the text at the cell or if no text is found, this function will return None
         """
         value = self.__texts.get((x, y))
-        return None if value is None else value[2]
+        return None if value is None else value[0].display_text
     
     
     @property

@@ -27,7 +27,7 @@ class Actor(metaclass=ABCMeta):
         self.__id = self.__game_object_count
         Actor.__game_object_count += 1
         self.__image: Image = Image(pygame.Surface((10, 10)))
-        self.__pos: List[int] = [x, y]
+        self.__pos: List[int] = [0, 0]
         self.__rot = rotation % FULL_DEGREES_ANGLE
         self.__app: "Application" = Application.get_app()
         
@@ -64,19 +64,15 @@ class Actor(metaclass=ABCMeta):
         """
         return self.__app.current_world
     
-    # TODO property or function     
-    @property
-    def image(self) -> "Image":
-        """
-        the image representing the actor (without rotation)
+    def get_image(self) -> "Image":
+        """Return the image object of this actor
+
+        Returns:
+            Image: the current image used to draw the actor
         """
         return self.__image
     
-    @image.setter
-    def image(self, img: Union["Image", str]) -> None:
-        self.set_image(img if isinstance(img, str) else img._surface)
-    
-    def set_image(self, filename_or_image: Union[str, pygame.surface.Surface]) -> None:  # type: ignore
+    def set_image(self, filename_or_image: Union[str, "Image"]) -> None:  # type: ignore
         """Set the image of the actor
 
         Args:
@@ -85,17 +81,18 @@ class Actor(metaclass=ABCMeta):
         Raises:
             FileNotFoundError: if the given argument is a string, but an invalid filename
         """
-        if isinstance(filename_or_image, str):
-            path = os.path.join("images", filename_or_image)
+        file_or_surf: Union[str, pygame.surface.Surface] = filename_or_image if isinstance(filename_or_image, str) else filename_or_image._surface  # type: ignore
+        if isinstance(file_or_surf, str):
+            path = os.path.join("images", file_or_surf)
             if not os.access(path, os.F_OK):
                 raise FileNotFoundError("File \"" + path + "\" does not exist")
-            filename_or_image: pygame.surface.Surface = pygame.image.load(path)
+            file_or_surf: pygame.surface.Surface = pygame.image.load(path)
         
         else:
-            filename_or_image = pygame.Surface((self.x, self.y), surface=filename_or_image)
+            file_or_surf = pygame.Surface((self.x, self.y), surface=file_or_surf)
         
-        filename_or_image = pygame.transform.rotate(filename_or_image, self.rotation)
-        image = Image(filename_or_image)
+        file_or_surf = pygame.transform.rotate(file_or_surf, self.rotation)
+        image = Image(file_or_surf)
         self.__image = image
         
     @property
@@ -154,15 +151,15 @@ class Actor(metaclass=ABCMeta):
         """
         self.__check_boundary()
         world = self.get_world()
-        if self.image is not None:
-            rel_pos = self.image._rel_pos
+        if self.get_image() is not None:
+            rel_pos = self.get_image()._rel_pos
             pos = [
-                self.x * world.cell_size + max(0, (world.cell_size - self.image.width)) + rel_pos[0],
-                self.y * world.cell_size + max(0, (world.cell_size - self.image.height)) + rel_pos[1]
+                self.x * world.cell_size + max(0, (world.cell_size - self.get_image().width)) + rel_pos[0],
+                self.y * world.cell_size + max(0, (world.cell_size - self.get_image().height)) + rel_pos[1]
                 
             ]
             screen = world._surface
-            screen.blit(self.image._surface, pos)
+            screen.blit(self.get_image()._surface, pos)
     
     @property
     def _rect(self) -> pygame.Rect:
@@ -248,14 +245,14 @@ class Actor(metaclass=ABCMeta):
                 if abs(a.x - self.x) <= cells or abs(a.y - self.y) <= cells:
                     yield a
     
-    # TODO "AT EDGE"
     def is_at_edge(self) -> bool:
-        """if the actor is outside of the world. Only possible if actors are not bound to the world
+        """if the actor is at the edge of the world.
 
         Returns:
-            bool: True if the actor is outside of the world
+            bool: True if the actor is outside of the world or on the last row/column within th world
         """
-        return not self.get_world()._rect.contains(self._rect)
+        world = self.get_world()
+        return not world._rect.contains(self._rect) or self.x == 0 or self.y == 0 or self.x == world.width - 1 or self.y == world.height - 1
     
     def intersects(self, actor: "Actor") -> bool:
         """Checks for graphical intersection between two actors. Rotation is not considered
