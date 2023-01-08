@@ -106,7 +106,7 @@ class Image:
         
         # TODO fix rot positioning
         if angle == 0:
-            self.__rot_image = self.__base_image.copy() # type: ignore
+            self.__rot_image = self.__base_image.copy()
             return
         self.__rot_image = pygame.transform.rotate(self.__base_image, -angle)
     

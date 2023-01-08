@@ -154,8 +154,8 @@ class Actor(metaclass=ABCMeta):
         if self.get_image() is not None:
             rel_pos = self.get_image()._rel_pos
             pos = [
-                self.x * world.cell_size + max(0, (world.cell_size - self.get_image().width)) + rel_pos[0],
-                self.y * world.cell_size + max(0, (world.cell_size - self.get_image().height)) + rel_pos[1]
+                self.x * world.cell_size + max(0, (world.cell_size - self.get_image().width)) + rel_pos[0] // 2,
+                self.y * world.cell_size + max(0, (world.cell_size - self.get_image().height)) + rel_pos[1] // 2
                 
             ]
             screen = world._surface
@@ -164,7 +164,7 @@ class Actor(metaclass=ABCMeta):
     @property
     def _rect(self) -> pygame.Rect:
         world = self.get_world()
-        return pygame.Rect(self.x * world.cell_size, self.y * world.cell_size, self.image.width, self.image.height)
+        return pygame.Rect(self.x * world.cell_size, self.y * world.cell_size, self.__image.width, self.__image.height)
     
     
     def get_intersecting_actors(self, type_: Optional[Type["Actor"]]) -> List["Actor"]:
