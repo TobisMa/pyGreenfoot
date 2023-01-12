@@ -49,11 +49,11 @@ class MyActor2(Actor):
     def __init__(self) -> None:
         Actor.__init__(self)
         self.get_image().clear()
-        self.get_image().scale(60, 60)
+        self.get_image().scale(40, 40)
         self.get_image().color = CYAN
-        self.get_image().draw_oval(0, 0, 60, 60, True)
+        self.get_image().draw_oval(0, 0, 40, 40, True)
         self.get_image().color = WHITE
-        self.get_image().draw_line(30, 30, 60, 30, 3)
+        self.get_image().draw_line(20, 20, 40, 20, 3)
     
     def act(self) -> None:
         if PyGreenfoot.is_mouse_button_pressed(1) and PyGreenfoot.is_mouse_in_window():

@@ -154,8 +154,8 @@ class Actor(metaclass=ABCMeta):
         if self.get_image() is not None:
             rel_pos = self.get_image()._rel_pos
             pos = [
-                self.x * world.cell_size + max(0, (world.cell_size - self.get_image().width)) + rel_pos[0] // 2,
-                self.y * world.cell_size + max(0, (world.cell_size - self.get_image().height)) + rel_pos[1] // 2
+                self.x * world.cell_size + max(0, (world.cell_size - self.get_image().width)) / 2 + rel_pos[0] / 2,
+                self.y * world.cell_size + max(0, (world.cell_size - self.get_image().height)) / 2 + rel_pos[1] / 2
                 
             ]
             screen = world._surface
