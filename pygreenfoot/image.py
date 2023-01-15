@@ -4,6 +4,7 @@ from typing import Optional, Tuple, Union
 import pygame
 
 from .color import Color
+from .font import Font
 from .math_helper import limit_value
 
 
@@ -60,12 +61,14 @@ class Image:
         self.__base_image = surface
         
     def draw_text(self, text: str, x: int, y: int,
-                  font: Optional[Union[pygame.font.Font, str]] = None, font_size: int = 26, 
+                  font: Optional[Union[pygame.font.Font, Font, str]] = None, font_size: int = 26, 
                   bold: bool = False, italic: bool = False) -> None:
         if font is None:
             font_obj = pygame.font.SysFont(pygame.font.get_default_font(), font_size, bold, italic)
         elif isinstance(font, str):
             font_obj = pygame.font.SysFont(font, font_size, bold, italic)
+        elif isinstance(font, Font):
+            font_obj = font._pygame
         else:
             font_obj = font
             
