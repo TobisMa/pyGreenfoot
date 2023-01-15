@@ -1,7 +1,6 @@
 from math import floor
 import time
 from typing import Dict, Hashable
-from pygreenfoot import Actor
 
 
 class Timer:
