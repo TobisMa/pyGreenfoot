@@ -2,6 +2,8 @@ from typing import Tuple
 
 import pygame
 
+from pygreenfoot.world import World
+
 from . import keys
 from .__types import _Key, _MouseButton
 from .application import Application
@@ -148,3 +150,11 @@ class PyGreenfoot:
         """
         Application.get_app().fps = fps
         
+    @staticmethod
+    def set_world(world: "World") -> None:
+        """Set the active world
+
+        Args:
+            world (World): the world instance that shall be get active
+        """
+        Application.get_app().current_world = world
