@@ -64,6 +64,9 @@ class Font:
     def get_default_font() -> str:
         return pygame.font.get_default_font()
     
+    def _text_size(self, text: str) -> Tuple[int, int]:
+        return self.__font.size(text)
+    
 
 class Text:
     
