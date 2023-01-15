@@ -139,7 +139,7 @@ class World(metaclass=ABCMeta):
         """
         raise NotImplementedError("act method needs to be implemented")
     
-    def set_act_order(self, act_order: Iterable[Type[Actor]]) -> None:
+    def set_act_order(self, *act_order: Type[Actor]) -> None:
         """Sets the order in which the actor's act methods are called
 
         Args:
@@ -156,7 +156,7 @@ class World(metaclass=ABCMeta):
         """
         return self.__act_order
     
-    def set_paint_order(self, paint_order: Iterable[Type[Actor]]) -> None:
+    def set_paint_order(self, *paint_order: Type[Actor]) -> None:
         """Sets the paint order of actor types. It is not possible to influence the draw order of two actors with the same type
 
         Args:
