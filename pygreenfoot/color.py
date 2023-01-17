@@ -2,7 +2,7 @@ from typing import Tuple
 
 import pygame
 
-__all__ = ("Color", "BLUE", "GREEN", "RED", "BLACK", "YELLOW", "VIOLET", "CYAN", "WHITE")
+__all__ = ("Color",)
 
 class Color:
     def __init__(self, r: int, g: int, b: int):

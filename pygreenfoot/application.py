@@ -207,7 +207,7 @@ class Application:
         if not self.__running:
             return
         
-        self.current_world._calc_frame(self.__screen)
+        self.current_world._calc_frame()
         world_surf = self.current_world._surface
         self.__delta_size = pygame.math.Vector2(
             max(0, self.__screen.get_width() - world_surf.get_width()) // 2,

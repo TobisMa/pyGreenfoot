@@ -11,7 +11,7 @@ from .math_helper import limit_value
 class Image:
     
     __slots__ = ("__base_image", "color", "__rot_image", "__rot")
-    __hidden_color: Optional[pygame.color.Color] = pygame.color.Color(0, 0, 0)
+    __hidden_color: Optional[pygame.color.Color] = pygame.color.Color(1, 1, 1)
     
     def __init__(self, image: Union["Image", pygame.surface.Surface]) -> None:
         self.__base_image: pygame.surface.Surface = image.__base_image.copy() if isinstance(image, Image) else image.copy()
@@ -148,3 +148,18 @@ class Image:
         else:
             res_img._set_rot(self.__rot)
         return res_img
+    
+    @classmethod
+    def text_label(cls, text: str, font: Font, foreground: Color, background: Color, outline: Optional[Color] = None, margin: int = 5) -> "Image":        
+        text_size = font._text_size(text)
+        text_obj = font.get_text(text, foreground)
+
+        surf = pygame.Surface(text_size)
+        surf.fill(background._pygame)
+        surf.blit(text_obj._surface, (margin, margin))
+        
+        if outline:
+            pygame.draw.rect(surf, outline._pygame, [0, 0, text_size[0] + margin, text_size[1] + margin], 1)
+        
+        return Image(surf)
+        
