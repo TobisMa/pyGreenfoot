@@ -10,7 +10,7 @@ import pygame
 
 from . import keys
 from .actor import Actor
-from .color import WHITE, Color
+from .color import Color
 from .image import Image
 from .font import Font, Text
 
@@ -131,13 +131,13 @@ class World(metaclass=ABCMeta):
                 game_object.act()
             
     
-    @abstractmethod
     def act(self) -> None:
         """
         Called once per frame by the main application.
-        Subclasses must override this method
+        Subclasses can override this method.
+        The default does nothing
         """
-        raise NotImplementedError("act method needs to be implemented")
+        pass
     
     def set_act_order(self, *act_order: Type[Actor]) -> None:
         """Sets the order in which the actor's act methods are called
@@ -211,7 +211,7 @@ class World(metaclass=ABCMeta):
         """
         if self.__background is None:
             s = pygame.Surface((self.__cell_size * self.width, self.__cell_size * self.height))
-            s.fill(WHITE._pygame)
+            s.fill(Color.WHITE._pygame)
             return Image(s)
         return self.__background
             

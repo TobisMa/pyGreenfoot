@@ -1,7 +1,7 @@
 from typing import Any, Tuple, Union
 import pygame
 
-from .color import BLACK, Color
+from .color import Color
 
 FONTS = pygame.font.get_fonts()
 
@@ -53,7 +53,7 @@ class Font:
     def copy(self) -> "Font":
         return Font(self.__fontname, self.size, self.bold, self.italic, self.underline)
     
-    def get_text(self, text: str, color: Color = BLACK, antialias: bool = True) -> "Text":
+    def get_text(self, text: str, color: Color = Color.BLACK, antialias: bool = True) -> "Text":
         return Text(self, text, color, antialias)
     
     @property
