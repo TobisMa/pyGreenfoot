@@ -82,7 +82,7 @@ class World(metaclass=ABCMeta):
         """
         return self.__cell_size
     
-    def _calc_frame(self, screen: pygame.surface.Surface) -> None:
+    def _calc_frame(self) -> None:
         cur_time = time()
         if cur_time - self.__last_time <= self.world_speed:
             return
