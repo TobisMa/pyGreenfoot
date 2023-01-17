@@ -139,3 +139,12 @@ class Image:
     def set_color_at(self, x: int, y: int) -> None:
         self.__base_image.set_at((x, y), self.color._pygame)
         self._set_rot(self.__rot)
+        
+    def mirror(self, horizontal: bool = False, vertical: bool = False, negate_rotation: bool = False) -> "Image":
+        new_img = pygame.transform.flip(self.__base_image, vertical, horizontal)
+        res_img = Image(new_img)
+        if negate_rotation:
+            res_img._set_rot(-self.__rot)
+        else:
+            res_img._set_rot(self.__rot)
+        return res_img
