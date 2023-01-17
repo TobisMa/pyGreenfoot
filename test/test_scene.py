@@ -1,5 +1,4 @@
-from pygreenfoot import BLACK, Actor, PyGreenfoot, World
-from pygreenfoot.color import CYAN, WHITE
+from pygreenfoot import Actor, PyGreenfoot, World, Color
 
 
 class MyActor(Actor):
@@ -20,8 +19,8 @@ class MyActor(Actor):
             self.y += 1
             
         if PyGreenfoot.is_key_pressed("space"):
-            self.image.alpha -= 1
-            print(self.image.alpha)
+            self.get_image().alpha -= 1
+            print(self.get_image().alpha)
         
         if PyGreenfoot.is_key_pressed("enter"):
             print("enter")
@@ -50,9 +49,9 @@ class MyActor2(Actor):
         Actor.__init__(self)
         self.get_image().clear()
         self.get_image().scale(40, 40)
-        self.get_image().color = CYAN
+        self.get_image().color = Color.CYAN
         self.get_image().draw_oval(0, 0, 40, 40, True)
-        self.get_image().color = WHITE
+        self.get_image().color = Color.WHITE
         self.get_image().draw_line(20, 20, 40, 20, 3)
     
     def act(self) -> None:

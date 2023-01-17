@@ -211,7 +211,13 @@ class Actor(metaclass=ABCMeta):
         """
         Returns the same as get_actors_at_offset_generator but converted to a list
         """
-        return list(self.get_actors_at_offset_generator(dx, dy, type_))        
+        return list(self.get_actors_at_offset_generator(dx, dy, type_))
+    
+    def get_one_actor_at_offset(self, dx: int, dy: int, type_: Optional[Type["Actor"]]) -> Optional["Actor"]:
+        try:
+            return next(self.get_actors_at_offset_generator(dx, dy, type_))
+        except StopIteration:
+            return None
     
     def get_actors_at_offset_generator(self, dx: int, dy: int, type_: Optional[Type["Actor"]]) -> Generator["Actor", None, None]:
         """Returns all objects at the relative offset (dx, dy) of this actor's coordinates.
