@@ -1,6 +1,6 @@
 from turtle import st
 
-from pygreenfoot import WHITE, Actor, Font, BLACK
+from pygreenfoot import Actor, Font, Color
 
 
 class Counter(Actor):
@@ -29,9 +29,9 @@ class Counter(Actor):
             twidth, theight = f._text_size(display)
             img = self.get_image()
             img.scale(twidth + 10, theight + 10)
-            img.color = WHITE
+            img.color = Color.WHITE
             img.fill_with_color()
-            img.color = BLACK
+            img.color = Color.BLACK
             img.draw_rect(0, 0, twidth + 9, theight + 9)
             img.draw_text(display, 5, 5, f)
         
