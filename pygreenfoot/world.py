@@ -252,7 +252,7 @@ class World(metaclass=ABCMeta):
         else:
             yield from self.__objects[type_]
                 
-    def get_objects_at(self, x: int, y: int, type_: Optional[Type[Actor]] = None) -> List[Actor]:
+    def get_objects_at(self, x: int, y: int, type_: Optional[Type[Actor]] = None) -> List[Actor]:  # FIXME better typing support
         """Return all objects at the position (x, y) having the type type_
 
         Args:

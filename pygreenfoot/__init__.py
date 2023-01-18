@@ -24,7 +24,7 @@ for __k in __keys:
 
 from .actor import Actor
 from .application import Application
-from .color import *
+from .color import Color
 from .image import Image
 from .pygreenfoot import PyGreenfoot
 from .sound import Sound

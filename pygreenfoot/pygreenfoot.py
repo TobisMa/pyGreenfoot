@@ -158,3 +158,7 @@ class PyGreenfoot:
             world (World): the world instance that shall be get active
         """
         Application.get_app().current_world = world
+        
+    @staticmethod
+    def delay(cycles: int):
+        ... # FIXME implement method
