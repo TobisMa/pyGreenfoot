@@ -3,7 +3,7 @@ name: Create Release
 on:
   push:
     tags:
-      - v1.**
+      - v*.**
 
 jobs:
   build:
@@ -31,5 +31,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./pygreenfoot.zip
-          asset_name: pygreenfoot-${{ github.ref_name }}
+          asset_name: pygreenfoot-${{ github.ref_name }}.zip
           asset_content_type: application/zip
