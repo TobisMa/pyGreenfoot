@@ -96,13 +96,16 @@ class World(metaclass=ABCMeta):
         
         self.__last_time = time()
                 
-    def repaint(self) -> None:
+    def repaint(self, only_background: bool = False) -> None:
         """
         Redraws the whole world
         """
         if self.__background is not None:
             self.__canvas.blit(self.__background._surface, (0, 0))
-            
+        
+        if only_background:
+            return
+        
         done: Set[Type[Actor]] = set()
         for object_type in self.__paint_order:
             done.add(object_type)
@@ -334,7 +337,6 @@ class World(metaclass=ABCMeta):
         """
         value = self.__texts.get((x, y))
         return None if value is None else value[0].display_text
-    
     
     @property
     def _rect(self) -> pygame.Rect:

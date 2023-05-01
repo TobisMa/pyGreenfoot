@@ -18,7 +18,7 @@ class Application:
     __slots__ = ("__screen", "__world", "__running", "__keys", "__mouse_in_window", "__size",
                  "__mouse_down", "__clock", "__fps_limit", "__mouse_wheel", "__scrollbar",
                  "__delta_size", "__delta_move", "show_scrollbar", "__scrollbar_rects",
-                 "__maximized")
+                 "__maximized", "__window_exposed")
     
     __instance: Optional["Application"] = None
     __pygame_info = pygame.display.Info()
@@ -48,6 +48,7 @@ class Application:
         self.__scrollbar_rects: Tuple[pygame.rect.Rect, pygame.rect.Rect] = (pygame.rect.Rect(0, 0, 0, 10), pygame.rect.Rect(0, 0, 10, 0))
         self.__size: Tuple[int, int] = (0, 0)
         self.__maximized: bool = False
+        self.__window_exposed: int = 0
         
     def start(self) -> None:
         """Initialize the application
@@ -193,10 +194,13 @@ class Application:
                 
             elif event.type == pygame.WINDOWMINIMIZED:
                 self.__maximized = False
-                        
+                
+            elif event.type == pygame.WINDOWEXPOSED or self.__window_exposed:
+                self.__window_exposed += 1
+            
             elif event.type != pygame.MOUSEMOTION:
                 print(event)
-                                
+      
     def update(self) -> None:
         """
         Needs to be called once for frame
@@ -208,6 +212,7 @@ class Application:
             return
         
         self.current_world._calc_frame()
+            
         world_surf = self.current_world._surface
         self.__delta_size = pygame.math.Vector2(
             max(0, self.__screen.get_width() - world_surf.get_width()) // 2,
@@ -295,12 +300,12 @@ class Application:
     @staticmethod
     def main(first_world: World) -> None:
         app = Application.get_app()
-        app.fps = 15
+        app.fps = 60
         app.current_world = first_world
         app.start()
-        
         while app.is_running():
             app.update()
+            print("=====")
         
         app.quit()
     
@@ -310,6 +315,7 @@ class Application:
     def quit(self) -> None:
         Sound.stop_all()
         self.stop()
+        exit(0)
         
     @property
     def delta_pos(self) -> Tuple[int, int]:
