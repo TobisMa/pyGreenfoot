@@ -60,6 +60,7 @@ class Application:
             raise RuntimeError("Scene has to be set before running the application")
         self.__running = True
         self.__update_screen()
+        self.__handle_events()
         
     def stop(self) -> None:
         """
@@ -88,7 +89,6 @@ class Application:
                 ss.get_width() < ws.get_width() and self.show_scrollbar[0],
                 ss.get_height() < ws.get_height() and self.show_scrollbar[1]
             )
-            print(f"{ss=}; {ws=}")
         
     @property
     def current_world(self) -> World:
@@ -201,7 +201,7 @@ class Application:
             elif event.type != pygame.MOUSEMOTION:
                 print(event)
       
-    def update(self) -> None:
+    def update(self, act_cycle: bool = True) -> None:
         """
         Needs to be called once for frame
         Handles the pygame events (and thus, prevents pygame from freezing) as well as updating screen
@@ -211,7 +211,10 @@ class Application:
         if not self.__running:
             return
         
-        self.current_world._calc_frame()
+        if act_cycle:
+            self.current_world._calc_frame()
+        else:
+            self.current_world.repaint()
             
         world_surf = self.current_world._surface
         self.__delta_size = pygame.math.Vector2(
@@ -305,7 +308,6 @@ class Application:
         app.start()
         while app.is_running():
             app.update()
-            print("=====")
         
         app.quit()
     

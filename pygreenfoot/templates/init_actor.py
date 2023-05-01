@@ -1,22 +1,38 @@
 from abc import abstractmethod
-from typing import Optional
-
+import functools
+from typing import Any, Optional
 from pygreenfoot import Actor, Image
+from pygreenfoot.application import Application
+from pygreenfoot.math_helper import FULL_DEGREES_ANGLE
 
+
+def _screen_update(f):
+    @functools.wraps(f)
+    def wrapper(*args, **kwargs):
+        res = f(*args, **kwargs)
+        Application.get_app().update(False)
+        return res
+    return wrapper
 
 class InitActor(Actor):
 
-    __slots__ = ("__init",)
+    __slots__ = ("__iter", "__update_screen")
+    __screen_update_functions = ["set_image", "remove_touching", "set_position", "move"]
     
     def __init__(self, rotation: int = 0, image: Optional[Image] = None) -> None:
         Actor.__init__(self, rotation, image)
-        self.__init: bool = False
-    
+        self.__iter: int = 0
+
+        for m in self.__screen_update_functions:
+            setattr(self, m, _screen_update(getattr(self, m)))
+
     @abstractmethod
     def init(self) -> None:
         raise NotImplementedError("subclasses of InitActor must override the init method")
     
     def act(self) -> None:
-        if not self.__init:
+        if self.__iter == 1:
             self.init()
-            self.__init = True
+        if self.__iter <= 2:
+            self.__iter += 1
+        self.__update_screen = False
