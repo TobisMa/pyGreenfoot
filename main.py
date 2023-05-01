@@ -1,3 +1,3 @@
 from pygreenfoot import Application
 
-if __name__ == '__main__':	Application.main(())
+if __name__ == '__main__':	Application.main()
