@@ -16,7 +16,7 @@ def _screen_update(f):
 
 class InitActor(Actor):
 
-    __slots__ = ("__iter", "__update_screen")
+    __slots__ = ("__iter",)
     __screen_update_functions = ["set_image", "remove_touching", "set_position", "move"]
     
     def __init__(self, rotation: int = 0, image: Optional[Image] = None) -> None:
@@ -35,4 +35,9 @@ class InitActor(Actor):
             self.init()
         if self.__iter <= 2:
             self.__iter += 1
-        self.__update_screen = False
+
+    def update_screen(self) -> None:
+        """
+        Updates the screen
+        """
+        Application.get_app().update(False)
