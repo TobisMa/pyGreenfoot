@@ -5,6 +5,11 @@ from pygreenfoot import Actor, Font, Color
 
 class Counter(Actor):
     
+    """
+    A counter where you can use a prefix before the count.
+    This counter works like an actor and needs to be added to the active world to be visible.
+    """
+    
     __slots__ = ("prefix", "__value", "__needs_update")
     
     def __init__(self, prefix: str = "", start_value: int = 0, rotation: int = 0):

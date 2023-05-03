@@ -5,6 +5,13 @@ from typing import Dict, Hashable
 
 class Timer:
     
+    """
+    A timer counting in nanoseconds and providing a function mark which creates a new internal extra 
+    timer using the optional tag argument. Multiple calls to mark on the same tag will reset the timer
+    behind tag. elapsed_ns will return the elapsed nanoseconds since the timer start on tag.
+    This is no actor.
+    """
+    
     __slots__ = ("__tags", )
     
     def __init__(self) -> None:

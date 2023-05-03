@@ -15,6 +15,17 @@ def _screen_update(f):
     return wrapper
 
 class InitActor(Actor):
+    
+    """
+    The InitActor class provides an actor for teaching. 
+    It provides an init method to put your code in and 
+    executes this method excactly once. This actor refreshes the screen
+    as soon as this actor caused a screen change as opposed to the normal
+    actors.
+    
+    
+    This counter works like an actor and needs to be added to the active world to be visible
+    """
 
     __slots__ = ("__iter",)
     __screen_update_functions = ["set_image", "remove_touching", "set_position", "move"]
