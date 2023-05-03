@@ -3,7 +3,7 @@ name: Create Release
 on:
   push:
     tags:
-      - v*.**
+      - v*.*.*
 
 jobs:
   build:
@@ -21,6 +21,7 @@ jobs:
           prerelease: false
           release_name: PyGreenfoot Module (${{ github.ref_name }})
           tag_name: ${{ github.ref }}
+          body_path: ./CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
