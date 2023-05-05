@@ -1,7 +1,10 @@
 import os
+import threading
 from typing import DefaultDict, List, Optional, Tuple
 
 import pygame
+
+from pygreenfoot.inheritance_tree import create_inheritance_tree
 
 from .__types import _Key
 from .mouse_info import MouseInfo
@@ -301,15 +304,21 @@ class Application:
         return Application.__instance
             
     @staticmethod
-    def main(first_world: World) -> None:
-        app = Application.get_app()
-        app.fps = 60
-        app.current_world = first_world
-        app.start()
-        while app.is_running():
-            app.update()
-        
-        app.quit()
+    def main(first_world: World, generate_inheritance_tree: bool = True) -> None:
+        t = threading.Thread(target=create_inheritance_tree)
+        t.start()
+        try:
+            app = Application.get_app()
+            app.fps = 60
+            app.current_world = first_world
+            app.start()
+            while app.is_running():
+                app.update()
+            
+            app.quit()
+            
+        finally:
+            t.join()
     
     def is_mouse_in_window(self) -> bool:
         return self.__mouse_in_window
