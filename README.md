@@ -26,3 +26,11 @@ if __name__ == "__main__":
 Now use the world to add/remove actors. Actors are classes subclassing `pygreenfoot.Actor`. 
 The act methods on worlds and actors are called once per frame and used for whatever you want.
 It is also possible to change the current world
+
+# Plantuml integration
+Is used to generate an hierachical tree of your project.
+When the main application is run, a valid plantuml diagram will be generated in `./_structure/diagram.wsd`. When the python package `plantuml` is installed a image will be created in the same folder. 
+
+
+# Editor to use
+Use the editor of your joice. Both PyCharm and Visual Studio Code provide an internal integration for plantuml diagrams
