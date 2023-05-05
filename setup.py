@@ -11,5 +11,8 @@ setup(
         "pygame >= 2.1.2",
         "typing"
     ],
-    platforms=["linux", "mac", "win32"]
+    platforms=["linux", "mac", "win32"],
+    extras_requires={
+        "plantuml image generation": ["plantuml>=0.3.0"]
+    }
 )
