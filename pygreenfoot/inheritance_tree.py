@@ -87,7 +87,6 @@ def generate_arrows(tree: Dict[str, Set[str]]) -> str:
             arrows += f"{base} <|-- {cls}\n"
         arrows += "\n"
     return arrows
-        
             
 
 def get_class_from_ast(ast_module: ast.Module) -> List[ClassRepresentation]:
