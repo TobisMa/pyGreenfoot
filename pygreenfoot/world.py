@@ -35,8 +35,8 @@ class World(metaclass=ABCMeta):
         self.__half_cell: int = self.__cell_size // 2
         self.__app = Application.get_app()
         self.__texts: Dict[Tuple[int, int], Tuple[Text, Tuple[int, int]]] = {}
-        self.running = True
-        self.world_speed = 0
+        self.running: bool = True
+        self.world_speed: int = 0
         self.__last_time = time()
         
     def add_to_world(self, game_object: "Actor", x: int, y: int) -> None:

@@ -1,6 +1,6 @@
 import os
 import threading
-from typing import DefaultDict, List, Optional, Tuple
+from typing import Any, Callable, DefaultDict, Dict, List, Optional, Tuple, Union
 
 import pygame
 
@@ -11,9 +11,50 @@ from .mouse_info import MouseInfo
 from .sound import Sound
 from .world import World
 from .math_helper import limit_value
+from configparser import ConfigParser
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.init()
+
+def bool_(value: str) -> Union[str, bool]:
+    if value.lower() == "true": 
+        return True
+    elif value.lower() == "false":
+        return False
+    raise TypeError("Invalid boolean value '%s'" % value)
+
+def signed_int(value: str) -> int:
+    v = int(value)
+    if v < 0: 
+        raise TypeError("Negative integer value '%s'")
+    return v
+
+def none_value(value) -> bool:
+    return value.lower() in ("none", "null", "unset")
+
+def optional_signed_int(value: str) -> Optional[int]:
+    return None if none_value(value) else signed_int(value)
+
+def window_mode(value):
+    result = pygame.SRCALPHA
+    # TODO
+    return result
+
+_config_key_converter: Dict[str, Callable[[str], Any]] = {
+    "generateDiagram": bool_,
+    "generateImage": bool_,
+    "tempPlantumlFile": bool_,
+    "diagramFilename": str,
+    "diagramFolder": str,
+    "imageResourceFolder": str,
+    "soundResourceFolder": str,
+    "fpsLimit": signed_int,
+    "defaultWorldSpeed": signed_int,
+    "windowWidth": optional_signed_int,
+    "windowHeight": optional_signed_int,
+    "windowMode": window_mode,
+    "windowModeStartUp": window_mode 
+}
 
 
 class Application:
@@ -21,12 +62,30 @@ class Application:
     __slots__ = ("__screen", "__world", "__running", "__keys", "__mouse_in_window", "__size",
                  "__mouse_down", "__clock", "__fps_limit", "__mouse_wheel", "__scrollbar",
                  "__delta_size", "__delta_move", "show_scrollbar", "__scrollbar_rects",
-                 "__maximized", "__window_exposed")
+                 "__maximized", "__window_exposed", "__config")
     
     __instance: Optional["Application"] = None
     __pygame_info = pygame.display.Info()
     __sw = __pygame_info.current_w
     __sh = __pygame_info.current_h
+    
+    DEFAULT_CONFIG = {
+        "generateDiagram": True,
+        "generateImage": True,
+        "tempPlantumlFile": False,
+        "diagramFilename": "diagram",
+        "diagramFolder": "_structure",
+        "fpsLimit": 60,
+        "imageResourceFolder": "images",
+        "soundResourceFolder": "sounds",
+        "defaultWorldSpeed": 0,
+        "windowWidth": None,
+        "windowHeight": None,
+        "windowMode": pygame.RESIZABLE | pygame.SRCALPHA,
+        "windowStartUpMode": pygame.RESIZABLE | pygame.SRCALPHA,
+    }
+    CONFIG_FILENAME = "pygreenfoot.config"
+    CONFIG_DELIMITER = "="
     
     def __new__(cls) -> "Application":
         if Application.__instance is None:
@@ -52,6 +111,7 @@ class Application:
         self.__size: Tuple[int, int] = (0, 0)
         self.__maximized: bool = False
         self.__window_exposed: int = 0
+        self.__config = Application.DEFAULT_CONFIG
         
     def start(self) -> None:
         """Initialize the application
@@ -297,6 +357,32 @@ class Application:
     def get_mouse_states(self) -> "MouseInfo":
         return MouseInfo(self.__mouse_wheel)
     
+    def read_config(self):
+        def _unknown_key(value):
+            raise TypeError("Key is unknown")
+        cnf_file: str = os.path.join(".", Application.CONFIG_FILENAME)
+        if not os.access(cnf_file, os.R_OK):
+            return
+        parsed = {}
+        print("Reading config")
+        with open(cnf_file, "r") as f:
+            for line in f:
+                line = line.lstrip().rstrip("\n")
+                if line.startswith("#"): continue
+                if Application.CONFIG_DELIMITER not in line:
+                    print("WARNING: No `=` in config file line")
+                    continue
+                key, attr = line.split(Application.CONFIG_DELIMITER)
+                print("Parse key: %s" % key)
+                try:
+                    v = _config_key_converter.get(key, _unknown_key)(attr)
+                except TypeError as e:
+                    print("ERROR: %r: %s" %(key, e.args))
+                else:
+                    parsed[key] = v
+        print(parsed)
+        
+    
     @staticmethod
     def get_app() -> "Application":
         if Application.__instance is None:
@@ -309,8 +395,8 @@ class Application:
         t.start()
         try:
             app = Application.get_app()
-            app.fps = 60
             app.current_world = first_world
+            app.read_config()
             app.start()
             while app.is_running():
                 app.update()
