@@ -5,7 +5,7 @@ setup(
     version="1.0.0",
     description='The java greenfoot in a python package',
     packages=['pygreenfoot', 'pygreenfoot.templates'],
-    license="MIT License",
+    license="GNU General Public License, version 2, with the Classpath Exception",
     python_requires=">=3.6.1, <4",
     install_requires=[
         "pygame >= 2.1.2",
