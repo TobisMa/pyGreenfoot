@@ -1,5 +1,9 @@
 # pyGreenfoot
 
+## Install
+Either move the `pygreenfoot` folder in the working directory from where the main file gets executed
+or use pip: `pip install git+https://github.com/TobisMa/pyGreenfoot`
+
 ## How to begin a project
 Install the project using the ps1 script for the desired solution or use the `pygreenfoot-v**.zip` file from the release and move the pygreenfoot folder to your python site-packages folder.
 
