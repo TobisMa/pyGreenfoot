@@ -11,7 +11,8 @@ class Sound(pygame.mixer.Sound):
             pygame.mixer.init()
         
         if isinstance(filename_or_buffer, str):
-            filename_or_buffer = os.path.join("sounds", filename_or_buffer)
+            from pygreenfoot import Application
+            filename_or_buffer = os.path.join(Application.get_app().sound_folder, filename_or_buffer)
             
         pygame.mixer.Sound.__init__(self, filename_or_buffer)
         

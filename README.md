@@ -23,7 +23,7 @@ from pygreenfoot import Application
 from world import MyWorld
 
 if __name__ == "__main__":
-  Application.main(MyWorld())  # notice the init call on the world
+  Application.main(MyWorld)  # notice that the class is not instantiated
 ```
 
 ### What to use the world for

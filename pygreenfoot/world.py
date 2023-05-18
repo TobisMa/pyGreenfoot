@@ -36,7 +36,7 @@ class World(metaclass=ABCMeta):
         self.__app = Application.get_app()
         self.__texts: Dict[Tuple[int, int], Tuple[Text, Tuple[int, int]]] = {}
         self.running: bool = True
-        self.world_speed: int = 0
+        self.world_speed: int = self.__app.default_world_speed
         self.__last_time = time()
         
     def add_to_world(self, game_object: "Actor", x: int, y: int) -> None:
@@ -187,7 +187,7 @@ class World(metaclass=ABCMeta):
             FileNotFoundError: if the argument is a string, but an invalid filename
         """
         if isinstance(filename_or_image, str):
-            path = os.path.join("images", filename_or_image)
+            path = os.path.join(self.__app.image_folder, filename_or_image)
             if not os.access(path, os.F_OK):
                 raise FileNotFoundError("File \"" + path + "\" not found")
 

@@ -1,6 +1,6 @@
 import os
 import threading
-from typing import Any, Callable, DefaultDict, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, DefaultDict, Dict, List, Optional, Tuple, Type, TypeVar, Union
 
 import pygame
 
@@ -15,6 +15,8 @@ from configparser import ConfigParser
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.init()
+
+FirstWorld = TypeVar("FirstWorld", bound=World)
 
 def bool_(value: str) -> Union[str, bool]:
     if value.lower() == "true": 
@@ -37,8 +39,14 @@ def optional_signed_int(value: str) -> Optional[int]:
 
 def window_mode(value):
     result = pygame.SRCALPHA
-    # TODO
+    result = result | _pygame_screen_modes[value.upper()]
     return result
+
+_pygame_screen_modes = {
+    "RESIZABLE": pygame.RESIZABLE,
+    "FULLSCREEN": pygame.FULLSCREEN,
+    "BORDERLESS": pygame.NOFRAME,
+}
 
 _config_key_converter: Dict[str, Callable[[str], Any]] = {
     "generateDiagram": bool_,
@@ -137,10 +145,17 @@ class Application:
         aw = world.width * world.cell_size if world else Application.__sw // 2
         ah = world.height * world.cell_size if world else Application.__sh // 2
         
-        w = min(aw, Application.__sw)
-        h = min(ah, Application.__sh - 50)
-        
-        self.__screen = pygame.display.set_mode((w, h), pygame.RESIZABLE | pygame.SRCALPHA)  # type: ignore
+        if self.__config.get("windowWidth"):
+            w = self.__config["windowWidth"]
+        else:
+            w = min(aw, Application.__sw)
+    
+        if self.__config.get("windowHeight"):
+            h = self.__config["windowHeight"]
+        else:
+            h = min(ah, Application.__sh - 50)
+            
+        self.__screen = pygame.display.set_mode((w, h), self.__config["windowMode"])  # type: ignore
         
         if not self.__maximized:
             self.__size = self.__screen.get_size()
@@ -357,11 +372,12 @@ class Application:
     def get_mouse_states(self) -> "MouseInfo":
         return MouseInfo(self.__mouse_wheel)
     
-    def read_config(self):
+    def read_config(self) -> None:
         def _unknown_key(value):
             raise TypeError("Key is unknown")
         cnf_file: str = os.path.join(".", Application.CONFIG_FILENAME)
         if not os.access(cnf_file, os.R_OK):
+            print("WARNING: No readable config file found")
             return
         parsed = {}
         print("Reading config")
@@ -380,23 +396,63 @@ class Application:
                     print("ERROR: %r: %s" %(key, e.args))
                 else:
                     parsed[key] = v
-        print(parsed)
+        self.__config.update(parsed)
         
+    @property
+    def image_folder(self) -> str:
+        return self.__config["imageResourceFolder"]
+    
+    @property
+    def sound_folder(self) -> str:
+        return self.__config["soundResourceFolder"]
+    
+    @property
+    def default_world_speed(self) -> int:
+        return self.__config["defaultWorldSpeed"]
     
     @staticmethod
     def get_app() -> "Application":
         if Application.__instance is None:
             Application.__instance = Application()
         return Application.__instance
+    
+    def setup_folder(self):
+        # check for folder
+        print(self.__config)  # TODO remove print
+        if not os.access(self.__config["imageResourceFolder"], os.F_OK):
+            os.makedirs(self.__config["imageResourceFolder"], 0o444)
+
+        if not os.access(self.__config["soundResourceFolder"], os.F_OK):
+            os.mkdir(self.__config["soundResourceFolder"], 0o444)
             
     @staticmethod
-    def main(first_world: World, generate_inheritance_tree: bool = True) -> None:
-        t = threading.Thread(target=create_inheritance_tree)
-        t.start()
+    def main(first_world: Type[FirstWorld], generate_inheritance_tree: bool = True) -> None:
+        app = Application.get_app()
+        app.read_config()
+        app.setup_folder()
+        
+        if app.__config.get("fpsLimit"):
+            app.__fps_limit = app.__config["fpsLimit"]
+            
+        app.current_world = first_world() # type: ignore
+        
+        if app.__config["generateDiagram"]:
+            t = threading.Thread(
+                target=create_inheritance_tree,
+                kwargs={
+                    "ignore": [
+                        app.__config["imageResourceFolder"],
+                        app.__config["soundResourceFolder"]
+                    ],
+                    "output_dir": app.__config["diagramFolder"],
+                    "output_file": app.__config["diagramFilename"],
+                    "temp_file": app.__config["tempPlantumlFile"],
+                    "generate_image": app.__config["generateImage"]
+                }
+            )
+            t.start()
+            
         try:
-            app = Application.get_app()
-            app.current_world = first_world
-            app.read_config()
             app.start()
             while app.is_running():
                 app.update()
@@ -404,7 +460,8 @@ class Application:
             app.quit()
             
         finally:
-            t.join()
+            if app.__config["generateDiagram"]:
+                t.join()  # type: ignore
     
     def is_mouse_in_window(self) -> bool:
         return self.__mouse_in_window
