@@ -83,7 +83,7 @@ class Actor(metaclass=ABCMeta):
         """
         file_or_surf: Union[str, pygame.surface.Surface] = filename_or_image if isinstance(filename_or_image, str) else filename_or_image._surface  # type: ignore
         if isinstance(file_or_surf, str):
-            path = os.path.join("images", file_or_surf)
+            path = os.path.join(self.__app.image_folder, file_or_surf)
             if not os.access(path, os.F_OK):
                 raise FileNotFoundError("File \"" + path + "\" does not exist")
             file_or_surf: pygame.surface.Surface = pygame.image.load(path)

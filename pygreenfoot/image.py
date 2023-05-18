@@ -87,7 +87,8 @@ class Image:
         
     @staticmethod
     def from_filename(filename: str) -> "Image":
-        path = os.path.join("images", filename)
+        from pygreenfoot import Application
+        path = os.path.join(Application.get_app().image_folder, filename)
         if not os.access(path, os.F_OK):
             raise FileNotFoundError("File %r does not exist" % path)
         image = pygame.image.load(path)

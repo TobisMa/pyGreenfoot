@@ -32,11 +32,3 @@ from .world import World
 from .font import Text, Font
 
 __version__ = "1.0.0"
-
-# check for folder
-if not os.access("./images", os.F_OK):
-    os.mkdir("./images", 0o444)
-
-if not os.access("./sounds", os.F_OK):
-    os.mkdir("./sounds", 0o444)
-    
