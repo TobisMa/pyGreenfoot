@@ -1,6 +1,6 @@
 import os
 from abc import ABCMeta, abstractmethod
-from math import atan2, cos, degrees, sin
+from math import atan2, cos, degrees, radians, sin
 from typing import TYPE_CHECKING, Generator, List, Optional, Tuple, Type, Union
 
 import pygame
@@ -338,5 +338,7 @@ class Actor(metaclass=ABCMeta):
         Args:
             steps (int, optional): the amount of cells the actor shall go. In case of a rotation like 30° the steps will be rounded. Defaults to 1.
         """
-        self.x += round(steps * cos(self.rotation))
-        self.y += round(steps * sin(self.rotation))
+        print("change x:", round(steps * cos(self.rotation)))
+        print("change y:", round(steps * sin(self.rotation)))
+        self.x += round(steps * cos(radians(self.rotation)))
+        self.y += round(steps * sin(radians(self.rotation)))
