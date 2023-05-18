@@ -338,7 +338,5 @@ class Actor(metaclass=ABCMeta):
         Args:
             steps (int, optional): the amount of cells the actor shall go. In case of a rotation like 30° the steps will be rounded. Defaults to 1.
         """
-        print("change x:", round(steps * cos(self.rotation)))
-        print("change y:", round(steps * sin(self.rotation)))
         self.x += round(steps * cos(radians(self.rotation)))
         self.y += round(steps * sin(radians(self.rotation)))
