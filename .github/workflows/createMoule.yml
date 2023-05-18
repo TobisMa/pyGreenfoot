@@ -1,0 +1,21 @@
+name: CreateModulebranch
+
+on:
+  push:
+    tags:
+      - v*.*.*
+
+jobs:
+  moveModule:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - run: mkdir moduleUpload
+      - run: cp pygreenfoot moduleUpload
+      - run: cd moduleUpload
+      - run: git init
+      - run: git add .
+      - run: git commit -m "Rendered new module ${{ github.ref_name }}"
+      - run: git remote add origin ${{ github.repositoryUrl }}
+      - run: git push origin module
