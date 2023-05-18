@@ -1,6 +1,6 @@
 import os
 import threading
-from typing import DefaultDict, List, Optional, Tuple
+from typing import Any, Callable, DefaultDict, Dict, List, Optional, Tuple, Type, TypeVar, Union
 
 import pygame
 
@@ -11,9 +11,58 @@ from .mouse_info import MouseInfo
 from .sound import Sound
 from .world import World
 from .math_helper import limit_value
+from configparser import ConfigParser
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.init()
+
+FirstWorld = TypeVar("FirstWorld", bound=World)
+
+def bool_(value: str) -> Union[str, bool]:
+    if value.lower() == "true": 
+        return True
+    elif value.lower() == "false":
+        return False
+    raise TypeError("Invalid boolean value '%s'" % value)
+
+def signed_int(value: str) -> int:
+    v = int(value)
+    if v < 0: 
+        raise TypeError("Negative integer value '%s'")
+    return v
+
+def none_value(value) -> bool:
+    return value.lower() in ("none", "null", "unset")
+
+def optional_signed_int(value: str) -> Optional[int]:
+    return None if none_value(value) else signed_int(value)
+
+def window_mode(value):
+    result = pygame.SRCALPHA
+    result = result | _pygame_screen_modes[value.upper()]
+    return result
+
+_pygame_screen_modes = {
+    "RESIZABLE": pygame.RESIZABLE,
+    "FULLSCREEN": pygame.FULLSCREEN,
+    "BORDERLESS": pygame.NOFRAME,
+}
+
+_config_key_converter: Dict[str, Callable[[str], Any]] = {
+    "generateDiagram": bool_,
+    "generateImage": bool_,
+    "tempPlantumlFile": bool_,
+    "diagramFilename": str,
+    "diagramFolder": str,
+    "imageResourceFolder": str,
+    "soundResourceFolder": str,
+    "fpsLimit": signed_int,
+    "defaultWorldSpeed": signed_int,
+    "windowWidth": optional_signed_int,
+    "windowHeight": optional_signed_int,
+    "windowMode": window_mode,
+    "windowModeStartUp": window_mode 
+}
 
 
 class Application:
@@ -21,12 +70,30 @@ class Application:
     __slots__ = ("__screen", "__world", "__running", "__keys", "__mouse_in_window", "__size",
                  "__mouse_down", "__clock", "__fps_limit", "__mouse_wheel", "__scrollbar",
                  "__delta_size", "__delta_move", "show_scrollbar", "__scrollbar_rects",
-                 "__maximized", "__window_exposed")
+                 "__maximized", "__window_exposed", "__config")
     
     __instance: Optional["Application"] = None
     __pygame_info = pygame.display.Info()
     __sw = __pygame_info.current_w
     __sh = __pygame_info.current_h
+    
+    DEFAULT_CONFIG = {
+        "generateDiagram": True,
+        "generateImage": True,
+        "tempPlantumlFile": False,
+        "diagramFilename": "diagram",
+        "diagramFolder": "_structure",
+        "fpsLimit": 60,
+        "imageResourceFolder": "images",
+        "soundResourceFolder": "sounds",
+        "defaultWorldSpeed": 0,
+        "windowWidth": None,
+        "windowHeight": None,
+        "windowMode": pygame.RESIZABLE | pygame.SRCALPHA,
+        "windowStartUpMode": pygame.RESIZABLE | pygame.SRCALPHA,
+    }
+    CONFIG_FILENAME = "pygreenfoot.config"
+    CONFIG_DELIMITER = "="
     
     def __new__(cls) -> "Application":
         if Application.__instance is None:
@@ -52,6 +119,7 @@ class Application:
         self.__size: Tuple[int, int] = (0, 0)
         self.__maximized: bool = False
         self.__window_exposed: int = 0
+        self.__config = Application.DEFAULT_CONFIG
         
     def start(self) -> None:
         """Initialize the application
@@ -77,10 +145,17 @@ class Application:
         aw = world.width * world.cell_size if world else Application.__sw // 2
         ah = world.height * world.cell_size if world else Application.__sh // 2
         
-        w = min(aw, Application.__sw)
-        h = min(ah, Application.__sh - 50)
-        
-        self.__screen = pygame.display.set_mode((w, h), pygame.RESIZABLE | pygame.SRCALPHA)  # type: ignore
+        if self.__config.get("windowWidth"):
+            w = self.__config["windowWidth"]
+        else:
+            w = min(aw, Application.__sw)
+    
+        if self.__config.get("windowHeight"):
+            h = self.__config["windowHeight"]
+        else:
+            h = min(ah, Application.__sh - 50)
+            
+        self.__screen = pygame.display.set_mode((w, h), self.__config["windowMode"])  # type: ignore
         
         if not self.__maximized:
             self.__size = self.__screen.get_size()
@@ -297,20 +372,87 @@ class Application:
     def get_mouse_states(self) -> "MouseInfo":
         return MouseInfo(self.__mouse_wheel)
     
+    def read_config(self) -> None:
+        def _unknown_key(value):
+            raise TypeError("Key is unknown")
+        cnf_file: str = os.path.join(".", Application.CONFIG_FILENAME)
+        if not os.access(cnf_file, os.R_OK):
+            print("WARNING: No readable config file found")
+            return
+        parsed = {}
+        print("Reading config")
+        with open(cnf_file, "r") as f:
+            for line in f:
+                line = line.lstrip().rstrip("\n")
+                if line.startswith("#"): continue
+                if Application.CONFIG_DELIMITER not in line:
+                    print("WARNING: No `=` in config file line")
+                    continue
+                key, attr = line.split(Application.CONFIG_DELIMITER)
+                print("Parse key: %s" % key)
+                try:
+                    v = _config_key_converter.get(key, _unknown_key)(attr)
+                except TypeError as e:
+                    print("ERROR: %r: %s" %(key, e.args))
+                else:
+                    parsed[key] = v
+        self.__config.update(parsed)
+        
+    @property
+    def image_folder(self) -> str:
+        return self.__config["imageResourceFolder"]
+    
+    @property
+    def sound_folder(self) -> str:
+        return self.__config["soundResourceFolder"]
+    
+    @property
+    def default_world_speed(self) -> int:
+        return self.__config["defaultWorldSpeed"]
+    
     @staticmethod
     def get_app() -> "Application":
         if Application.__instance is None:
             Application.__instance = Application()
         return Application.__instance
+    
+    def setup_folder(self):
+        # check for folder
+        print(self.__config)  # TODO remove print
+        if not os.access(self.__config["imageResourceFolder"], os.F_OK):
+            os.makedirs(self.__config["imageResourceFolder"], 0o444)
+
+        if not os.access(self.__config["soundResourceFolder"], os.F_OK):
+            os.mkdir(self.__config["soundResourceFolder"], 0o444)
             
     @staticmethod
-    def main(first_world: World, generate_inheritance_tree: bool = True) -> None:
-        t = threading.Thread(target=create_inheritance_tree)
-        t.start()
+    def main(first_world: Type[FirstWorld], generate_inheritance_tree: bool = True) -> None:
+        app = Application.get_app()
+        app.read_config()
+        app.setup_folder()
+        
+        if app.__config.get("fpsLimit"):
+            app.__fps_limit = app.__config["fpsLimit"]
+            
+        app.current_world = first_world() # type: ignore
+        
+        if app.__config["generateDiagram"]:
+            t = threading.Thread(
+                target=create_inheritance_tree,
+                kwargs={
+                    "ignore": [
+                        app.__config["imageResourceFolder"],
+                        app.__config["soundResourceFolder"]
+                    ],
+                    "output_dir": app.__config["diagramFolder"],
+                    "output_file": app.__config["diagramFilename"],
+                    "temp_file": app.__config["tempPlantumlFile"],
+                    "generate_image": app.__config["generateImage"]
+                }
+            )
+            t.start()
+            
         try:
-            app = Application.get_app()
-            app.fps = 60
-            app.current_world = first_world
             app.start()
             while app.is_running():
                 app.update()
@@ -318,7 +460,8 @@ class Application:
             app.quit()
             
         finally:
-            t.join()
+            if app.__config["generateDiagram"]:
+                t.join()  # type: ignore
     
     def is_mouse_in_window(self) -> bool:
         return self.__mouse_in_window

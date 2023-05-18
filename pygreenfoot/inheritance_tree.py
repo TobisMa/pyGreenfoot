@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
 import os
 import ast
-from typing import Dict, List, Set
+from typing import Dict, List, Optional, Set
 try:
     from plantuml import PlantUML
 except ImportError:
@@ -35,10 +35,20 @@ class ClassRepresentation:
         return hash(self.name)
 
 
-def create_inheritance_tree():
+def create_inheritance_tree(
+    ignore: Optional[List[str]] = None,
+    output_dir: str = "_structure",
+    output_file: str = "diagram.wsd",
+    generate_image: bool = True,
+    temp_file: bool = False
+):
+    print(ignore, output_dir, output_file, generate_image, temp_file)
+    if ignore is None:
+        ignore = []
+        
     inheritance_tree = {}
     for dir, dirs, files in os.walk(os.getcwd()):
-        if dir.endswith(("__pycache__", "images", "sounds")):
+        if dir.endswith(("__pycache__", *ignore)):
             continue
         
         for file in files:
@@ -54,10 +64,12 @@ def create_inheritance_tree():
             for cls in clses:
                 inheritance_tree[cls.name] = set(cls.bases)
     
-    if not os.access("_structure", os.W_OK):
-        os.mkdir("_structure")
+    if not os.access(output_dir, os.W_OK):
+        os.makedirs(output_dir)
 
-    with open("_structure/diagram.wsd", "w") as f:
+    out_path = os.path.join(output_dir, output_file) 
+
+    with open(out_path + ".wsd", "w") as f:
         f.write("@startuml pyGreenfootClsDiagram\n\n")
         for name, cls in ClassRepresentation._classes.items():
             print("Writing class %r" % name)
@@ -71,12 +83,15 @@ def create_inheritance_tree():
     if not _plantuml:
         print("WARNING: Cannot generate image. No plantuml installed.")
         print("WARNING: Install by executin `python -m pip install plantuml`")
-        return
-
-    pl = PlantUML("http://www.plantuml.com/plantuml/img/")
-    print("Generating image using external server...")
-    pl.processes_file("_structure/diagram.wsd", "_structure/diagram.png")
-    print("Successfully generated image")
+        
+    elif generate_image:
+        pl = PlantUML("http://www.plantuml.com/plantuml/img/")
+        print("Generating image using external server...")
+        pl.processes_file(out_path + ".wsd", out_path + ".png")
+        print("Successfully generated image")
+    
+    if temp_file:
+        os.remove(out_path + ".wsd")
     
 
         
@@ -87,7 +102,6 @@ def generate_arrows(tree: Dict[str, Set[str]]) -> str:
             arrows += f"{base} <|-- {cls}\n"
         arrows += "\n"
     return arrows
-        
             
 
 def get_class_from_ast(ast_module: ast.Module) -> List[ClassRepresentation]:
