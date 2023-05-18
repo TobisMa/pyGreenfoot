@@ -424,7 +424,6 @@ class Application:
     
     def setup_folder(self):
         # check for folder
-        print(self.__config)  # TODO remove print
         if not os.access(self.__config["imageResourceFolder"], os.F_OK):
             os.makedirs(self.__config["imageResourceFolder"], 0o444)
 

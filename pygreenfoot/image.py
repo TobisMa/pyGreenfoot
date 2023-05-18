@@ -108,7 +108,6 @@ class Image:
     def _set_rot(self, angle: float) -> None:
         self.__rot = angle % 360
         
-        # TODO fix rot positioning
         if angle == 0:
             self.__rot_image = self.__base_image.copy()
             return
