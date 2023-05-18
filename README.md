@@ -70,7 +70,7 @@ Each line consist of an attribute and value separated by an `=` per default.
 | imageResourceFolder | string | `images` | where to look for images. This folder will be created if it does not already exist |
 | soundResourceFolder | string | `sounds` | where to look for sound files. This folder will be created if it does not already exist |
 | fpsLimit | signed int | `60` | The maximum fps for the game |
-| defaultWorldSpeed | signed int | `0` | the delay between the cycles of the worlds. These are independent of the fpsLimit |
+| defaultWorldSpeed | signed float | `0` | the delay between the cycles of the worlds in seconds. `0.05` would be twenty cycles per frame. These are independent of the fpsLimit |
 | windowWidth | optional signed int | `unset` | the windowWidth of the game. If given this will set the window to a fixed width |
 | windowHeight | optional signed int | `unset` | same as width, but for the height |
 | windowMode | windowMode | `RESIZABLE` | the window mode during the game |
@@ -80,7 +80,8 @@ Each line consist of an attribute and value separated by an `=` per default.
 | :--- | :--- |
 | boolean | case-insensitive `true` or `false` |
 | string | some order of chars. Should not be enclosed by quotation marks (`"`, `'`). |
-| signed integer | some integer value >= `0`. E. g. `1`, `5`, `32802` |
+| signed int | some psotivie integer value: `0`. E. g. `1`, `5`, `32802` |
+| signed float | some positive float valie: `0`, `2`, `0.04`, `0.3242`, `122.43` |
 | optional | case-insesitive `unset`, `null` or `none` |
 | optional signed integer | some value of either `optional` or `signed integer` |
 | windowMode | either `RESIZABLE` or `FULLSCREEN` or `BORDERLESS` |

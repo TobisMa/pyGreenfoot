@@ -37,6 +37,12 @@ def none_value(value) -> bool:
 def optional_signed_int(value: str) -> Optional[int]:
     return None if none_value(value) else signed_int(value)
 
+def signed_float(value) -> float:
+    v = float(value)
+    if v < 0: 
+        raise TypeError("Negative integer value '%s'")
+    return v
+
 def window_mode(value):
     result = pygame.SRCALPHA
     result = result | _pygame_screen_modes[value.upper()]
@@ -57,7 +63,7 @@ _config_key_converter: Dict[str, Callable[[str], Any]] = {
     "imageResourceFolder": str,
     "soundResourceFolder": str,
     "fpsLimit": signed_int,
-    "defaultWorldSpeed": signed_int,
+    "defaultWorldSpeed": signed_float,
     "windowWidth": optional_signed_int,
     "windowHeight": optional_signed_int,
     "windowMode": window_mode,
@@ -407,7 +413,7 @@ class Application:
         return self.__config["soundResourceFolder"]
     
     @property
-    def default_world_speed(self) -> int:
+    def default_world_speed(self) -> float:
         return self.__config["defaultWorldSpeed"]
     
     @staticmethod
