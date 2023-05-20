@@ -5,6 +5,7 @@ from typing import Any, Callable, DefaultDict, Dict, List, Optional, Tuple, Type
 
 import pygame
 from pygreenfoot import get_module_str_import
+from pygreenfoot.color import Color
 
 from pygreenfoot.inheritance_tree import create_inheritance_tree
 
@@ -80,7 +81,7 @@ class Application:
     __slots__ = ("__screen", "__world", "__running", "__keys", "__mouse_in_window", "__size",
                  "__mouse_down", "__clock", "__fps_limit", "__mouse_wheel", "__scrollbar",
                  "__delta_size", "__delta_move", "show_scrollbar", "__scrollbar_rects",
-                 "__maximized", "__window_exposed", "__config")
+                 "__maximized", "__window_exposed", "__config", "scrollbar_color")
     
     __instance: Optional["Application"] = None
     __pygame_info = pygame.display.Info()
@@ -124,6 +125,7 @@ class Application:
         self.__delta_size: pygame.math.Vector2 = pygame.math.Vector2()
         self.__delta_move: pygame.math.Vector2 = pygame.math.Vector2()
         self.__mouse_down: Optional[int] = None
+        self.scrollbar_color: Color = Color(128, 128, 128)
         self.show_scrollbar: List[bool] = [True, True]
         self.__scrollbar: Tuple[bool, bool] = (False, False)
         self.__scrollbar_rects: Tuple[pygame.rect.Rect, pygame.rect.Rect] = (pygame.rect.Rect(0, 0, 0, 10), pygame.rect.Rect(0, 0, 10, 0))
@@ -321,10 +323,10 @@ class Application:
         self.__screen.blit(world_surf, diff)
         
         if self.__scrollbar[0] and self.show_scrollbar[0]:
-            pygame.draw.rect(self.__screen, [128, 128, 128], self.__scrollbar_rects[0], border_radius=3)
+            pygame.draw.rect(self.__screen, self.scrollbar_color._pygame, self.__scrollbar_rects[0], border_radius=3)
         
         if self.__scrollbar[1] and self.show_scrollbar[1]:
-            pygame.draw.rect(self.__screen, [128, 128, 128], self.__scrollbar_rects[1], border_radius=3)            
+            pygame.draw.rect(self.__screen, self.scrollbar_color._pygame, self.__scrollbar_rects[1], border_radius=3)            
         
         pygame.display.update()
         
