@@ -55,8 +55,9 @@ def create_inheritance_tree(
             if not file.endswith(".py"):
                 continue
             
-            print("Parse File %r" % file)
-            with open(file) as f:
+            file_path = os.path.join(dir, file)
+            print("Parse File %r" % file_path)
+            with open(file_path, "r") as f:
                 tree = ast.parse(f.read(), file, mode="exec")
             
             # print(ast.dump(tree, indent=2))
@@ -118,7 +119,7 @@ def get_class_from_ast(ast_module: ast.Module) -> List[ClassRepresentation]:
 def parse_ast_class(ast_node: ast.ClassDef) -> "ClassRepresentation":
     res = ClassRepresentation(ast_node.name)
     for ast_name in ast_node.bases:
-        res.bases.append(ast_name.id)
+        res.bases.append(ast.unparse(ast_name))
     
     for ast_body_node in ast_node.body:
         if isinstance(ast_body_node, ast.FunctionDef):

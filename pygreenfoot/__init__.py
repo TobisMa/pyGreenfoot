@@ -34,7 +34,7 @@ def get_resource_path(file: str, type_: str) -> str:
         return path
     
     if subfolder is not None:
-        path = files("pygreenfoot").joinpath(subfolder).joinpath(file).as_posix()
+        path = files("pygreenfoot").joinpath(subfolder).joinpath(file).as_posix()  # TODO test on other platforms than windows
         if os.access(path, os.R_OK):
             return path
     

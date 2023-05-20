@@ -1,3 +1,4 @@
 ## Changes since last release:
 
- - Inheritance image and local plantuml diagram generation
+ - loading images from package if no corresponding was found in the cwd
+ - fixing class diagram generator
