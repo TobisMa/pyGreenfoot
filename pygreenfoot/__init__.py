@@ -11,7 +11,7 @@ import pygame
 builtins.print = __orig_print
 
 # TODO? add pygreenfoot config for start world
-def get_world(module_str: str) -> Type:
+def get_module_str_import(module_str: str) -> Type:
     importstr = "from " + '.'.join(module_str.split(".")[:-1]) + " import " + module_str.split(".")[-1]
     exec(importstr)
     return eval(module_str.split(".")[-1])
