@@ -4,8 +4,9 @@ import threading
 from typing import Any, Callable, DefaultDict, Dict, List, Optional, Tuple, Type, TypeVar, Union
 
 import pygame
-from pygreenfoot import get_module_str_import
+from pygreenfoot import get_module_str_import, get_resource_path
 from pygreenfoot.color import Color
+from pygreenfoot.image import Image
 
 from pygreenfoot.inheritance_tree import create_inheritance_tree
 
@@ -73,7 +74,8 @@ _config_key_converter: Dict[str, Callable[[str], Any]] = {
     "windowMode": window_mode,
     "windowModeStartUp": window_mode,
     "firstWorld": str,
-    "title": str
+    "title": str,
+    "icon": str
 }
 
 
@@ -104,7 +106,8 @@ class Application:
         "windowMode": pygame.RESIZABLE | pygame.SRCALPHA,
         "windowStartUpMode": pygame.RESIZABLE | pygame.SRCALPHA,
         "firstWorld": None,
-        "title": "PyGreenfoot Game"
+        "title": "PyGreenfoot Game",
+        "icon": "wizard.png"
     }
     CONFIG_FILENAME = "pygreenfoot.config"
     CONFIG_DELIMITER = "="
@@ -445,7 +448,15 @@ class Application:
     def apply_config(self) -> None:
         self.setup_folder()
         self.__fps_limit = self.__config["fpsLimit"]
-        pygame.display.set_caption(self.__config["title"])
+        pygame.display.set_caption(self.__config["title"], )
+        pygame.display.set_icon(
+            Image.from_filename(
+                get_resource_path(
+                    self.__config["icon"],
+                    "image"
+                )
+            )._surface
+        )
         
                 
     @staticmethod

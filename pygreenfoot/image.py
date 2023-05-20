@@ -90,7 +90,7 @@ class Image:
     @staticmethod
     def from_filename(filename: str) -> "Image":
         from pygreenfoot import Application
-        path = get_resource_path(filename, folder="image")
+        path = get_resource_path(filename, "image")
         image = pygame.image.load(path)
         return Image(image)
     
