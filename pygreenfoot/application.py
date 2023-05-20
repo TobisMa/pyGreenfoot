@@ -302,13 +302,13 @@ class Application:
         """
         self.__handle_events()
         
-        if not self.__running:
-            return
-        
         if act_cycle:
             self.current_world._calc_frame()
         else:
             self.current_world.repaint()
+        
+        if not self.__running:
+            return
             
         world_surf = self.current_world._surface
         self.__delta_size = pygame.math.Vector2(
