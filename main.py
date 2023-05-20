@@ -4,7 +4,7 @@ from pygreenfoot import PyGreenfoot
 class MyWorld(World):
     def __init__(self):
         World.__init__(self, 45, 45, 40)
-        self.set_background("cell.png")
+        self.set_background("cell.jpg")
         for i in range(self.width):
             for j in range(self.height):
                 ...

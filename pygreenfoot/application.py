@@ -298,9 +298,6 @@ class Application:
                 
             elif event.type == pygame.WINDOWEXPOSED or self.__window_exposed:
                 self.__window_exposed += 1
-            
-            elif event.type != pygame.MOUSEMOTION:
-                print(event)
       
     def update(self, act_cycle: bool = True) -> None:
         """
