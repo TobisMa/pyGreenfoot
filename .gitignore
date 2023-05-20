@@ -123,5 +123,4 @@ cython_debug/
 # pyCharm
 .idea
 
-test*
 test/**
