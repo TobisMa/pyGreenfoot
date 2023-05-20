@@ -3,6 +3,8 @@ from typing import Optional, Tuple, Union
 
 import pygame
 
+from pygreenfoot import get_resource_path
+
 from .color import Color
 from .font import Font
 from .math_helper import limit_value
@@ -88,9 +90,7 @@ class Image:
     @staticmethod
     def from_filename(filename: str) -> "Image":
         from pygreenfoot import Application
-        path = os.path.join(Application.get_app().image_folder, filename)
-        if not os.access(path, os.F_OK):
-            raise FileNotFoundError("File %r does not exist" % path)
+        path = get_resource_path(filename, folder="image")
         image = pygame.image.load(path)
         return Image(image)
     

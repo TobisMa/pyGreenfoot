@@ -5,6 +5,8 @@ from typing import TYPE_CHECKING, Generator, List, Optional, Tuple, Type, Union
 
 import pygame
 
+from pygreenfoot import get_resource_path
+
 from .image import Image
 from .math_helper import FULL_DEGREES_ANGLE, limit_value
 
@@ -83,9 +85,7 @@ class Actor(metaclass=ABCMeta):
         """
         file_or_surf: Union[str, pygame.surface.Surface] = filename_or_image if isinstance(filename_or_image, str) else filename_or_image._surface  # type: ignore
         if isinstance(file_or_surf, str):
-            path = os.path.join(self.__app.image_folder, file_or_surf)
-            if not os.access(path, os.F_OK):
-                raise FileNotFoundError("File \"" + path + "\" does not exist")
+            path = get_resource_path(file_or_surf, "image")
             file_or_surf: pygame.surface.Surface = pygame.image.load(path)
         
         else:

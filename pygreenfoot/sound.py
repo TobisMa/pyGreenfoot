@@ -3,6 +3,8 @@ from typing import IO, Union
 
 import pygame
 
+from pygreenfoot import get_resource_path
+
 pygame.mixer.init()
 
 class Sound(pygame.mixer.Sound):    
@@ -12,7 +14,7 @@ class Sound(pygame.mixer.Sound):
         
         if isinstance(filename_or_buffer, str):
             from pygreenfoot import Application
-            filename_or_buffer = os.path.join(Application.get_app().sound_folder, filename_or_buffer)
+            filename_or_buffer = get_resource_path(filename_or_buffer, "sound")
             
         pygame.mixer.Sound.__init__(self, filename_or_buffer)
         
