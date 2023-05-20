@@ -76,6 +76,7 @@ Each line consist of an attribute and value separated by an `=` per default.
 | windowMode | windowMode | `RESIZABLE` | the window mode during the game |
 | firstWorld | string | _unknown_ | As long as the main function from the Application gets an world passed as argument, this argument will have priority of this file. If you want to use the config file set it to `worlds.MyWorld` where `worlds` is the file containing your world `MyWorld`. `MyWorld` needs to inherit from `pygreenfoot.World`. |
 | title | string | `PyGreenfoot Game` | The title shown in the windows title bar |
+| icon | string | `wizard.png` | an resource path to the image which should be used in the windows titlebar |
 
 ### the types above explained 
 | Type | Possible values |

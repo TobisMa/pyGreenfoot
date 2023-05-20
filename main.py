@@ -4,10 +4,11 @@ from pygreenfoot import PyGreenfoot
 class MyWorld(World):
     def __init__(self):
         World.__init__(self, 45, 45, 40)
-        self.set_background("cell.jpg")
+        self.set_background("cell.png")
         for i in range(self.width):
             for j in range(self.height):
-                self.show_text(str(i * j)[:2], i, j)
+                ...
+                # self.show_text(str(i * j)[:2], i, j)
         self.show_text("A", 44, 44)
         
     def act(self):
