@@ -54,6 +54,7 @@ _pygame_screen_modes = {
     "RESIZABLE": pygame.RESIZABLE,
     "FULLSCREEN": pygame.FULLSCREEN,
     "BORDERLESS": pygame.NOFRAME,
+    "FIXED": 0  # NOTE: apparently, no constant for the default exists
 }
 
 _config_key_converter: Dict[str, Callable[[str], Any]] = {
