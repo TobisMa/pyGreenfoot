@@ -8,7 +8,7 @@ from typing import (DefaultDict, Dict, Generator, Iterable, List, Optional,
 
 import pygame
 
-from . import keys
+from . import get_resource_path, keys
 from .actor import Actor
 from .color import Color
 from .image import Image
@@ -187,9 +187,7 @@ class World(metaclass=ABCMeta):
             FileNotFoundError: if the argument is a string, but an invalid filename
         """
         if isinstance(filename_or_image, str):
-            path = os.path.join(self.__app.image_folder, filename_or_image)
-            if not os.access(path, os.F_OK):
-                raise FileNotFoundError("File \"" + path + "\" not found")
+            path = get_resource_path(filename_or_image, "image")
 
             image: pygame.surface.Surface = pygame.image.load(path)
             
