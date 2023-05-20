@@ -72,7 +72,8 @@ _config_key_converter: Dict[str, Callable[[str], Any]] = {
     "windowHeight": optional_signed_int,
     "windowMode": window_mode,
     "windowModeStartUp": window_mode,
-    "firstWorld": str
+    "firstWorld": str,
+    "title": str
 }
 
 
@@ -103,6 +104,7 @@ class Application:
         "windowMode": pygame.RESIZABLE | pygame.SRCALPHA,
         "windowStartUpMode": pygame.RESIZABLE | pygame.SRCALPHA,
         "firstWorld": None,
+        "title": "PyGreenfoot Game"
     }
     CONFIG_FILENAME = "pygreenfoot.config"
     CONFIG_DELIMITER = "="
@@ -440,14 +442,17 @@ class Application:
         if not os.access(self.__config["soundResourceFolder"], os.F_OK):
             os.mkdir(self.__config["soundResourceFolder"], 0o444)
             
+    def apply_config(self) -> None:
+        self.setup_folder()
+        self.__fps_limit = self.__config["fpsLimit"]
+        pygame.display.set_caption(self.__config["title"])
+        
+                
     @staticmethod
     def main(first_world: Optional[Type[FirstWorld]] = None) -> None:
         app = Application.get_app()
         app.read_config()
-        app.setup_folder()
-        
-        if app.__config.get("fpsLimit"):
-            app.__fps_limit = app.__config["fpsLimit"]
+        app.apply_config()
         
         if first_world is None:
             first_world_str = app.__config["firstWorld"]
