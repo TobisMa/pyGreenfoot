@@ -1,8 +1,10 @@
 import os
+import sys
 import threading
 from typing import Any, Callable, DefaultDict, Dict, List, Optional, Tuple, Type, TypeVar, Union
 
 import pygame
+from pygreenfoot import get_module_str_import
 
 from pygreenfoot.inheritance_tree import create_inheritance_tree
 
@@ -67,7 +69,8 @@ _config_key_converter: Dict[str, Callable[[str], Any]] = {
     "windowWidth": optional_signed_int,
     "windowHeight": optional_signed_int,
     "windowMode": window_mode,
-    "windowModeStartUp": window_mode 
+    "windowModeStartUp": window_mode,
+    "firstWorld": str
 }
 
 
@@ -97,6 +100,7 @@ class Application:
         "windowHeight": None,
         "windowMode": pygame.RESIZABLE | pygame.SRCALPHA,
         "windowStartUpMode": pygame.RESIZABLE | pygame.SRCALPHA,
+        "firstWorld": None,
     }
     CONFIG_FILENAME = "pygreenfoot.config"
     CONFIG_DELIMITER = "="
@@ -431,14 +435,26 @@ class Application:
             os.mkdir(self.__config["soundResourceFolder"], 0o444)
             
     @staticmethod
-    def main(first_world: Type[FirstWorld], generate_inheritance_tree: bool = True) -> None:
+    def main(first_world: Optional[Type[FirstWorld]] = None) -> None:
         app = Application.get_app()
         app.read_config()
         app.setup_folder()
         
         if app.__config.get("fpsLimit"):
             app.__fps_limit = app.__config["fpsLimit"]
-            
+        
+        if first_world is None:
+            first_world_str = app.__config["firstWorld"]
+            try:
+                world = get_module_str_import(first_world_str)
+            except ImportError:
+                print("World entry %r in pygreenfoot.config is invalid or does not exist" % first_world_str, file=sys.stderr)
+            else:
+                if not issubclass(world, World):
+                    print("world entry %r in pygreenfoot.config does not inherit from pygreenfoot.World" % first_world_str, file=sys.stderr)
+                    exit(-1)
+                first_world = world # type: ignore
+        
         app.current_world = first_world() # type: ignore
         
         if app.__config["generateDiagram"]:
