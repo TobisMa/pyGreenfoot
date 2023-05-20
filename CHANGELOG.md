@@ -5,3 +5,4 @@
 - new config keys
 - fixed scrollbars
 - methods to influence the scrollbars from the outside
+- constant for a non-resizable window

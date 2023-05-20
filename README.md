@@ -85,7 +85,7 @@ Each line consist of an attribute and value separated by an `=` per default.
 | signed float | some positive float valie: `0`, `2`, `0.04`, `0.3242`, `122.43` |
 | optional | case-insesitive `unset`, `null` or `none` |
 | optional signed integer | some value of either `optional` or `signed integer` |
-| windowMode | either `RESIZABLE` or `FULLSCREEN` or `BORDERLESS` |
+| windowMode | either `RESIZABLE` or `FULLSCREEN` or `BORDERLESS` or `FIXED` (=non-reszable) |
 
 
 ## Editor to use
