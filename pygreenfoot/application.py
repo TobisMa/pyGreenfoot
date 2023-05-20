@@ -164,18 +164,21 @@ class Application:
             h = self.__config["windowHeight"]
         else:
             h = min(ah, Application.__sh - 50)
-            
+
         self.__screen = pygame.display.set_mode((w, h), self.__config["windowMode"])  # type: ignore
         
         if not self.__maximized:
             self.__size = self.__screen.get_size()
             
+        self.__calc_scrollbars()
+            
+    def __calc_scrollbars(self) -> None:
         if self.current_world:
-            ws = world._surface
-            ss = self.__screen
+            world_surface = self.current_world._surface
+            screen = self.__screen
             self.__scrollbar = (
-                ss.get_width() < ws.get_width() and self.show_scrollbar[0],
-                ss.get_height() < ws.get_height() and self.show_scrollbar[1]
+                screen.get_width() < world_surface.get_width() and self.show_scrollbar[0],
+                screen.get_height() < world_surface.get_height() and self.show_scrollbar[1]
             )
         
     @property
@@ -276,9 +279,11 @@ class Application:
                     
             elif event.type == pygame.WINDOWSIZECHANGED:
                 self.__size = (event.x, event.y)
+                self.__calc_scrollbars()
                 
             elif event.type == pygame.WINDOWMAXIMIZED:
                 self.__maximized = True
+                self.__calc_scrollbars()
                 
             elif event.type == pygame.WINDOWMINIMIZED:
                 self.__maximized = False
@@ -335,9 +340,8 @@ class Application:
     def __make_scrollbar_x(self, world_surf: pygame.surface.Surface, screen_width: int) -> None:
         if self.__scrollbar[0] and self.show_scrollbar[0]:
             vr = self.__scrollbar_rects[0]
-            fraction_width = screen_width / (world_surf.get_width() - screen_width)
+            fraction_width = screen_width / (world_surf.get_width() + screen_width)
             
-            # FIXME find real bug
             if fraction_width >= 1:
                 return
             
@@ -353,9 +357,8 @@ class Application:
     def __make_scrollbar_y(self, world_surf: pygame.surface.Surface, screen_height: int) -> None:
         if self.__scrollbar[1] and self.show_scrollbar[1]:
             hr = self.__scrollbar_rects[1]
-            fraction_height = screen_height / (world_surf.get_height() - screen_height)
+            fraction_height = screen_height / (world_surf.get_height() + screen_height)
             
-            # FIXME find real bug
             if fraction_height >= 1:
                 return
             
@@ -491,6 +494,14 @@ class Application:
         Sound.stop_all()
         self.stop()
         exit(0)
+        
+    def move_world(self, delta_x: int = 0, delta_y: int = 0) -> None:
+        self.__scrollbar_rects[0].x += delta_x
+        self.__scrollbar_rects[1].y += delta_y
+        
+    def set_world_position(self, x: int = 0, y: int = 0) -> None:
+        self.__scrollbar_rects[0].x = x
+        self.__scrollbar_rects[0].y = y
         
     @property
     def delta_pos(self) -> Tuple[int, int]:
