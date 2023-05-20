@@ -18,5 +18,8 @@ class MyWorld(World):
         else:
             Application.get_app().move_world(0, movement)
         
+        if PyGreenfoot.is_key_pressed("ctrl") and PyGreenfoot.is_key_pressed("q") and shift_pressed:
+            Application.get_app().stop()
+        
 
 if __name__ == '__main__':	Application.main()
