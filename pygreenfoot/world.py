@@ -3,7 +3,7 @@ from abc import ABCMeta, abstractmethod
 from collections import defaultdict
 from functools import cached_property
 from time import time
-from typing import (DefaultDict, Dict, Generator, Iterable, List, Optional,
+from typing import (DefaultDict, Dict, Generator, List, Optional,
                     Set, Tuple, Type, Union)
 
 import pygame
@@ -83,6 +83,9 @@ class World(metaclass=ABCMeta):
         return self.__cell_size
     
     def _calc_frame(self) -> None:
+        """
+        Runs the act cylces if necessary
+        """
         cur_time = time()
         if cur_time - self.__last_time <= self.world_speed:
             return
@@ -338,8 +341,14 @@ class World(metaclass=ABCMeta):
     
     @property
     def _rect(self) -> pygame.Rect:
+        """
+        pygame.Rect of the world
+        """
         return pygame.Rect(0, 0, self.width * self.cell_size, self.height * self.cell_size)
     
     @property
     def _surface(self) -> pygame.surface.Surface:
+        """
+        The pygame's world surface
+        """
         return self.__canvas

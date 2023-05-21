@@ -149,14 +149,20 @@ class Application:
         self.__update_screen()
         self.__handle_events()
         
-    def stop(self) -> None:
+    def stop(self, stop_sounds: bool = True) -> None:
         """
-        Stops the application and clean ups pygame
+        Stops the application and clean ups pygame. This forces no exit of the python process. 
+        Everthing after the main function will be executed
         """
         self.__running = False
+        if stop_sounds:
+            Sound.stop_all()
         pygame.quit()
         
     def __update_screen(self) -> None:
+        """
+        Updates the screen and reconfigures the scrollbars
+        """
         world = self.current_world
         aw = world.width * world.cell_size if world else Application.__sw // 2
         ah = world.height * world.cell_size if world else Application.__sh // 2
@@ -179,6 +185,9 @@ class Application:
         self.__calc_scrollbars()
             
     def __calc_scrollbars(self) -> None:
+        """
+        Recalculates if scrollbars are needed
+        """
         if self.current_world:
             world_surface = self.current_world._surface
             screen = self.__screen
@@ -186,6 +195,7 @@ class Application:
                 screen.get_width() < world_surface.get_width(),
                 screen.get_height() < world_surface.get_height()
             )
+            # TODO make sure the world is fully visible if possible, but was not previously
         
     @property
     def current_world(self) -> World:
@@ -213,10 +223,13 @@ class Application:
         
     @property
     def fps(self) -> int:
-        """The fps limit for the game
+        """The fps limit for the game.
+        This value can be configured in the `pygreenfoot.config` 
+        file for initial setup or later through accessing this property.
+        The value defaults to 60.
 
         Returns:
-            int: the current set limit
+            int: the current set fps limit
         """
         return self.__fps_limit
     
@@ -300,7 +313,7 @@ class Application:
     def update(self, act_cycle: bool = True) -> None:
         """
         Needs to be called once for frame
-        Handles the pygame events (and thus, prevents pygame from freezing) as well as updating screen
+        Handles the pygame events (and thus, prevents pygame from freezing) as well as updates the screen
         """
         self.__handle_events()
         
@@ -335,12 +348,22 @@ class Application:
         self.__screen.fill([0] * 3)
         
     def __make_scrollbars(self) -> None:
+        """
+        Bundle method to call make_scrollbar functions
+        """
         world_surface = self.current_world._surface
         screen_width, screen_height = self.__size
         self.__make_scrollbar_x(world_surface, screen_width)
         self.__make_scrollbar_y(world_surface, screen_height)
         
     def __make_scrollbar_x(self, world_surf: pygame.surface.Surface, screen_width: int) -> None:
+        """
+        Calculates position of the world surfaces and the horizontal scrollbar
+
+        Args:
+            world_surf (pygame.surface.Surface): the surfaces of the world
+            screen_width (int): the screen width
+        """
         if self.__scrollbar[0]:
             vr = self.__scrollbar_rects[0]
             fraction_width = screen_width / (world_surf.get_width() + screen_width)
@@ -358,6 +381,13 @@ class Application:
             
     
     def __make_scrollbar_y(self, world_surf: pygame.surface.Surface, screen_height: int) -> None:
+        """
+        Calculates the position of the world surfaces and the vertical scrollbar
+
+        Args:
+            world_surf (pygame.surface.Surface): the surface of the world
+            screen_height (int): the height of the screen
+        """
         if self.__scrollbar[1]:
             hr = self.__scrollbar_rects[1]
             fraction_height = screen_height / (world_surf.get_height() + screen_height)
@@ -386,14 +416,23 @@ class Application:
         return tuple(self.__keys[k] for k in keys)
     
     def get_mouse_states(self) -> "MouseInfo":
+        """
+        Returns the mouse state in a MouseInfo object
+
+        Returns:
+            MouseInfo: the mouse info object with the mouse states
+        """
         return MouseInfo(self.__mouse_wheel)
     
     def read_config(self) -> None:
+        """
+        Parses the config file if provided
+        """
         def _unknown_key(value):
             raise TypeError("Key is unknown")
         cnf_file: str = os.path.join(".", Application.CONFIG_FILENAME)
         if not os.access(cnf_file, os.R_OK):
-            print("WARNING: No readable config file found")
+            print("INFO: No readable config file found")
             return
         parsed = {}
         print("Reading config")
@@ -416,23 +455,44 @@ class Application:
         
     @property
     def image_folder(self) -> str:
+        """
+        Returns the relative path to the image folder in the cwd
+        """
         return self.__config["imageResourceFolder"]
     
     @property
     def sound_folder(self) -> str:
+        """
+        Returns the relative path to the sound folder in the cwd
+        """
         return self.__config["soundResourceFolder"]
     
     @property
     def default_world_speed(self) -> float:
+        """
+        Returns the world speed initially used if not other specified in your world's constructor
+
+        Returns:
+            float: the world speed.
+        """
         return self.__config["defaultWorldSpeed"]
     
     @staticmethod
     def get_app() -> "Application":
+        """
+        Static method to get the application object
+
+        Returns:
+            Application: the application
+        """
         if Application.__instance is None:
             Application.__instance = Application()
         return Application.__instance
     
     def setup_folder(self):
+        """
+        Creates the resource folders if necessary.
+        """
         # check for folder
         if not os.access(self.__config["imageResourceFolder"], os.F_OK):
             os.makedirs(self.__config["imageResourceFolder"], 0o444)
@@ -441,6 +501,9 @@ class Application:
             os.mkdir(self.__config["soundResourceFolder"], 0o444)
             
     def apply_config(self) -> None:
+        """
+        Applies other config keys like fps limit or window caption
+        """
         self.setup_folder()
         self.__fps_limit = self.__config["fpsLimit"]
         pygame.display.set_caption(self.__config["title"], )
@@ -456,6 +519,12 @@ class Application:
                 
     @staticmethod
     def main(first_world: Optional[Type[FirstWorld]] = None) -> None:
+        """
+        Function called to start the pygreenfoot program
+
+        Args:
+            first_world (Optional[Type[FirstWorld]]): The first world to start the game with as type (no parentheses). Defaults to None and looks in the `pygreenfoot.config` file for `firstWorld`.
+        """
         app = Application.get_app()
         app.read_config()
         app.apply_config()
@@ -502,22 +571,50 @@ class Application:
                 t.join()  # type: ignore
     
     def is_mouse_in_window(self) -> bool:
+        """
+        Check if the mouse is in the winow
+
+        Returns:
+            bool: True if the mouse is in the winow else False
+        """
         return self.__mouse_in_window
     
     def quit(self) -> None:
-        Sound.stop_all()
-        self.stop()
+        """
+        Quits the game/application and forces exit of the python process. Use `app.stop()` when the python process shall continue.  
+        """
+        self.stop(stop_sounds=True)
         exit(0)
         
     def move_world(self, delta_x: int = 0, delta_y: int = 0) -> None:
+        """
+        Moves the world in px by moving the scrollbars by (delta_x, delta_y). Boundaries are automatically applied
+
+        Args:
+            delta_x (int, optional): the delta movement in the x direction. Defaults to 0.
+            delta_y (int, optional): the delta movement in the y direction. Negative values move the world up. Defaults to 0.
+        """
         self.__scrollbar_rects[0].x += delta_x
         self.__scrollbar_rects[1].y += delta_y
         
     def set_world_position(self, x: int = 0, y: int = 0) -> None:
+        """
+        Sets the world position by setting the scrollbars Boundaries are applied automatically
+
+        Args:
+            x (int, optional): the x position of the world. Defaults to 0.
+            y (int, optional): the y position of the world. Defaults to 0.
+        """
         self.__scrollbar_rects[0].x = x
-        self.__scrollbar_rects[0].y = y
+        self.__scrollbar_rects[1].y = y
         
     @property
     def delta_pos(self) -> Tuple[int, int]:
+        """
+        The delta position of the worlds current position
+
+        Returns:
+            Tuple[int, int]: the moved position of the world in px
+        """
         diff = self.__delta_move + self.__delta_size
-        return (int(diff[0]), int(diff[1]))
+        return int(diff[0]), int(diff[1])

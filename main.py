@@ -24,6 +24,9 @@ class MyWorld(World):
 
         if PyGreenfoot.is_key_pressed("ctrl") and PyGreenfoot.is_key_pressed("Q"):
             Application.get_app().stop()
+        elif PyGreenfoot.is_key_pressed("r"):
+            print(Application.get_app().delta_pos)
+            Application.get_app().set_world_position(100, 100)
         
 
 if __name__ == '__main__':	Application.main()

@@ -16,6 +16,12 @@ if TYPE_CHECKING:
 
 class Actor(metaclass=ABCMeta):
     
+    """
+    Abstract base class for every object within a world (=actors).
+    An object can only be added to the world as world object if it is inheriting from this class
+    and overriding the `act` method
+    """
+    
     __slots__ = ("__id", "__image", "__pos", "__rot", "__size", "__app")
     __game_object_count = 0
     
@@ -48,15 +54,16 @@ class Actor(metaclass=ABCMeta):
         pass
     
     def __hash__(self) -> int:
+        """Important for internal stuff"""
         return self.__id
     
     @abstractmethod
     def act(self) -> None:
         """
-        Method executed once per frame when the/a world with this actor is currently set on the application
+        Method executed once per frame when the world with this actor is currently set on the application
         This method must be implemented in subclasses.
         """
-        raise NotImplementedError("act method needs to be implemented and may not be from this class")
+        raise NotImplementedError("act method needs to be implemented in subclasses of pygreenfoot.Actor")
     
     def get_world(self) -> "World":
         """Get the current active world
@@ -78,10 +85,12 @@ class Actor(metaclass=ABCMeta):
         """Set the image of the actor
 
         Args:
-            filename_or_image (Union[str, pygame.surface.Surface]): a string to the image file (default directory: 'images') or an Surfaces object from pygame
+            filename_or_image (Union[str, pygame.surface.Surface]): a string to the image file or an
+                Surfaces object from pygame. For files is first looked in the `imageResourceFolder` 
+                which defaults to `images` and secondly in the packages own image folder
 
         Raises:
-            FileNotFoundError: if the given argument is a string, but an invalid filename
+            FileNotFoundError: if the given argument is a string, but no resource was found
         """
         file_or_surf: Union[str, pygame.surface.Surface] = filename_or_image if isinstance(filename_or_image, str) else filename_or_image._surface  # type: ignore
         if isinstance(file_or_surf, str):
@@ -104,8 +113,8 @@ class Actor(metaclass=ABCMeta):
         return self.__pos[0]
     
     @x.setter
-    def x(self, value: int) -> None:  # sourcery skip: remove-unnecessary-cast
-        self.__pos[0] = int(value)
+    def x(self, value: int) -> None:
+        self.__pos[0] = value
         self.__check_boundary()
     
     @property
@@ -117,12 +126,15 @@ class Actor(metaclass=ABCMeta):
         return self.__pos[1]
     
     @y.setter
-    def y(self, value: int) -> None:  # sourcery skip: remove-unnecessary-cast
-        self.__pos[1] = int(value)
+    def y(self, value: int) -> None:
+        self.__pos[1] = value
         self.__check_boundary()
         
         
     def __check_boundary(self) -> None:
+        """
+        Sets the actor back into the world if world bounding is set to True
+        """
         try:
             world = self.get_world()
         except ValueError:
@@ -135,7 +147,7 @@ class Actor(metaclass=ABCMeta):
     @property
     def rotation(self) -> float:
         """
-        the rotation of the actor
+        the rotation of the actor in degrees
         """
         return self.__rot
 
@@ -163,6 +175,9 @@ class Actor(metaclass=ABCMeta):
     
     @property
     def _rect(self) -> pygame.Rect:
+        """
+        A pygame.Rect object representing this objects boundaries
+        """
         world = self.get_world()
         return pygame.Rect(self.x * world.cell_size, self.y * world.cell_size, self.__image.width, self.__image.height)
     
@@ -214,6 +229,12 @@ class Actor(metaclass=ABCMeta):
         return list(self.get_actors_at_offset_generator(dx, dy, type_))
     
     def get_one_actor_at_offset(self, dx: int, dy: int, type_: Optional[Type["Actor"]]) -> Optional["Actor"]:
+        """
+        Returns the first found actor of type_ at the current location + the given offset
+
+        Returns:
+            Optional[Actor]: None if no actor has been found otherwise the Actor
+        """
         try:
             return next(self.get_actors_at_offset_generator(dx, dy, type_))
         except StopIteration:

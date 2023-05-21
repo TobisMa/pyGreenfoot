@@ -7,10 +7,12 @@ from .__types import _MouseButtonStates
 
 class MouseInfo:
     
-    __slots__ =  ("__mouse_wheel",)
+    __slots__ =  ("__mouse_wheel", "__app")
         
     def __init__(self, mouse_wheel: int) -> None:
+        from .application import Application
         self.__mouse_wheel = mouse_wheel
+        self.__app: Application = Application.get_app()
         
     @property
     def mouse_wheel(self) -> int:
@@ -24,12 +26,27 @@ class MouseInfo:
     
     @property
     def buttons(self) -> _MouseButtonStates:
-        from .application import Application
-        if Application.get_app().is_running():
+        """
+        Returns the pressed state of the left button, middle wheel and right button
+
+        Returns:
+            _MouseButtonStates: the mouse button states in a 3-length-tuple
+        """
+        if self.__app.is_running():
             return pygame.mouse.get_pressed(num_buttons=3)  # type: ignore
         return 0, 0, 0
         
     @property
     def pos(self) -> Tuple[int, int]:
+        """
+        The position of the cursor or the position of the cursor before it left the window.
+
+        Returns:
+            Tuple[int, int]: (x, y)
+        """
         x, y = pygame.mouse.get_pos()
         return x, y
+    
+    @property
+    def mouse_in_window(self) -> bool:
+        return self.__app.is_mouse_in_window()

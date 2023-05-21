@@ -12,6 +12,10 @@ from .math_helper import limit_value
 
 class Image:
     
+    """
+    pygreenfoot's class to handle generally handle images
+    """
+    
     __slots__ = ("__base_image", "color", "__rot_image", "__rot")
     __hidden_color: Optional[pygame.color.Color] = pygame.color.Color(1, 1, 1)
     
@@ -23,16 +27,40 @@ class Image:
         
     @property
     def width(self) -> int:
+        """
+        The width of the image in px
+        """
         return self.__base_image.get_width()
     
     @property
     def height(self) -> int:
+        """
+        The height of the image in px
+        """
         return self.__base_image.get_height()
     
     def draw_image(self, image: "Image", x: int, y: int) -> None:
+        """
+        Draws another Image object onto this one
+
+        Args:
+            image (Image): the other image
+            x (int): the x position of the upper left corner where to put the image
+            y (int): the y position of the upper left corner where to put the image
+        """
         self.__base_image.blit(image.__base_image, (x, y))
         
     def draw_line(self, x1: int, y1: int, x2: int, y2: int, width: int = 1) -> None:
+        """
+        Draws a line on the image from (x1, y1) to (x2, y2)
+
+        Args:
+            x1 (int): 1st x-coordinate
+            y1 (int): 1st y-coordinate
+            x2 (int): 2nd x-coordinate
+            y2 (int): 2nd y-coordinate
+            width (int, optional): the line width. Defaults to 1.
+        """
         pygame.draw.line(self.__base_image, self.color._pygame, (x1, y1) , (x2, y2), width)
         self._set_rot(self.__rot)
         
@@ -51,11 +79,20 @@ class Image:
         pygame.draw.polygon(self.__base_image, self.color._pygame, points, w)
     
     def fill_with_color(self, color: Color = ...) -> None:
+        """
+        Fills the canvas with a color. When using `get_hidden_color` this function is equal to `clear`
+
+        Args:
+            color (Color, optional): the color to use for clearing the canvas. Defaults to ....
+        """
         if color is ...:
             color = self.color
         pygame.draw.rect(self.__base_image, color._pygame, [0, 0, self.width, self.height])
         
     def clear(self) -> None:
+        """
+        Clears the canvas by setting transparent color
+        """
         surface = pygame.Surface((self.width, self.height))
         if Image.__hidden_color is not None:
             surface.set_colorkey(Image.__hidden_color)
@@ -80,6 +117,12 @@ class Image:
         
     @property
     def alpha(self) -> int:
+        """
+        The transparency of the image by the alpha value. This value is from 0 to 255. 0 is fully transparent
+
+        Returns:
+            int: the alpha value
+        """
         alpha = self.__base_image.get_alpha()
         return 255 if alpha is None else alpha
     
@@ -89,23 +132,60 @@ class Image:
         
     @staticmethod
     def from_filename(filename: str) -> "Image":
-        from pygreenfoot import Application
+        """
+        Create an Image object from an image file
+
+        Args:
+            filename (str): the filename/resource path
+
+        Returns:
+            Image: the image object
+        """
         path = get_resource_path(filename, "image")
         image = pygame.image.load(path)
         return Image(image)
     
     @staticmethod
     def get_empty(width: int, height: int) -> "Image":
+        """
+        Getting an empty image object
+
+        Args:
+            width (int): the width of the empty image
+            height (int): the height of the empty image
+
+        Returns:
+            Image: the new empty image
+        """
         return Image(pygame.Surface((width, height)))
     
     def scale(self, width: int, height: int) -> None:
+        """
+        Scale the image to a custom size
+
+        Args:
+            width (int): the new width
+            height (int): the new height
+        """
         self.__base_image = pygame.transform.smoothscale(self.__base_image, (width, height))
         
     def copy(self) -> "Image":
+        """
+        Copy the image object
+
+        Returns:
+            Image: the copy
+        """
         image = Image(self.__base_image)
         return image
     
     def _set_rot(self, angle: float) -> None:
+        """
+        Sets the rotation of the image
+
+        Args:
+            angle (float): the angle of the rotation in degrees
+        """
         self.__rot = angle % 360
         
         if angle == 0:
@@ -115,6 +195,9 @@ class Image:
     
     @property
     def _surface(self) -> pygame.surface.Surface:
+        """
+        The image surface for pygame
+        """
         return self.__rot_image
     
     @property
@@ -125,22 +208,66 @@ class Image:
 
     @staticmethod
     def set_hidden_color(color: Optional[pygame.color.Color] = None) -> None:
+        """
+        Set the color used for hiding pixels in the images. This should be set before calling functions using images
+
+        Args:
+            color (Optional[pygame.color.Color], optional): the color to use. Defaults to None.
+        """
         Image.__hidden_color = color
         
     @staticmethod
     def get_hidden_color() -> Optional[pygame.color.Color]:
+        """
+        The used hidden color
+        NOTE: this color cannot be used in images for drawing or similar because it is hidden as the name implies
+
+        Returns:
+            Optional[pygame.color.Color]: the current hidden color used for transparency
+        """
         return Image.__hidden_color
     
     def get_color_at(self, x: int, y: int) -> Color:
+        """
+        Get the color at one particular point in the image
+
+        Args:
+            x (int): the x coordinate
+            y (int): the y coordinate
+
+        Raises:
+            ValueError: if the coordinate is outside of the image
+
+        Returns:
+            Color: the color at the specified point
+        """
         if x < 0 or x > self.width or y < 0 or y > self.height:
             raise ValueError("Pixel coordinates out of image range")
         return Color.from_pygame_color(self.__base_image.get_at((x, y)))  # type: ignore
     
     def set_color_at(self, x: int, y: int) -> None:
+        """
+        Set a color at one particular point
+
+        Args:
+            x (int): the x coordinate
+            y (int): the y coordinate
+        """
         self.__base_image.set_at((x, y), self.color._pygame)
         self._set_rot(self.__rot)
         
     def mirror(self, horizontal: bool = False, vertical: bool = False, negate_rotation: bool = False) -> "Image":
+        """
+        Mirror the image into a new Image object
+
+        Args:
+            horizontal (bool, optional): Whether to mirrot horizontally. Defaults to False.
+            vertical (bool, optional): Whether to mirrot vertically. Defaults to False.
+            negate_rotation (bool, optional): Whether to "mirror" rotation as well. Defaults to False.
+
+        Returns:
+            Image: _description_
+        """
         new_img = pygame.transform.flip(self.__base_image, vertical, horizontal)
         res_img = Image(new_img)
         if negate_rotation:
@@ -151,6 +278,20 @@ class Image:
     
     @classmethod
     def text_label(cls, text: str, font: Font, foreground: Color, background: Color, outline: Optional[Color] = None, margin: int = 5) -> "Image":        
+        """
+        Create an text label image object
+
+        Args:
+            text (str): the text on the label
+            font (Font): the font of the text
+            foreground (Color): the foreground color
+            background (Color): the background color
+            outline (Optional[Color], optional): Whether to outline the boundaries of the text label. Defaults to None.
+            margin (int, optional): the margin of the outline. Defaults to 5.
+
+        Returns:
+            Image: _description_
+        """
         text_size = font._text_size(text)
         text_obj = font.get_text(text, foreground)
 
