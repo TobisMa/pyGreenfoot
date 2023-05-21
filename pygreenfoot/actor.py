@@ -1,7 +1,6 @@
-import os
 from abc import ABCMeta, abstractmethod
 from math import atan2, cos, degrees, radians, sin
-from typing import TYPE_CHECKING, Generator, List, Optional, Tuple, Type, Union
+from typing import TYPE_CHECKING, Generator, List, Optional, Type, Union
 
 import pygame
 

@@ -1,4 +1,4 @@
-from typing import Any, Mapping, Tuple, Union
+from typing import Any, Tuple, Union
 import pygame
 
 from .color import Color

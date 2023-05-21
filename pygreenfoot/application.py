@@ -15,7 +15,7 @@ from .mouse_info import MouseInfo
 from .sound import Sound
 from .world import World
 from .math_helper import limit_value
-from configparser import ConfigParser
+
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.init()
