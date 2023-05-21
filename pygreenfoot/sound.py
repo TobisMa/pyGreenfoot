@@ -1,4 +1,3 @@
-import os
 from typing import IO, Union
 
 import pygame

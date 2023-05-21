@@ -1,18 +1,17 @@
-import os
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta
 from collections import defaultdict
 from functools import cached_property
 from time import time
-from typing import (DefaultDict, Dict, Generator, List, Optional,
-                    Set, Tuple, Type, Union)
+from typing import (DefaultDict, Dict, Generator, List, Optional, Set, Tuple,
+                    Type, Union)
 
 import pygame
 
 from . import get_resource_path, keys
 from .actor import Actor
 from .color import Color
-from .image import Image
 from .font import Font, Text
+from .image import Image
 
 
 class World(metaclass=ABCMeta):

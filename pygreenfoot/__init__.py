@@ -1,13 +1,16 @@
 import builtins
-from functools import cache
 import os
+from functools import cache
 from typing import Type
-from importlib_resources import files 
+
+from importlib_resources import files
+
 
 # block message of pygame
 __orig_print = print
 builtins.print = lambda *args, **kwargs : None
 import pygame
+
 builtins.print = __orig_print
 
 
@@ -65,10 +68,10 @@ for __k in __keys:
 from .actor import Actor
 from .application import Application
 from .color import Color
+from .font import Font, Text
 from .image import Image
 from .pygreenfoot import PyGreenfoot
 from .sound import Sound
 from .world import World
-from .font import Text, Font
 
 __version__ = "1.0.0"

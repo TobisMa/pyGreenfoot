@@ -1,4 +1,4 @@
-from typing import NewType, Tuple, Union
+from typing import Tuple, Union
 
 _Key =  Union[str, int]  # typing for key inputs
 _MouseButton = int  # Mousebutton typing

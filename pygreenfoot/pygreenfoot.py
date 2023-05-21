@@ -24,7 +24,7 @@ class PyGreenfoot:
         if isinstance(key, str):
             if len(key) == 1:
                 if key.isdigit() or key.islower():
-                    key = getattr(keys, "K_" + key)
+                    return app.get_key_states(getattr(keys, "K_" + key))[0]
                 elif key.isupper():
                     shift = any(app.get_key_states(keys.K_LSHIFT, keys.K_RSHIFT))
                     return shift and app.get_key_states(getattr(keys, "K_" + key.lower()))[0]
