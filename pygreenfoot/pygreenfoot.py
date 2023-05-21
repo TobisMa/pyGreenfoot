@@ -15,7 +15,7 @@ class PyGreenfoot:
         """Is the given key pressed?
 
         Args:
-            key (_Key): the key to check for. can be either a specific string or a pygreenfoot.keys constant
+            key (_Key): the key to check for. can be either a specific string or a pygreenfoot.keys constant. When the key is an alphabetic key upper case letters require shift to be pressed. While lower key letters require shift not to pressed.
 
         Returns:
             bool: True if the given key is pressed, otherwise False
@@ -80,8 +80,7 @@ class PyGreenfoot:
                 elif key == "print":
                     return app.get_key_states(keys.K_PRINT)[0]
                 
-            if not isinstance(key, int):
-                raise ValueError("invalid key: %s" % key)
+            raise ValueError("invalid key: %s" % key)
         
         return app.get_key_states(key)[0]
     
@@ -100,7 +99,7 @@ class PyGreenfoot:
             bool: True if the given mouse button is pressed, otherwise False.
         """
         button -= 1
-        if button not in range(3):
+        if button not in (0, 1, 2):
             raise ValueError("The only valid mouse buttons are: 1, 2, 3")
         app = Application.get_app()
         states = app.get_mouse_states()

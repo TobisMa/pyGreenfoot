@@ -10,7 +10,7 @@ builtins.print = lambda *args, **kwargs : None
 import pygame
 builtins.print = __orig_print
 
-# TODO? add pygreenfoot config for start world
+
 def get_module_str_import(module_str: str) -> Type:
     importstr = "from " + '.'.join(module_str.split(".")[:-1]) + " import " + module_str.split(".")[-1]
     exec(importstr)
@@ -19,6 +19,20 @@ def get_module_str_import(module_str: str) -> Type:
 
 @cache
 def get_resource_path(file: str, type_: str) -> str:
+    """
+    Returns the path to the resource file
+
+    Args:
+        file (str): the filename (may include folders)
+        type_ (str): the resource type. If it is something else than 'image' or 'sound' this 
+        function assumes in the cwd exists an folder of type_ in which the resource is to be found
+
+    Raises:
+        FileNotFoundError: If the resource path does not exist
+
+    Returns:
+        str: the relative path to the resource from the cwd or absolute posix path to the packages resources
+    """
     if type_ == "image":
         folder = Application.get_app().image_folder
         subfolder = "images"

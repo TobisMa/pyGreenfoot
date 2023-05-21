@@ -12,12 +12,19 @@ class Color:
         
     @property
     def _pygame(self) -> Tuple[int, int, int]:
+        """
+        The color in pygame format. Used in functions for pygame
+
+        Returns:
+            Tuple[int, int, int]: a tuple of format (red, green, blue)
+        """
         return self.r, self.g, self.b
     
     @staticmethod
     def from_pygame_color(color: pygame.Color) -> "Color":
         return Color(color.r, color.g, color.b)
     
+    # typing for existing colors on this class
     BLACK: "Color"
     RED: "Color"
     GREEN: "Color"
