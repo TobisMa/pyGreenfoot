@@ -48,9 +48,7 @@ def signed_float(value) -> float:
     return v
 
 def window_mode(value):
-    result = pygame.SRCALPHA
-    result = result | _pygame_screen_modes[value.upper()]
-    return result
+    return  _pygame_screen_modes[value.upper()]
 
 _pygame_screen_modes = {
     "RESIZABLE": pygame.RESIZABLE,
@@ -103,8 +101,8 @@ class Application:
         "defaultWorldSpeed": 0,
         "windowWidth": None,
         "windowHeight": None,
-        "windowMode": pygame.RESIZABLE | pygame.SRCALPHA,
-        "windowStartUpMode": pygame.RESIZABLE | pygame.SRCALPHA,
+        "windowMode": pygame.RESIZABLE,
+        "windowStartUpMode": pygame.SRCALPHA,
         "firstWorld": None,
         "title": "PyGreenfoot Game",
         "icon": "wizard.png"
@@ -173,7 +171,7 @@ class Application:
         else:
             h = min(ah, Application.__sh - 50)
 
-        self.__screen = pygame.display.set_mode((w, h), self.__config["windowMode"])  # type: ignore
+        self.__screen = pygame.display.set_mode((w, h), self.__config["windowMode"] | pygame.SRCALPHA)  # type: ignore
         
         if not self.__maximized:
             self.__size = self.__screen.get_size()
