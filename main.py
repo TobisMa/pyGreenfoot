@@ -7,9 +7,9 @@ class MyWorld(World):
         self.set_background("cell.jpg")
         for i in range(self.width):
             for j in range(self.height):
-                ...
-                # self.show_text(str(i * j)[:2], i, j)
+                self.show_text(str(i * j)[:2], i, j)
         self.show_text("A", 44, 44)
+        # Application.get_app().show_scrollbar = [False, False]
         
     def act(self):
         shift_pressed = PyGreenfoot.is_key_pressed("shift")
@@ -19,6 +19,9 @@ class MyWorld(World):
         else:
             Application.get_app().move_world(0, movement)
         
+        if movement != 0:
+            print(f"{movement=}")
+
         if PyGreenfoot.is_key_pressed("ctrl") and PyGreenfoot.is_key_pressed("q") and shift_pressed:
             Application.get_app().stop()
         

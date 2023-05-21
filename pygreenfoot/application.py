@@ -185,8 +185,8 @@ class Application:
             world_surface = self.current_world._surface
             screen = self.__screen
             self.__scrollbar = (
-                screen.get_width() < world_surface.get_width() and self.show_scrollbar[0],
-                screen.get_height() < world_surface.get_height() and self.show_scrollbar[1]
+                screen.get_width() < world_surface.get_width(),
+                screen.get_height() < world_surface.get_height()
             )
         
     @property
@@ -343,7 +343,7 @@ class Application:
         self.__make_scrollbar_y(world_surface, screen_height)
         
     def __make_scrollbar_x(self, world_surf: pygame.surface.Surface, screen_width: int) -> None:
-        if self.__scrollbar[0] and self.show_scrollbar[0]:
+        if self.__scrollbar[0]:
             vr = self.__scrollbar_rects[0]
             fraction_width = screen_width / (world_surf.get_width() + screen_width)
             
@@ -360,7 +360,7 @@ class Application:
             
     
     def __make_scrollbar_y(self, world_surf: pygame.surface.Surface, screen_height: int) -> None:
-        if self.__scrollbar[1] and self.show_scrollbar[1]:
+        if self.__scrollbar[1]:
             hr = self.__scrollbar_rects[1]
             fraction_height = screen_height / (world_surf.get_height() + screen_height)
             
