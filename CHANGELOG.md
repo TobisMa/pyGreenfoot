@@ -6,3 +6,4 @@
 - fixed scrollbars
 - methods to influence the scrollbars from the outside
 - constant for a non-resizable window
+- generic type support on actor collection methods
