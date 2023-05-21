@@ -190,12 +190,21 @@ class Application:
         """
         if self.current_world:
             world_surface = self.current_world._surface
-            screen = self.__screen
+            screen_width, screen_height = self.__screen.get_size()
+            
             self.__scrollbar = (
-                screen.get_width() < world_surface.get_width(),
-                screen.get_height() < world_surface.get_height()
+                screen_width < world_surface.get_width(),
+                screen_height < world_surface.get_height()
             )
-            # TODO make sure the world is fully visible if possible, but was not previously
+            
+            if self.__maximized:
+                # fixing world position if scrollbars get lost on resize
+                if not self.__scrollbar[0]:
+                    self.__scrollbar_rects[0].x = 0
+                    self.__make_scrollbar_x(world_surface, screen_width, True)
+                if not self.__scrollbar[1]:
+                    self.__scrollbar_rects[1].y = 0
+                    self.__make_scrollbar_x(world_surface, screen_height, True)
         
     @property
     def current_world(self) -> World:
@@ -347,16 +356,16 @@ class Application:
         
         self.__screen.fill([0] * 3)
         
-    def __make_scrollbars(self) -> None:
+    def __make_scrollbars(self, force=False) -> None:
         """
         Bundle method to call make_scrollbar functions
         """
         world_surface = self.current_world._surface
         screen_width, screen_height = self.__size
-        self.__make_scrollbar_x(world_surface, screen_width)
-        self.__make_scrollbar_y(world_surface, screen_height)
+        self.__make_scrollbar_x(world_surface, screen_width, force)
+        self.__make_scrollbar_y(world_surface, screen_height, force)
         
-    def __make_scrollbar_x(self, world_surf: pygame.surface.Surface, screen_width: int) -> None:
+    def __make_scrollbar_x(self, world_surf: pygame.surface.Surface, screen_width: int, force=False) -> None:
         """
         Calculates position of the world surfaces and the horizontal scrollbar
 
@@ -364,7 +373,7 @@ class Application:
             world_surf (pygame.surface.Surface): the surfaces of the world
             screen_width (int): the screen width
         """
-        if self.__scrollbar[0]:
+        if self.__scrollbar[0] or force:
             vr = self.__scrollbar_rects[0]
             fraction_width = screen_width / (world_surf.get_width() + screen_width)
             
@@ -380,7 +389,7 @@ class Application:
             self.__delta_move.x = -vr.x / xmax * (world_surf.get_width() - screen_width)
             
     
-    def __make_scrollbar_y(self, world_surf: pygame.surface.Surface, screen_height: int) -> None:
+    def __make_scrollbar_y(self, world_surf: pygame.surface.Surface, screen_height: int, force=False) -> None:
         """
         Calculates the position of the world surfaces and the vertical scrollbar
 
@@ -388,7 +397,7 @@ class Application:
             world_surf (pygame.surface.Surface): the surface of the world
             screen_height (int): the height of the screen
         """
-        if self.__scrollbar[1]:
+        if self.__scrollbar[1] or force:
             hr = self.__scrollbar_rects[1]
             fraction_height = screen_height / (world_surf.get_height() + screen_height)
             

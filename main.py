@@ -5,7 +5,7 @@ from pygreenfoot import Actor
 
 class MyWorld(World):
     def __init__(self):
-        World.__init__(self, 45, 45, 40)
+        World.__init__(self, 55, 45, 40)
         self.set_background("cell.jpg")
         for i in range(self.width):
             for j in range(self.height):
@@ -29,7 +29,7 @@ class MyWorld(World):
             Application.get_app().stop()
         elif PyGreenfoot.is_key_pressed("r"):
             print(Application.get_app().delta_pos)
-            Application.get_app().set_world_position(100, 100)
+            Application.get_app().set_world_position(0, 0)
             
 class MA(Actor):
     def __init__(self):
