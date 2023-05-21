@@ -1,5 +1,7 @@
+from typing import List
 from pygreenfoot import Application, World
 from pygreenfoot import PyGreenfoot
+from pygreenfoot import Actor
 
 class MyWorld(World):
     def __init__(self):
@@ -10,6 +12,7 @@ class MyWorld(World):
                 self.show_text(str(i * j)[:2], i, j)
         self.show_text("A", 44, 44)
         # Application.get_app().show_scrollbar = [False, False]
+        a = self.get_actors_generator(MA)
         
     def act(self):
         shift_pressed = PyGreenfoot.is_key_pressed("shift")
@@ -27,6 +30,15 @@ class MyWorld(World):
         elif PyGreenfoot.is_key_pressed("r"):
             print(Application.get_app().delta_pos)
             Application.get_app().set_world_position(100, 100)
+            
+class MA(Actor):
+    def __init__(self):
+        Actor.__init__(self)
+        a = self.get_actors_in_range(3, MA)
+        a[0].test_method
+        
+    def test_method(self):
+        pass
         
 
 if __name__ == '__main__':	Application.main()

@@ -12,6 +12,7 @@ from .actor import Actor
 from .color import Color
 from .font import Font, Text
 from .image import Image
+from .__types import _ActorType
 
 
 class World(metaclass=ABCMeta):
@@ -234,7 +235,7 @@ class World(metaclass=ABCMeta):
             )
         )
     
-    def get_actors(self, type_: Optional[Type[Actor]] = None) -> List[Actor]:
+    def get_actors(self, type_: Optional[Type[_ActorType]] = None) -> List[_ActorType]:
         """Return all actors currently existing in the world
 
         Args:
@@ -245,17 +246,17 @@ class World(metaclass=ABCMeta):
         """
         return list(self.get_actors_generator(type_))
         
-    def get_actors_generator(self, type_: Optional[Type[Actor]] = None) -> Generator[Actor, None, None]:
+    def get_actors_generator(self, type_: Optional[Type[_ActorType]] = None) -> Generator[_ActorType, None, None]:
         """
         the same as get_actors but returns a generator object
         """
         if type_ is None:
             for actor_set in self.__objects.values():
-                yield from actor_set
+                yield from actor_set  # type: ignore
         else:
-            yield from self.__objects[type_]
+            yield from self.__objects[type_]  # type: ignore
                 
-    def get_objects_at(self, x: int, y: int, type_: Optional[Type[Actor]] = None) -> List[Actor]:  # FIXME better typing support
+    def get_objects_at(self, x: int, y: int, type_: Optional[Type[_ActorType]] = None) -> List[_ActorType]:
         """Return all objects at the position (x, y) having the type type_
 
         Args:
@@ -268,18 +269,18 @@ class World(metaclass=ABCMeta):
         """
         return list(self.get_objects_at_generator(x, y, type_))
     
-    def get_objects_at_generator(self, x: int, y: int, type_: Optional[Type[Actor]] = None) -> Generator[Actor, None, None]:        
+    def get_objects_at_generator(self, x: int, y: int, type_: Optional[Type[_ActorType]] = None) -> Generator[_ActorType, None, None]:        
         """
         The same as get_objects_at but returns a generator
         """
         area = pygame.Rect(x * self.__cell_size, y * self.__cell_size, self.__cell_size, self.__cell_size)
         if type_ is None:
             for actor_type in self.__objects:
-                yield from self.get_objects_at_generator(x, y, actor_type)
+                yield from self.get_objects_at_generator(x, y, actor_type) # type: ignore
         else:
             for actor in self.__objects[type_]:
                 if actor._rect.colliderect(area):
-                    yield actor
+                    yield actor  # type: ignore
                     
     def remove_from_world(self, *actors: Actor) -> None:
         """

@@ -8,6 +8,7 @@ from pygreenfoot import get_resource_path
 
 from .image import Image
 from .math_helper import FULL_DEGREES_ANGLE, limit_value
+from .__types import _ActorType
 
 if TYPE_CHECKING:
     from .application import Application
@@ -181,7 +182,7 @@ class Actor(metaclass=ABCMeta):
         return pygame.Rect(self.x * world.cell_size, self.y * world.cell_size, self.__image.width, self.__image.height)
     
     
-    def get_intersecting_actors(self, type_: Optional[Type["Actor"]]) -> List["Actor"]:
+    def get_intersecting_actors(self, type_: Optional[Type[_ActorType]]) -> List[_ActorType]:
         """this method returns the same as `get_intersecting_actors_generator` as a list. 
         This method has to be used if actors are getting removed during iteration.
         
@@ -190,7 +191,7 @@ class Actor(metaclass=ABCMeta):
         """
         return list(self.get_intersecting_actors_generator(type_))
 
-    def get_intersecting_actors_generator(self, type_: Optional[Type["Actor"]]) -> Generator["Actor", None, None]:
+    def get_intersecting_actors_generator(self, type_: Optional[Type[_ActorType]]) -> Generator[_ActorType, None, None]:
         """Returns a generator object to iterate over all actors intersecting this one.
         The rectangular representation of the actors will be used for collision detection 
 
@@ -202,11 +203,11 @@ class Actor(metaclass=ABCMeta):
             if a._rect.colliderect(self._rect):
                 yield a
     
-    def get_actors_in_range(self, radius: int, type_: Optional[Type["Actor"]] = None) -> List["Actor"]:
+    def get_actors_in_range(self, radius: int, type_: Optional[Type[_ActorType]] = None) -> List[_ActorType]:
         """Returns a list of all actors within range of this one of type type_. None is treated as wildcard"""
         return list(self.get_actors_in_range_generator(radius, type_))
         
-    def get_actors_in_range_generator(self, radius: int, type_: Optional[Type["Actor"]] = None) -> Generator["Actor", None, None]:
+    def get_actors_in_range_generator(self, radius: int, type_: Optional[Type[_ActorType]] = None) -> Generator[_ActorType, None, None]:
         """A generator iterating over all actors of type type_ within radius. None is treated as wildcard
 
         Yields:
@@ -221,13 +222,13 @@ class Actor(metaclass=ABCMeta):
             if dx + dy <= radius ** 2:
                 yield a
     
-    def get_actors_at_offset(self, dx: int, dy: int, type_: Optional[Type["Actor"]]) -> List["Actor"]:
+    def get_actors_at_offset(self, dx: int, dy: int, type_: Optional[Type[_ActorType]]) -> List[_ActorType]:
         """
         Returns the same as get_actors_at_offset_generator but converted to a list
         """
         return list(self.get_actors_at_offset_generator(dx, dy, type_))
     
-    def get_one_actor_at_offset(self, dx: int, dy: int, type_: Optional[Type["Actor"]]) -> Optional["Actor"]:
+    def get_one_actor_at_offset(self, dx: int, dy: int, type_: Optional[Type[_ActorType]]) -> Optional[_ActorType]:
         """
         Returns the first found actor of type_ at the current location + the given offset
 
@@ -239,7 +240,7 @@ class Actor(metaclass=ABCMeta):
         except StopIteration:
             return None
     
-    def get_actors_at_offset_generator(self, dx: int, dy: int, type_: Optional[Type["Actor"]]) -> Generator["Actor", None, None]:
+    def get_actors_at_offset_generator(self, dx: int, dy: int, type_: Optional[Type[_ActorType]]) -> Generator[_ActorType, None, None]:
         """Returns all objects at the relative offset (dx, dy) of this actor's coordinates.
 
         Yields:
@@ -247,7 +248,7 @@ class Actor(metaclass=ABCMeta):
         """
         yield from self.get_world().get_objects_at_generator(self.x + dx, self.y + dy, type_)
     
-    def get_neighbours(self, cells: int, diagonal: bool = False, type_: Optional[Type["Actor"]] = None) -> List["Actor"]:
+    def get_neighbours(self, cells: int, diagonal: bool = False, type_: Optional[Type[_ActorType]] = None) -> List[_ActorType]:
         """Returns the same as get_neighbours_generator but as a list instead of a generator object
 
         Returns:
@@ -255,7 +256,7 @@ class Actor(metaclass=ABCMeta):
         """
         return list(self.get_neighbours_generator(cells, diagonal, type_))
     
-    def get_neighbours_generator(self, cells: int, diagonal: bool = False, type_: Optional[Type["Actor"]] = None) -> Generator["Actor", None, None]:
+    def get_neighbours_generator(self, cells: int, diagonal: bool = False, type_: Optional[Type[_ActorType]] = None) -> Generator[_ActorType, None, None]:
         """Returns all actors considered to be neighbours. if diagonal=True it will be the same as get_actors_in_range(cells, type_)
         if diagonal is False it will consider an actor as neighbours if either x or y have the same value and the absolute difference between
         x or y is less than or equals the specified cells
