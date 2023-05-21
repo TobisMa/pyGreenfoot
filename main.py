@@ -22,7 +22,7 @@ class MyWorld(World):
         if movement != 0:
             print(f"{movement=}")
 
-        if PyGreenfoot.is_key_pressed("ctrl") and PyGreenfoot.is_key_pressed("q") and shift_pressed:
+        if PyGreenfoot.is_key_pressed("ctrl") and PyGreenfoot.is_key_pressed("Q"):
             Application.get_app().stop()
         
 
