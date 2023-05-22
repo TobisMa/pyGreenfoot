@@ -179,12 +179,13 @@ class World(metaclass=ABCMeta):
         """
         return self.__paint_order
     
-    def set_background(self, filename_or_image: Union[str, pygame.Surface]) -> None:
+    def set_background(self, filename_or_image: Union[str, pygame.Surface], scale_to_cell_size: bool = False) -> None:
         """Set an background image for the world. If the image is too small for the world it will be repeated in vertical 
         and horizontal direction until it covers all cells of the world.
 
         Args:
             filename_or_image (Union[str, pygame.Surface]): a str used as path (default directory is 'images') or an pygame.Surface object
+            scale_to_cell_size (bool): scales the image to the cell size if True. Default is False.
 
         Raises:
             FileNotFoundError: if the argument is a string, but an invalid filename
@@ -198,8 +199,8 @@ class World(metaclass=ABCMeta):
             image: pygame.surface.Surface = filename_or_image
         
         bg = pygame.Surface((self.width * self.cell_size, self.height * self.cell_size))
-        wr = range(0, self.cell_size * self.width + self.cell_size, self.cell_size)
-        hr = range(0, self.cell_size * self.height + self.cell_size, self.cell_size)
+        wr = range(0, self.cell_size * self.width + self.cell_size, image.get_width())
+        hr = range(0, self.cell_size * self.height + self.cell_size, image.get_height())
         
         for x in wr:
             for y in hr:
