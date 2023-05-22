@@ -18,6 +18,7 @@ setup(
     python_requires=">=3.6.1, <4",
     install_requires=[
         "pygame >= 2.1.2",
+        "importlib-resources >= 5.12.0",
         "typing"
     ],
     platforms=["linux", "mac", "win32"],
