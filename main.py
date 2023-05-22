@@ -5,14 +5,16 @@ from pygreenfoot import Actor
 
 class MyWorld(World):
     def __init__(self):
-        World.__init__(self, 55, 45, 40)
-        self.set_background("cell.jpg")
+        World.__init__(self, 10, 10, 40)
+        self.set_background("Background Pits Muted.png")
         for i in range(self.width):
             for j in range(self.height):
-                self.show_text(str(i * j)[:2], i, j)
+                ...
+                # self.show_text(str(i * j)[:2], i, j)
         self.show_text("A", 44, 44)
         # Application.get_app().show_scrollbar = [False, False]
-        a = self.get_actors_generator(MA)
+        self.add_to_world(MA(), 2, 2)
+        self.world_speed = 0.05
         
     def act(self):
         shift_pressed = PyGreenfoot.is_key_pressed("shift")
@@ -31,14 +33,22 @@ class MyWorld(World):
             print(Application.get_app().delta_pos)
             Application.get_app().set_world_position(0, 0)
             
+
 class MA(Actor):
     def __init__(self):
         Actor.__init__(self)
-        a = self.get_actors_in_range(3, MA)
-        a[0].test_method
+        self.set_image("hase.png")
+        self.get_image().scale(40, 40)
         
-    def test_method(self):
-        pass
+    def act(self):
+        if PyGreenfoot.is_key_pressed("w"):
+            self.y -= 1
+        if PyGreenfoot.is_key_pressed("a"):
+            self.x -= 1
+        if PyGreenfoot.is_key_pressed("s"):
+            self.y += 1
+        if PyGreenfoot.is_key_pressed("d"):
+            self.x += 1
         
 
 if __name__ == '__main__':	Application.main()
