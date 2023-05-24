@@ -1,0 +1,1303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>pygreenfoot.image API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>pygreenfoot.image</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import os
+from typing import Optional, Tuple, Union
+
+import pygame
+
+from pygreenfoot import get_resource_path
+
+from .color import Color
+from .font import Font
+from .math_helper import limit_value
+
+
+class Image:
+    
+    &#34;&#34;&#34;
+    pygreenfoot&#39;s class to handle generally handle images
+    &#34;&#34;&#34;
+    
+    __slots__ = (&#34;__base_image&#34;, &#34;color&#34;, &#34;__rot_image&#34;, &#34;__rot&#34;)
+    __hidden_color: Optional[pygame.color.Color] = pygame.color.Color(1, 1, 1)
+    
+    def __init__(self, image: Union[&#34;Image&#34;, pygame.surface.Surface]) -&gt; None:
+        self.__base_image: pygame.surface.Surface = image.__base_image.copy() if isinstance(image, Image) else image.copy()
+        self.__rot_image: pygame.surface.Surface = self.__base_image.copy()  # type: ignore
+        self.__rot = 0
+        self.color: Color = Color(0, 0, 0)
+        
+    @property
+    def width(self) -&gt; int:
+        &#34;&#34;&#34;
+        The width of the image in px
+        &#34;&#34;&#34;
+        return self.__base_image.get_width()
+    
+    @property
+    def height(self) -&gt; int:
+        &#34;&#34;&#34;
+        The height of the image in px
+        &#34;&#34;&#34;
+        return self.__base_image.get_height()
+    
+    def draw_image(self, image: &#34;Image&#34;, x: int, y: int) -&gt; None:
+        &#34;&#34;&#34;
+        Draws another Image object onto this one
+
+        Args:
+            image (Image): the other image
+            x (int): the x position of the upper left corner where to put the image
+            y (int): the y position of the upper left corner where to put the image
+        &#34;&#34;&#34;
+        self.__base_image.blit(image.__base_image, (x, y))
+        
+    def draw_line(self, x1: int, y1: int, x2: int, y2: int, width: int = 1) -&gt; None:
+        &#34;&#34;&#34;
+        Draws a line on the image from (x1, y1) to (x2, y2)
+
+        Args:
+            x1 (int): 1st x-coordinate
+            y1 (int): 1st y-coordinate
+            x2 (int): 2nd x-coordinate
+            y2 (int): 2nd y-coordinate
+            width (int, optional): the line width. Defaults to 1.
+        &#34;&#34;&#34;
+        pygame.draw.line(self.__base_image, self.color._pygame, (x1, y1) , (x2, y2), width)
+        self._set_rot(self.__rot)
+        
+    def draw_oval(self, x: int, y: int, width: int, height: int, fill: bool = False) -&gt; None:
+        w = 0 if fill else 1
+        pygame.draw.ellipse(self.__base_image, self.color._pygame, [x, y, width, height], w)
+        
+    def draw_rect(self, x: int, y: int, width: int, height: int, fill: bool = False) -&gt; None:
+        w = 0 if fill else 1
+        pygame.draw.rect(self.__base_image, self.color._pygame, [x, y, width, height], w)
+        
+    def draw_polygon(self, points: Tuple[Tuple[int, int], ...], fill: bool = False) -&gt; None:
+        if len(points) &lt; 3:
+            raise ValueError(&#34;Polygon needs at least 3 points&#34;)
+        w = 0 if fill else 1
+        pygame.draw.polygon(self.__base_image, self.color._pygame, points, w)
+    
+    def fill_with_color(self, color: Color = ...) -&gt; None:
+        &#34;&#34;&#34;
+        Fills the canvas with a color. When using `get_hidden_color` this function is equal to `clear`
+
+        Args:
+            color (Color, optional): the color to use for clearing the canvas. Defaults to ....
+        &#34;&#34;&#34;
+        if color is ...:
+            color = self.color
+        pygame.draw.rect(self.__base_image, color._pygame, [0, 0, self.width, self.height])
+        
+    def clear(self) -&gt; None:
+        &#34;&#34;&#34;
+        Clears the canvas by setting transparent color
+        &#34;&#34;&#34;
+        surface = pygame.Surface((self.width, self.height))
+        if Image.__hidden_color is not None:
+            surface.set_colorkey(Image.__hidden_color)
+            surface.fill(Image.__hidden_color)
+        self.__base_image = surface
+        
+    def draw_text(self, text: str, x: int, y: int,
+                  font: Optional[Union[pygame.font.Font, Font, str]] = None, font_size: int = 26, 
+                  bold: bool = False, italic: bool = False) -&gt; None:
+        if font is None:
+            font_obj = pygame.font.SysFont(pygame.font.get_default_font(), font_size, bold, italic)
+        elif isinstance(font, str):
+            font_obj = pygame.font.SysFont(font, font_size, bold, italic)
+        elif isinstance(font, Font):
+            font_obj = font._pygame
+        else:
+            font_obj = font
+            
+        rendered_text = font_obj.render(text, True, self.color._pygame)
+        self.__base_image.blit(rendered_text, (x, y))
+        self._set_rot(self.__rot)
+        
+    @property
+    def alpha(self) -&gt; int:
+        &#34;&#34;&#34;
+        The transparency of the image by the alpha value. This value is from 0 to 255. 0 is fully transparent
+
+        Returns:
+            int: the alpha value
+        &#34;&#34;&#34;
+        alpha = self.__base_image.get_alpha()
+        return 255 if alpha is None else alpha
+    
+    @alpha.setter
+    def alpha(self, alpha: int) -&gt; None:
+        self.__base_image.set_alpha(limit_value(alpha, 0, 255))
+        
+    @staticmethod
+    def from_filename(filename: str) -&gt; &#34;Image&#34;:
+        &#34;&#34;&#34;
+        Create an Image object from an image file
+
+        Args:
+            filename (str): the filename/resource path
+
+        Returns:
+            Image: the image object
+        &#34;&#34;&#34;
+        path = get_resource_path(filename, &#34;image&#34;)
+        image = pygame.image.load(path)
+        return Image(image)
+    
+    @staticmethod
+    def get_empty(width: int, height: int) -&gt; &#34;Image&#34;:
+        &#34;&#34;&#34;
+        Getting an empty image object
+
+        Args:
+            width (int): the width of the empty image
+            height (int): the height of the empty image
+
+        Returns:
+            Image: the new empty image
+        &#34;&#34;&#34;
+        return Image(pygame.Surface((width, height)))
+    
+    def scale(self, width: int, height: int) -&gt; None:
+        &#34;&#34;&#34;
+        Scale the image to a custom size
+
+        Args:
+            width (int): the new width
+            height (int): the new height
+        &#34;&#34;&#34;
+        self.__base_image = pygame.transform.smoothscale(self.__base_image, (width, height))
+        
+    def copy(self) -&gt; &#34;Image&#34;:
+        &#34;&#34;&#34;
+        Copy the image object
+
+        Returns:
+            Image: the copy
+        &#34;&#34;&#34;
+        image = Image(self.__base_image)
+        return image
+    
+    def _set_rot(self, angle: float) -&gt; None:
+        &#34;&#34;&#34;
+        Sets the rotation of the image
+
+        Args:
+            angle (float): the angle of the rotation in degrees
+        &#34;&#34;&#34;
+        self.__rot = angle % 360
+        
+        if angle == 0:
+            self.__rot_image = self.__base_image.copy()
+            return
+        self.__rot_image = pygame.transform.rotate(self.__base_image, -angle)
+    
+    @property
+    def _surface(self) -&gt; pygame.surface.Surface:
+        &#34;&#34;&#34;
+        The image surface for pygame
+        &#34;&#34;&#34;
+        return self.__rot_image
+    
+    @property
+    def _rel_pos(self) -&gt; Tuple[int, int]:
+        p = pygame.math.Vector2(self.__base_image.get_rect().size)
+        p = (p - pygame.math.Vector2(self.__rot_image.get_rect().size))
+        return int(p.x), int(p.y)
+
+    @staticmethod
+    def set_hidden_color(color: Optional[pygame.color.Color] = None) -&gt; None:
+        &#34;&#34;&#34;
+        Set the color used for hiding pixels in the images. This should be set before calling functions using images
+
+        Args:
+            color (Optional[pygame.color.Color], optional): the color to use. Defaults to None.
+        &#34;&#34;&#34;
+        Image.__hidden_color = color
+        
+    @staticmethod
+    def get_hidden_color() -&gt; Optional[pygame.color.Color]:
+        &#34;&#34;&#34;
+        The used hidden color
+        NOTE: this color cannot be used in images for drawing or similar because it is hidden as the name implies
+
+        Returns:
+            Optional[pygame.color.Color]: the current hidden color used for transparency
+        &#34;&#34;&#34;
+        return Image.__hidden_color
+    
+    def get_color_at(self, x: int, y: int) -&gt; Color:
+        &#34;&#34;&#34;
+        Get the color at one particular point in the image
+
+        Args:
+            x (int): the x coordinate
+            y (int): the y coordinate
+
+        Raises:
+            ValueError: if the coordinate is outside of the image
+
+        Returns:
+            Color: the color at the specified point
+        &#34;&#34;&#34;
+        if x &lt; 0 or x &gt; self.width or y &lt; 0 or y &gt; self.height:
+            raise ValueError(&#34;Pixel coordinates out of image range&#34;)
+        return Color.from_pygame_color(self.__base_image.get_at((x, y)))  # type: ignore
+    
+    def set_color_at(self, x: int, y: int) -&gt; None:
+        &#34;&#34;&#34;
+        Set a color at one particular point
+
+        Args:
+            x (int): the x coordinate
+            y (int): the y coordinate
+        &#34;&#34;&#34;
+        self.__base_image.set_at((x, y), self.color._pygame)
+        self._set_rot(self.__rot)
+        
+    def mirror(self, horizontal: bool = False, vertical: bool = False, negate_rotation: bool = False) -&gt; &#34;Image&#34;:
+        &#34;&#34;&#34;
+        Mirror the image into a new Image object
+
+        Args:
+            horizontal (bool, optional): Whether to mirrot horizontally. Defaults to False.
+            vertical (bool, optional): Whether to mirrot vertically. Defaults to False.
+            negate_rotation (bool, optional): Whether to &#34;mirror&#34; rotation as well. Defaults to False.
+
+        Returns:
+            Image: _description_
+        &#34;&#34;&#34;
+        new_img = pygame.transform.flip(self.__base_image, vertical, horizontal)
+        res_img = Image(new_img)
+        if negate_rotation:
+            res_img._set_rot(-self.__rot)
+        else:
+            res_img._set_rot(self.__rot)
+        return res_img
+    
+    @classmethod
+    def text_label(cls, text: str, font: Font, foreground: Color, background: Color, outline: Optional[Color] = None, margin: int = 5) -&gt; &#34;Image&#34;:        
+        &#34;&#34;&#34;
+        Create an text label image object
+
+        Args:
+            text (str): the text on the label
+            font (Font): the font of the text
+            foreground (Color): the foreground color
+            background (Color): the background color
+            outline (Optional[Color], optional): Whether to outline the boundaries of the text label. Defaults to None.
+            margin (int, optional): the margin of the outline. Defaults to 5.
+
+        Returns:
+            Image: _description_
+        &#34;&#34;&#34;
+        text_size = font._text_size(text)
+        text_obj = font.get_text(text, foreground)
+
+        surf = pygame.Surface(text_size)
+        surf.fill(background._pygame)
+        surf.blit(text_obj._surface, (margin, margin))
+        
+        if outline:
+            pygame.draw.rect(surf, outline._pygame, [0, 0, text_size[0] + margin, text_size[1] + margin], 1)
+        
+        return Image(surf)
+        </code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="pygreenfoot.image.Image"><code class="flex name class">
+<span>class <span class="ident">Image</span></span>
+<span>(</span><span>image: Union[ForwardRef('<a title="pygreenfoot.image.Image" href="#pygreenfoot.image.Image">Image</a>'), pygame.Surface])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>pygreenfoot's class to handle generally handle images</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Image:
+    
+    &#34;&#34;&#34;
+    pygreenfoot&#39;s class to handle generally handle images
+    &#34;&#34;&#34;
+    
+    __slots__ = (&#34;__base_image&#34;, &#34;color&#34;, &#34;__rot_image&#34;, &#34;__rot&#34;)
+    __hidden_color: Optional[pygame.color.Color] = pygame.color.Color(1, 1, 1)
+    
+    def __init__(self, image: Union[&#34;Image&#34;, pygame.surface.Surface]) -&gt; None:
+        self.__base_image: pygame.surface.Surface = image.__base_image.copy() if isinstance(image, Image) else image.copy()
+        self.__rot_image: pygame.surface.Surface = self.__base_image.copy()  # type: ignore
+        self.__rot = 0
+        self.color: Color = Color(0, 0, 0)
+        
+    @property
+    def width(self) -&gt; int:
+        &#34;&#34;&#34;
+        The width of the image in px
+        &#34;&#34;&#34;
+        return self.__base_image.get_width()
+    
+    @property
+    def height(self) -&gt; int:
+        &#34;&#34;&#34;
+        The height of the image in px
+        &#34;&#34;&#34;
+        return self.__base_image.get_height()
+    
+    def draw_image(self, image: &#34;Image&#34;, x: int, y: int) -&gt; None:
+        &#34;&#34;&#34;
+        Draws another Image object onto this one
+
+        Args:
+            image (Image): the other image
+            x (int): the x position of the upper left corner where to put the image
+            y (int): the y position of the upper left corner where to put the image
+        &#34;&#34;&#34;
+        self.__base_image.blit(image.__base_image, (x, y))
+        
+    def draw_line(self, x1: int, y1: int, x2: int, y2: int, width: int = 1) -&gt; None:
+        &#34;&#34;&#34;
+        Draws a line on the image from (x1, y1) to (x2, y2)
+
+        Args:
+            x1 (int): 1st x-coordinate
+            y1 (int): 1st y-coordinate
+            x2 (int): 2nd x-coordinate
+            y2 (int): 2nd y-coordinate
+            width (int, optional): the line width. Defaults to 1.
+        &#34;&#34;&#34;
+        pygame.draw.line(self.__base_image, self.color._pygame, (x1, y1) , (x2, y2), width)
+        self._set_rot(self.__rot)
+        
+    def draw_oval(self, x: int, y: int, width: int, height: int, fill: bool = False) -&gt; None:
+        w = 0 if fill else 1
+        pygame.draw.ellipse(self.__base_image, self.color._pygame, [x, y, width, height], w)
+        
+    def draw_rect(self, x: int, y: int, width: int, height: int, fill: bool = False) -&gt; None:
+        w = 0 if fill else 1
+        pygame.draw.rect(self.__base_image, self.color._pygame, [x, y, width, height], w)
+        
+    def draw_polygon(self, points: Tuple[Tuple[int, int], ...], fill: bool = False) -&gt; None:
+        if len(points) &lt; 3:
+            raise ValueError(&#34;Polygon needs at least 3 points&#34;)
+        w = 0 if fill else 1
+        pygame.draw.polygon(self.__base_image, self.color._pygame, points, w)
+    
+    def fill_with_color(self, color: Color = ...) -&gt; None:
+        &#34;&#34;&#34;
+        Fills the canvas with a color. When using `get_hidden_color` this function is equal to `clear`
+
+        Args:
+            color (Color, optional): the color to use for clearing the canvas. Defaults to ....
+        &#34;&#34;&#34;
+        if color is ...:
+            color = self.color
+        pygame.draw.rect(self.__base_image, color._pygame, [0, 0, self.width, self.height])
+        
+    def clear(self) -&gt; None:
+        &#34;&#34;&#34;
+        Clears the canvas by setting transparent color
+        &#34;&#34;&#34;
+        surface = pygame.Surface((self.width, self.height))
+        if Image.__hidden_color is not None:
+            surface.set_colorkey(Image.__hidden_color)
+            surface.fill(Image.__hidden_color)
+        self.__base_image = surface
+        
+    def draw_text(self, text: str, x: int, y: int,
+                  font: Optional[Union[pygame.font.Font, Font, str]] = None, font_size: int = 26, 
+                  bold: bool = False, italic: bool = False) -&gt; None:
+        if font is None:
+            font_obj = pygame.font.SysFont(pygame.font.get_default_font(), font_size, bold, italic)
+        elif isinstance(font, str):
+            font_obj = pygame.font.SysFont(font, font_size, bold, italic)
+        elif isinstance(font, Font):
+            font_obj = font._pygame
+        else:
+            font_obj = font
+            
+        rendered_text = font_obj.render(text, True, self.color._pygame)
+        self.__base_image.blit(rendered_text, (x, y))
+        self._set_rot(self.__rot)
+        
+    @property
+    def alpha(self) -&gt; int:
+        &#34;&#34;&#34;
+        The transparency of the image by the alpha value. This value is from 0 to 255. 0 is fully transparent
+
+        Returns:
+            int: the alpha value
+        &#34;&#34;&#34;
+        alpha = self.__base_image.get_alpha()
+        return 255 if alpha is None else alpha
+    
+    @alpha.setter
+    def alpha(self, alpha: int) -&gt; None:
+        self.__base_image.set_alpha(limit_value(alpha, 0, 255))
+        
+    @staticmethod
+    def from_filename(filename: str) -&gt; &#34;Image&#34;:
+        &#34;&#34;&#34;
+        Create an Image object from an image file
+
+        Args:
+            filename (str): the filename/resource path
+
+        Returns:
+            Image: the image object
+        &#34;&#34;&#34;
+        path = get_resource_path(filename, &#34;image&#34;)
+        image = pygame.image.load(path)
+        return Image(image)
+    
+    @staticmethod
+    def get_empty(width: int, height: int) -&gt; &#34;Image&#34;:
+        &#34;&#34;&#34;
+        Getting an empty image object
+
+        Args:
+            width (int): the width of the empty image
+            height (int): the height of the empty image
+
+        Returns:
+            Image: the new empty image
+        &#34;&#34;&#34;
+        return Image(pygame.Surface((width, height)))
+    
+    def scale(self, width: int, height: int) -&gt; None:
+        &#34;&#34;&#34;
+        Scale the image to a custom size
+
+        Args:
+            width (int): the new width
+            height (int): the new height
+        &#34;&#34;&#34;
+        self.__base_image = pygame.transform.smoothscale(self.__base_image, (width, height))
+        
+    def copy(self) -&gt; &#34;Image&#34;:
+        &#34;&#34;&#34;
+        Copy the image object
+
+        Returns:
+            Image: the copy
+        &#34;&#34;&#34;
+        image = Image(self.__base_image)
+        return image
+    
+    def _set_rot(self, angle: float) -&gt; None:
+        &#34;&#34;&#34;
+        Sets the rotation of the image
+
+        Args:
+            angle (float): the angle of the rotation in degrees
+        &#34;&#34;&#34;
+        self.__rot = angle % 360
+        
+        if angle == 0:
+            self.__rot_image = self.__base_image.copy()
+            return
+        self.__rot_image = pygame.transform.rotate(self.__base_image, -angle)
+    
+    @property
+    def _surface(self) -&gt; pygame.surface.Surface:
+        &#34;&#34;&#34;
+        The image surface for pygame
+        &#34;&#34;&#34;
+        return self.__rot_image
+    
+    @property
+    def _rel_pos(self) -&gt; Tuple[int, int]:
+        p = pygame.math.Vector2(self.__base_image.get_rect().size)
+        p = (p - pygame.math.Vector2(self.__rot_image.get_rect().size))
+        return int(p.x), int(p.y)
+
+    @staticmethod
+    def set_hidden_color(color: Optional[pygame.color.Color] = None) -&gt; None:
+        &#34;&#34;&#34;
+        Set the color used for hiding pixels in the images. This should be set before calling functions using images
+
+        Args:
+            color (Optional[pygame.color.Color], optional): the color to use. Defaults to None.
+        &#34;&#34;&#34;
+        Image.__hidden_color = color
+        
+    @staticmethod
+    def get_hidden_color() -&gt; Optional[pygame.color.Color]:
+        &#34;&#34;&#34;
+        The used hidden color
+        NOTE: this color cannot be used in images for drawing or similar because it is hidden as the name implies
+
+        Returns:
+            Optional[pygame.color.Color]: the current hidden color used for transparency
+        &#34;&#34;&#34;
+        return Image.__hidden_color
+    
+    def get_color_at(self, x: int, y: int) -&gt; Color:
+        &#34;&#34;&#34;
+        Get the color at one particular point in the image
+
+        Args:
+            x (int): the x coordinate
+            y (int): the y coordinate
+
+        Raises:
+            ValueError: if the coordinate is outside of the image
+
+        Returns:
+            Color: the color at the specified point
+        &#34;&#34;&#34;
+        if x &lt; 0 or x &gt; self.width or y &lt; 0 or y &gt; self.height:
+            raise ValueError(&#34;Pixel coordinates out of image range&#34;)
+        return Color.from_pygame_color(self.__base_image.get_at((x, y)))  # type: ignore
+    
+    def set_color_at(self, x: int, y: int) -&gt; None:
+        &#34;&#34;&#34;
+        Set a color at one particular point
+
+        Args:
+            x (int): the x coordinate
+            y (int): the y coordinate
+        &#34;&#34;&#34;
+        self.__base_image.set_at((x, y), self.color._pygame)
+        self._set_rot(self.__rot)
+        
+    def mirror(self, horizontal: bool = False, vertical: bool = False, negate_rotation: bool = False) -&gt; &#34;Image&#34;:
+        &#34;&#34;&#34;
+        Mirror the image into a new Image object
+
+        Args:
+            horizontal (bool, optional): Whether to mirrot horizontally. Defaults to False.
+            vertical (bool, optional): Whether to mirrot vertically. Defaults to False.
+            negate_rotation (bool, optional): Whether to &#34;mirror&#34; rotation as well. Defaults to False.
+
+        Returns:
+            Image: _description_
+        &#34;&#34;&#34;
+        new_img = pygame.transform.flip(self.__base_image, vertical, horizontal)
+        res_img = Image(new_img)
+        if negate_rotation:
+            res_img._set_rot(-self.__rot)
+        else:
+            res_img._set_rot(self.__rot)
+        return res_img
+    
+    @classmethod
+    def text_label(cls, text: str, font: Font, foreground: Color, background: Color, outline: Optional[Color] = None, margin: int = 5) -&gt; &#34;Image&#34;:        
+        &#34;&#34;&#34;
+        Create an text label image object
+
+        Args:
+            text (str): the text on the label
+            font (Font): the font of the text
+            foreground (Color): the foreground color
+            background (Color): the background color
+            outline (Optional[Color], optional): Whether to outline the boundaries of the text label. Defaults to None.
+            margin (int, optional): the margin of the outline. Defaults to 5.
+
+        Returns:
+            Image: _description_
+        &#34;&#34;&#34;
+        text_size = font._text_size(text)
+        text_obj = font.get_text(text, foreground)
+
+        surf = pygame.Surface(text_size)
+        surf.fill(background._pygame)
+        surf.blit(text_obj._surface, (margin, margin))
+        
+        if outline:
+            pygame.draw.rect(surf, outline._pygame, [0, 0, text_size[0] + margin, text_size[1] + margin], 1)
+        
+        return Image(surf)</code></pre>
+</details>
+<h3>Static methods</h3>
+<dl>
+<dt id="pygreenfoot.image.Image.from_filename"><code class="name flex">
+<span>def <span class="ident">from_filename</span></span>(<span>filename: str) ‑> <a title="pygreenfoot.image.Image" href="#pygreenfoot.image.Image">Image</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create an Image object from an image file</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>filename</code></strong> :&ensp;<code>str</code></dt>
+<dd>the filename/resource path</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code><a title="pygreenfoot.image.Image" href="#pygreenfoot.image.Image">Image</a></code></dt>
+<dd>the image object</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def from_filename(filename: str) -&gt; &#34;Image&#34;:
+    &#34;&#34;&#34;
+    Create an Image object from an image file
+
+    Args:
+        filename (str): the filename/resource path
+
+    Returns:
+        Image: the image object
+    &#34;&#34;&#34;
+    path = get_resource_path(filename, &#34;image&#34;)
+    image = pygame.image.load(path)
+    return Image(image)</code></pre>
+</details>
+</dd>
+<dt id="pygreenfoot.image.Image.get_empty"><code class="name flex">
+<span>def <span class="ident">get_empty</span></span>(<span>width: int, height: int) ‑> <a title="pygreenfoot.image.Image" href="#pygreenfoot.image.Image">Image</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Getting an empty image object</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>width</code></strong> :&ensp;<code>int</code></dt>
+<dd>the width of the empty image</dd>
+<dt><strong><code>height</code></strong> :&ensp;<code>int</code></dt>
+<dd>the height of the empty image</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code><a title="pygreenfoot.image.Image" href="#pygreenfoot.image.Image">Image</a></code></dt>
+<dd>the new empty image</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_empty(width: int, height: int) -&gt; &#34;Image&#34;:
+    &#34;&#34;&#34;
+    Getting an empty image object
+
+    Args:
+        width (int): the width of the empty image
+        height (int): the height of the empty image
+
+    Returns:
+        Image: the new empty image
+    &#34;&#34;&#34;
+    return Image(pygame.Surface((width, height)))</code></pre>
+</details>
+</dd>
+<dt id="pygreenfoot.image.Image.get_hidden_color"><code class="name flex">
+<span>def <span class="ident">get_hidden_color</span></span>(<span>) ‑> Optional[pygame.Color]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>The used hidden color
+NOTE: this color cannot be used in images for drawing or similar because it is hidden as the name implies</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Optional[pygame.color.Color]</code></dt>
+<dd>the current hidden color used for transparency</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_hidden_color() -&gt; Optional[pygame.color.Color]:
+    &#34;&#34;&#34;
+    The used hidden color
+    NOTE: this color cannot be used in images for drawing or similar because it is hidden as the name implies
+
+    Returns:
+        Optional[pygame.color.Color]: the current hidden color used for transparency
+    &#34;&#34;&#34;
+    return Image.__hidden_color</code></pre>
+</details>
+</dd>
+<dt id="pygreenfoot.image.Image.set_hidden_color"><code class="name flex">
+<span>def <span class="ident">set_hidden_color</span></span>(<span>color: Optional[pygame.Color] = None) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set the color used for hiding pixels in the images. This should be set before calling functions using images</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>color</code></strong> :&ensp;<code>Optional[pygame.color.Color]</code>, optional</dt>
+<dd>the color to use. Defaults to None.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def set_hidden_color(color: Optional[pygame.color.Color] = None) -&gt; None:
+    &#34;&#34;&#34;
+    Set the color used for hiding pixels in the images. This should be set before calling functions using images
+
+    Args:
+        color (Optional[pygame.color.Color], optional): the color to use. Defaults to None.
+    &#34;&#34;&#34;
+    Image.__hidden_color = color</code></pre>
+</details>
+</dd>
+<dt id="pygreenfoot.image.Image.text_label"><code class="name flex">
+<span>def <span class="ident">text_label</span></span>(<span>text: str, font: <a title="pygreenfoot.font.Font" href="font.html#pygreenfoot.font.Font">Font</a>, foreground: <a title="pygreenfoot.color.Color" href="color.html#pygreenfoot.color.Color">Color</a>, background: <a title="pygreenfoot.color.Color" href="color.html#pygreenfoot.color.Color">Color</a>, outline: Optional[<a title="pygreenfoot.color.Color" href="color.html#pygreenfoot.color.Color">Color</a>] = None, margin: int = 5) ‑> <a title="pygreenfoot.image.Image" href="#pygreenfoot.image.Image">Image</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create an text label image object</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>text</code></strong> :&ensp;<code>str</code></dt>
+<dd>the text on the label</dd>
+<dt><strong><code>font</code></strong> :&ensp;<code>Font</code></dt>
+<dd>the font of the text</dd>
+<dt><strong><code>foreground</code></strong> :&ensp;<code>Color</code></dt>
+<dd>the foreground color</dd>
+<dt><strong><code>background</code></strong> :&ensp;<code>Color</code></dt>
+<dd>the background color</dd>
+<dt><strong><code>outline</code></strong> :&ensp;<code>Optional[Color]</code>, optional</dt>
+<dd>Whether to outline the boundaries of the text label. Defaults to None.</dd>
+<dt><strong><code>margin</code></strong> :&ensp;<code>int</code>, optional</dt>
+<dd>the margin of the outline. Defaults to 5.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code><a title="pygreenfoot.image.Image" href="#pygreenfoot.image.Image">Image</a></code></dt>
+<dd><em>description</em></dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def text_label(cls, text: str, font: Font, foreground: Color, background: Color, outline: Optional[Color] = None, margin: int = 5) -&gt; &#34;Image&#34;:        
+    &#34;&#34;&#34;
+    Create an text label image object
+
+    Args:
+        text (str): the text on the label
+        font (Font): the font of the text
+        foreground (Color): the foreground color
+        background (Color): the background color
+        outline (Optional[Color], optional): Whether to outline the boundaries of the text label. Defaults to None.
+        margin (int, optional): the margin of the outline. Defaults to 5.
+
+    Returns:
+        Image: _description_
+    &#34;&#34;&#34;
+    text_size = font._text_size(text)
+    text_obj = font.get_text(text, foreground)
+
+    surf = pygame.Surface(text_size)
+    surf.fill(background._pygame)
+    surf.blit(text_obj._surface, (margin, margin))
+    
+    if outline:
+        pygame.draw.rect(surf, outline._pygame, [0, 0, text_size[0] + margin, text_size[1] + margin], 1)
+    
+    return Image(surf)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="pygreenfoot.image.Image.alpha"><code class="name">var <span class="ident">alpha</span> : int</code></dt>
+<dd>
+<div class="desc"><p>The transparency of the image by the alpha value. This value is from 0 to 255. 0 is fully transparent</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>int</code></dt>
+<dd>the alpha value</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def alpha(self) -&gt; int:
+    &#34;&#34;&#34;
+    The transparency of the image by the alpha value. This value is from 0 to 255. 0 is fully transparent
+
+    Returns:
+        int: the alpha value
+    &#34;&#34;&#34;
+    alpha = self.__base_image.get_alpha()
+    return 255 if alpha is None else alpha</code></pre>
+</details>
+</dd>
+<dt id="pygreenfoot.image.Image.color"><code class="name">var <span class="ident">color</span></code></dt>
+<dd>
+<div class="desc"><p>Return an attribute of instance, which is of type owner.</p></div>
+</dd>
+<dt id="pygreenfoot.image.Image.height"><code class="name">var <span class="ident">height</span> : int</code></dt>
+<dd>
+<div class="desc"><p>The height of the image in px</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def height(self) -&gt; int:
+    &#34;&#34;&#34;
+    The height of the image in px
+    &#34;&#34;&#34;
+    return self.__base_image.get_height()</code></pre>
+</details>
+</dd>
+<dt id="pygreenfoot.image.Image.width"><code class="name">var <span class="ident">width</span> : int</code></dt>
+<dd>
+<div class="desc"><p>The width of the image in px</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def width(self) -&gt; int:
+    &#34;&#34;&#34;
+    The width of the image in px
+    &#34;&#34;&#34;
+    return self.__base_image.get_width()</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="pygreenfoot.image.Image.clear"><code class="name flex">
+<span>def <span class="ident">clear</span></span>(<span>self) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Clears the canvas by setting transparent color</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clear(self) -&gt; None:
+    &#34;&#34;&#34;
+    Clears the canvas by setting transparent color
+    &#34;&#34;&#34;
+    surface = pygame.Surface((self.width, self.height))
+    if Image.__hidden_color is not None:
+        surface.set_colorkey(Image.__hidden_color)
+        surface.fill(Image.__hidden_color)
+    self.__base_image = surface</code></pre>
+</details>
+</dd>
+<dt id="pygreenfoot.image.Image.copy"><code class="name flex">
+<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="pygreenfoot.image.Image" href="#pygreenfoot.image.Image">Image</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Copy the image object</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code><a title="pygreenfoot.image.Image" href="#pygreenfoot.image.Image">Image</a></code></dt>
+<dd>the copy</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy(self) -&gt; &#34;Image&#34;:
+    &#34;&#34;&#34;
+    Copy the image object
+
+    Returns:
+        Image: the copy
+    &#34;&#34;&#34;
+    image = Image(self.__base_image)
+    return image</code></pre>
+</details>
+</dd>
+<dt id="pygreenfoot.image.Image.draw_image"><code class="name flex">
+<span>def <span class="ident">draw_image</span></span>(<span>self, image: <a title="pygreenfoot.image.Image" href="#pygreenfoot.image.Image">Image</a>, x: int, y: int) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Draws another Image object onto this one</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>image</code></strong> :&ensp;<code><a title="pygreenfoot.image.Image" href="#pygreenfoot.image.Image">Image</a></code></dt>
+<dd>the other image</dd>
+<dt><strong><code>x</code></strong> :&ensp;<code>int</code></dt>
+<dd>the x position of the upper left corner where to put the image</dd>
+<dt><strong><code>y</code></strong> :&ensp;<code>int</code></dt>
+<dd>the y position of the upper left corner where to put the image</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_image(self, image: &#34;Image&#34;, x: int, y: int) -&gt; None:
+    &#34;&#34;&#34;
+    Draws another Image object onto this one
+
+    Args:
+        image (Image): the other image
+        x (int): the x position of the upper left corner where to put the image
+        y (int): the y position of the upper left corner where to put the image
+    &#34;&#34;&#34;
+    self.__base_image.blit(image.__base_image, (x, y))</code></pre>
+</details>
+</dd>
+<dt id="pygreenfoot.image.Image.draw_line"><code class="name flex">
+<span>def <span class="ident">draw_line</span></span>(<span>self, x1: int, y1: int, x2: int, y2: int, width: int = 1) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Draws a line on the image from (x1, y1) to (x2, y2)</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>x1</code></strong> :&ensp;<code>int</code></dt>
+<dd>1st x-coordinate</dd>
+<dt><strong><code>y1</code></strong> :&ensp;<code>int</code></dt>
+<dd>1st y-coordinate</dd>
+<dt><strong><code>x2</code></strong> :&ensp;<code>int</code></dt>
+<dd>2nd x-coordinate</dd>
+<dt><strong><code>y2</code></strong> :&ensp;<code>int</code></dt>
+<dd>2nd y-coordinate</dd>
+<dt><strong><code>width</code></strong> :&ensp;<code>int</code>, optional</dt>
+<dd>the line width. Defaults to 1.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_line(self, x1: int, y1: int, x2: int, y2: int, width: int = 1) -&gt; None:
+    &#34;&#34;&#34;
+    Draws a line on the image from (x1, y1) to (x2, y2)
+
+    Args:
+        x1 (int): 1st x-coordinate
+        y1 (int): 1st y-coordinate
+        x2 (int): 2nd x-coordinate
+        y2 (int): 2nd y-coordinate
+        width (int, optional): the line width. Defaults to 1.
+    &#34;&#34;&#34;
+    pygame.draw.line(self.__base_image, self.color._pygame, (x1, y1) , (x2, y2), width)
+    self._set_rot(self.__rot)</code></pre>
+</details>
+</dd>
+<dt id="pygreenfoot.image.Image.draw_oval"><code class="name flex">
+<span>def <span class="ident">draw_oval</span></span>(<span>self, x: int, y: int, width: int, height: int, fill: bool = False) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_oval(self, x: int, y: int, width: int, height: int, fill: bool = False) -&gt; None:
+    w = 0 if fill else 1
+    pygame.draw.ellipse(self.__base_image, self.color._pygame, [x, y, width, height], w)</code></pre>
+</details>
+</dd>
+<dt id="pygreenfoot.image.Image.draw_polygon"><code class="name flex">
+<span>def <span class="ident">draw_polygon</span></span>(<span>self, points: Tuple[Tuple[int, int], ...], fill: bool = False) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_polygon(self, points: Tuple[Tuple[int, int], ...], fill: bool = False) -&gt; None:
+    if len(points) &lt; 3:
+        raise ValueError(&#34;Polygon needs at least 3 points&#34;)
+    w = 0 if fill else 1
+    pygame.draw.polygon(self.__base_image, self.color._pygame, points, w)</code></pre>
+</details>
+</dd>
+<dt id="pygreenfoot.image.Image.draw_rect"><code class="name flex">
+<span>def <span class="ident">draw_rect</span></span>(<span>self, x: int, y: int, width: int, height: int, fill: bool = False) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_rect(self, x: int, y: int, width: int, height: int, fill: bool = False) -&gt; None:
+    w = 0 if fill else 1
+    pygame.draw.rect(self.__base_image, self.color._pygame, [x, y, width, height], w)</code></pre>
+</details>
+</dd>
+<dt id="pygreenfoot.image.Image.draw_text"><code class="name flex">
+<span>def <span class="ident">draw_text</span></span>(<span>self, text: str, x: int, y: int, font: Union[pygame.font.Font, <a title="pygreenfoot.font.Font" href="font.html#pygreenfoot.font.Font">Font</a>, str, ForwardRef(None)] = None, font_size: int = 26, bold: bool = False, italic: bool = False) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_text(self, text: str, x: int, y: int,
+              font: Optional[Union[pygame.font.Font, Font, str]] = None, font_size: int = 26, 
+              bold: bool = False, italic: bool = False) -&gt; None:
+    if font is None:
+        font_obj = pygame.font.SysFont(pygame.font.get_default_font(), font_size, bold, italic)
+    elif isinstance(font, str):
+        font_obj = pygame.font.SysFont(font, font_size, bold, italic)
+    elif isinstance(font, Font):
+        font_obj = font._pygame
+    else:
+        font_obj = font
+        
+    rendered_text = font_obj.render(text, True, self.color._pygame)
+    self.__base_image.blit(rendered_text, (x, y))
+    self._set_rot(self.__rot)</code></pre>
+</details>
+</dd>
+<dt id="pygreenfoot.image.Image.fill_with_color"><code class="name flex">
+<span>def <span class="ident">fill_with_color</span></span>(<span>self, color: <a title="pygreenfoot.color.Color" href="color.html#pygreenfoot.color.Color">Color</a> = Ellipsis) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Fills the canvas with a color. When using <code>get_hidden_color</code> this function is equal to <code>clear</code></p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>color</code></strong> :&ensp;<code>Color</code>, optional</dt>
+<dd>the color to use for clearing the canvas. Defaults to ....</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fill_with_color(self, color: Color = ...) -&gt; None:
+    &#34;&#34;&#34;
+    Fills the canvas with a color. When using `get_hidden_color` this function is equal to `clear`
+
+    Args:
+        color (Color, optional): the color to use for clearing the canvas. Defaults to ....
+    &#34;&#34;&#34;
+    if color is ...:
+        color = self.color
+    pygame.draw.rect(self.__base_image, color._pygame, [0, 0, self.width, self.height])</code></pre>
+</details>
+</dd>
+<dt id="pygreenfoot.image.Image.get_color_at"><code class="name flex">
+<span>def <span class="ident">get_color_at</span></span>(<span>self, x: int, y: int) ‑> <a title="pygreenfoot.color.Color" href="color.html#pygreenfoot.color.Color">Color</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the color at one particular point in the image</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>x</code></strong> :&ensp;<code>int</code></dt>
+<dd>the x coordinate</dd>
+<dt><strong><code>y</code></strong> :&ensp;<code>int</code></dt>
+<dd>the y coordinate</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>ValueError</code></dt>
+<dd>if the coordinate is outside of the image</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Color</code></dt>
+<dd>the color at the specified point</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_color_at(self, x: int, y: int) -&gt; Color:
+    &#34;&#34;&#34;
+    Get the color at one particular point in the image
+
+    Args:
+        x (int): the x coordinate
+        y (int): the y coordinate
+
+    Raises:
+        ValueError: if the coordinate is outside of the image
+
+    Returns:
+        Color: the color at the specified point
+    &#34;&#34;&#34;
+    if x &lt; 0 or x &gt; self.width or y &lt; 0 or y &gt; self.height:
+        raise ValueError(&#34;Pixel coordinates out of image range&#34;)
+    return Color.from_pygame_color(self.__base_image.get_at((x, y)))  # type: ignore</code></pre>
+</details>
+</dd>
+<dt id="pygreenfoot.image.Image.mirror"><code class="name flex">
+<span>def <span class="ident">mirror</span></span>(<span>self, horizontal: bool = False, vertical: bool = False, negate_rotation: bool = False) ‑> <a title="pygreenfoot.image.Image" href="#pygreenfoot.image.Image">Image</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Mirror the image into a new Image object</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>horizontal</code></strong> :&ensp;<code>bool</code>, optional</dt>
+<dd>Whether to mirrot horizontally. Defaults to False.</dd>
+<dt><strong><code>vertical</code></strong> :&ensp;<code>bool</code>, optional</dt>
+<dd>Whether to mirrot vertically. Defaults to False.</dd>
+<dt><strong><code>negate_rotation</code></strong> :&ensp;<code>bool</code>, optional</dt>
+<dd>Whether to "mirror" rotation as well. Defaults to False.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code><a title="pygreenfoot.image.Image" href="#pygreenfoot.image.Image">Image</a></code></dt>
+<dd><em>description</em></dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mirror(self, horizontal: bool = False, vertical: bool = False, negate_rotation: bool = False) -&gt; &#34;Image&#34;:
+    &#34;&#34;&#34;
+    Mirror the image into a new Image object
+
+    Args:
+        horizontal (bool, optional): Whether to mirrot horizontally. Defaults to False.
+        vertical (bool, optional): Whether to mirrot vertically. Defaults to False.
+        negate_rotation (bool, optional): Whether to &#34;mirror&#34; rotation as well. Defaults to False.
+
+    Returns:
+        Image: _description_
+    &#34;&#34;&#34;
+    new_img = pygame.transform.flip(self.__base_image, vertical, horizontal)
+    res_img = Image(new_img)
+    if negate_rotation:
+        res_img._set_rot(-self.__rot)
+    else:
+        res_img._set_rot(self.__rot)
+    return res_img</code></pre>
+</details>
+</dd>
+<dt id="pygreenfoot.image.Image.scale"><code class="name flex">
+<span>def <span class="ident">scale</span></span>(<span>self, width: int, height: int) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Scale the image to a custom size</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>width</code></strong> :&ensp;<code>int</code></dt>
+<dd>the new width</dd>
+<dt><strong><code>height</code></strong> :&ensp;<code>int</code></dt>
+<dd>the new height</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def scale(self, width: int, height: int) -&gt; None:
+    &#34;&#34;&#34;
+    Scale the image to a custom size
+
+    Args:
+        width (int): the new width
+        height (int): the new height
+    &#34;&#34;&#34;
+    self.__base_image = pygame.transform.smoothscale(self.__base_image, (width, height))</code></pre>
+</details>
+</dd>
+<dt id="pygreenfoot.image.Image.set_color_at"><code class="name flex">
+<span>def <span class="ident">set_color_at</span></span>(<span>self, x: int, y: int) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set a color at one particular point</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>x</code></strong> :&ensp;<code>int</code></dt>
+<dd>the x coordinate</dd>
+<dt><strong><code>y</code></strong> :&ensp;<code>int</code></dt>
+<dd>the y coordinate</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_color_at(self, x: int, y: int) -&gt; None:
+    &#34;&#34;&#34;
+    Set a color at one particular point
+
+    Args:
+        x (int): the x coordinate
+        y (int): the y coordinate
+    &#34;&#34;&#34;
+    self.__base_image.set_at((x, y), self.color._pygame)
+    self._set_rot(self.__rot)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="pygreenfoot" href="index.html">pygreenfoot</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="pygreenfoot.image.Image" href="#pygreenfoot.image.Image">Image</a></code></h4>
+<ul class="two-column">
+<li><code><a title="pygreenfoot.image.Image.alpha" href="#pygreenfoot.image.Image.alpha">alpha</a></code></li>
+<li><code><a title="pygreenfoot.image.Image.clear" href="#pygreenfoot.image.Image.clear">clear</a></code></li>
+<li><code><a title="pygreenfoot.image.Image.color" href="#pygreenfoot.image.Image.color">color</a></code></li>
+<li><code><a title="pygreenfoot.image.Image.copy" href="#pygreenfoot.image.Image.copy">copy</a></code></li>
+<li><code><a title="pygreenfoot.image.Image.draw_image" href="#pygreenfoot.image.Image.draw_image">draw_image</a></code></li>
+<li><code><a title="pygreenfoot.image.Image.draw_line" href="#pygreenfoot.image.Image.draw_line">draw_line</a></code></li>
+<li><code><a title="pygreenfoot.image.Image.draw_oval" href="#pygreenfoot.image.Image.draw_oval">draw_oval</a></code></li>
+<li><code><a title="pygreenfoot.image.Image.draw_polygon" href="#pygreenfoot.image.Image.draw_polygon">draw_polygon</a></code></li>
+<li><code><a title="pygreenfoot.image.Image.draw_rect" href="#pygreenfoot.image.Image.draw_rect">draw_rect</a></code></li>
+<li><code><a title="pygreenfoot.image.Image.draw_text" href="#pygreenfoot.image.Image.draw_text">draw_text</a></code></li>
+<li><code><a title="pygreenfoot.image.Image.fill_with_color" href="#pygreenfoot.image.Image.fill_with_color">fill_with_color</a></code></li>
+<li><code><a title="pygreenfoot.image.Image.from_filename" href="#pygreenfoot.image.Image.from_filename">from_filename</a></code></li>
+<li><code><a title="pygreenfoot.image.Image.get_color_at" href="#pygreenfoot.image.Image.get_color_at">get_color_at</a></code></li>
+<li><code><a title="pygreenfoot.image.Image.get_empty" href="#pygreenfoot.image.Image.get_empty">get_empty</a></code></li>
+<li><code><a title="pygreenfoot.image.Image.get_hidden_color" href="#pygreenfoot.image.Image.get_hidden_color">get_hidden_color</a></code></li>
+<li><code><a title="pygreenfoot.image.Image.height" href="#pygreenfoot.image.Image.height">height</a></code></li>
+<li><code><a title="pygreenfoot.image.Image.mirror" href="#pygreenfoot.image.Image.mirror">mirror</a></code></li>
+<li><code><a title="pygreenfoot.image.Image.scale" href="#pygreenfoot.image.Image.scale">scale</a></code></li>
+<li><code><a title="pygreenfoot.image.Image.set_color_at" href="#pygreenfoot.image.Image.set_color_at">set_color_at</a></code></li>
+<li><code><a title="pygreenfoot.image.Image.set_hidden_color" href="#pygreenfoot.image.Image.set_hidden_color">set_hidden_color</a></code></li>
+<li><code><a title="pygreenfoot.image.Image.text_label" href="#pygreenfoot.image.Image.text_label">text_label</a></code></li>
+<li><code><a title="pygreenfoot.image.Image.width" href="#pygreenfoot.image.Image.width">width</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

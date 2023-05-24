@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>pygreenfoot.pygreenfoot API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>pygreenfoot.pygreenfoot</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from typing import Tuple
+
+import pygame
+
+from pygreenfoot.world import World
+
+from . import keys
+from .__types import _Key, _MouseButton
+from .application import Application
+
+
+class PyGreenfoot:
+    @staticmethod
+    def is_key_pressed(key: _Key) -&gt; bool:  # sourcery skip: low-code-quality
+        &#34;&#34;&#34;Is the given key pressed?
+
+        Args:
+            key (_Key): the key to check for. can be either a specific string or a pygreenfoot.keys constant. When the key is an alphabetic key upper case letters require shift to be pressed. While lower key letters require shift not to pressed.
+
+        Returns:
+            bool: True if the given key is pressed, otherwise False
+        &#34;&#34;&#34;
+        app = Application.get_app()
+        if isinstance(key, str):
+            if len(key) == 1:
+                if key.isdigit() or key.islower():
+                    return app.get_key_states(getattr(keys, &#34;K_&#34; + key))[0]
+                elif key.isupper():
+                    shift = any(app.get_key_states(keys.K_LSHIFT, keys.K_RSHIFT))
+                    return shift and app.get_key_states(getattr(keys, &#34;K_&#34; + key.lower()))[0]
+                elif key == &#34;.&#34;:
+                    return app.get_key_states(keys.K_PERIOD)[0]
+                elif key == &#34;,&#34;:
+                    return app.get_key_states(keys.K_COMMA)[0]
+                elif key == &#34;-&#34;:
+                    return app.get_key_states(keys.K_MINUS)[0]
+                elif key == &#34;#&#34;:
+                    return app.get_key_states(keys.K_HASH)[0]
+                elif key == &#34;&lt;&#34;:
+                    return app.get_key_states(keys.K_LESS)[0]
+                elif key == &#34;^&#34;:
+                    return app.get_key_states(keys.K_CARET)[0]
+            else:
+                if len(key) in range(2, 4) and key.startswith((&#34;f&#34;, &#34;F&#34;)):
+                    return app.get_key_states(getattr(keys, &#34;K_&#34; + key.upper()))[0]
+                
+                key = key.lower()
+                if key == &#34;space&#34;:
+                    return app.get_key_states(keys.K_SPACE)[0]
+                elif key == &#34;shift&#34;:
+                    return any(app.get_key_states(keys.K_LSHIFT, keys.K_RSHIFT))
+                elif key == &#34;escape&#34;:
+                    return app.get_key_states(keys.K_ESCAPE)[0]
+                elif key == &#34;enter&#34;:
+                    return app.get_key_states(keys.K_RETURN)[0]
+                elif key in (&#34;ctrl&#34;, &#34;strg&#34;):
+                    return any(app.get_key_states(keys.K_LCTRL, keys.K_RCTRL))
+                elif key == &#34;left&#34;:
+                    return app.get_key_states(keys.K_LEFT)[0]
+                elif key == &#34;right&#34;:
+                    return app.get_key_states(keys.K_RIGHT)[0]
+                elif key == &#34;up&#34;:
+                    return app.get_key_states(keys.K_UP)[0]
+                elif key == &#34;down&#34;:
+                    return app.get_key_states(keys.K_DOWN)[0]
+                elif key == &#34;meta&#34;:
+                    return any(app.get_key_states(keys.K_LMETA, keys.K_RMETA))
+                elif key == &#34;alt&#34;:
+                    return app.get_key_states(keys.K_LALT)[0]
+                elif key == &#34;alt gr&#34;:
+                    return app.get_key_states(keys.K_RALT)[0]
+                elif key == &#34;backspace&#34;:
+                    return app.get_key_states(keys.K_BACKSPACE)[0]
+                elif key == &#34;delete&#34;:
+                    return app.get_key_states(keys.K_DELETE)[0]
+                elif key == &#34;insert&#34;:
+                    return app.get_key_states(keys.K_INSERT)[0]
+                elif key == &#34;tab&#34;:
+                    return app.get_key_states(keys.K_TAB)[0]
+                elif key == &#34;print&#34;:
+                    return app.get_key_states(keys.K_PRINT)[0]
+                
+            raise ValueError(&#34;invalid key: %s&#34; % key)
+        
+        return app.get_key_states(key)[0]
+    
+    @staticmethod
+    def is_mouse_button_pressed(button: _MouseButton) -&gt; bool:
+        &#34;&#34;&#34;Returns if the given mouse button is pressed.
+        Existing values are 1 (left), 2 (mouse wheel click), 3 (right).
+
+        Args:
+            button (_MouseButton): A Mousebutton value 1, 2 or 3.
+
+        Raises:
+            ValueError: if the given mouse button is not existing
+
+        Returns:
+            bool: True if the given mouse button is pressed, otherwise False.
+        &#34;&#34;&#34;
+        button -= 1
+        if button not in (0, 1, 2):
+            raise ValueError(&#34;The only valid mouse buttons are: 1, 2, 3&#34;)
+        app = Application.get_app()
+        states = app.get_mouse_states()
+        buttons = states.buttons
+        return buttons[button] != 0
+    
+    @staticmethod
+    def get_mouse_wheel() -&gt; int:
+        &#34;&#34;&#34;How far the mouse wheel was moved between the current and last frame.
+        Negative values mean the mouse wheel was moved downwards, positive values 
+        mean the mouse wheel was moved upwards
+
+        Returns:
+            int: an integer indicating whether the mouse wheel was moved and how far
+        &#34;&#34;&#34;
+        return Application.get_app().get_mouse_states().mouse_wheel
+    
+    @staticmethod
+    def get_mouse_position() -&gt; Tuple[int, int]:
+        &#34;&#34;&#34;Return the mouse position (in cells). This function might return odd numbers if the cursor has left the window.
+        To ensure that the mouse position is correct you can check that using PyGreenfoot.is_mouse_in_window().
+
+        Returns:
+            Tuple[int, int]: the coordinates of the mouse cursor in the form (x, y)
+        &#34;&#34;&#34;
+        app = Application.get_app()
+        pos = pygame.mouse.get_pos()
+        dp = app.delta_pos
+        pos = (pos[0] - dp[0], pos[1] - dp[1])
+        return pos[0] // app.current_world.cell_size, pos[1] // app.current_world.cell_size
+    
+    @staticmethod
+    def is_mouse_in_window() -&gt; bool:
+        &#34;&#34;&#34;Checks whether the mouse is within the window or not.
+
+        Returns:
+            bool: True if the mouse is hovering over the window, otherwise False.
+        &#34;&#34;&#34;
+        return Application.get_app().is_mouse_in_window()
+    
+    @staticmethod
+    def set_game_frames(fps: int) -&gt; None:
+        &#34;&#34;&#34;sets the fps limit for the application
+
+        Args:
+            fps (int): the new limit (defaults to 60)
+        &#34;&#34;&#34;
+        Application.get_app().fps = fps
+        
+    @staticmethod
+    def set_world(world: &#34;World&#34;) -&gt; None:
+        &#34;&#34;&#34;Set the active world
+
+        Args:
+            world (World): the world instance that shall be get active
+        &#34;&#34;&#34;
+        Application.get_app().current_world = world</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="pygreenfoot.pygreenfoot.PyGreenfoot"><code class="flex name class">
+<span>class <span class="ident">PyGreenfoot</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PyGreenfoot:
+    @staticmethod
+    def is_key_pressed(key: _Key) -&gt; bool:  # sourcery skip: low-code-quality
+        &#34;&#34;&#34;Is the given key pressed?
+
+        Args:
+            key (_Key): the key to check for. can be either a specific string or a pygreenfoot.keys constant. When the key is an alphabetic key upper case letters require shift to be pressed. While lower key letters require shift not to pressed.
+
+        Returns:
+            bool: True if the given key is pressed, otherwise False
+        &#34;&#34;&#34;
+        app = Application.get_app()
+        if isinstance(key, str):
+            if len(key) == 1:
+                if key.isdigit() or key.islower():
+                    return app.get_key_states(getattr(keys, &#34;K_&#34; + key))[0]
+                elif key.isupper():
+                    shift = any(app.get_key_states(keys.K_LSHIFT, keys.K_RSHIFT))
+                    return shift and app.get_key_states(getattr(keys, &#34;K_&#34; + key.lower()))[0]
+                elif key == &#34;.&#34;:
+                    return app.get_key_states(keys.K_PERIOD)[0]
+                elif key == &#34;,&#34;:
+                    return app.get_key_states(keys.K_COMMA)[0]
+                elif key == &#34;-&#34;:
+                    return app.get_key_states(keys.K_MINUS)[0]
+                elif key == &#34;#&#34;:
+                    return app.get_key_states(keys.K_HASH)[0]
+                elif key == &#34;&lt;&#34;:
+                    return app.get_key_states(keys.K_LESS)[0]
+                elif key == &#34;^&#34;:
+                    return app.get_key_states(keys.K_CARET)[0]
+            else:
+                if len(key) in range(2, 4) and key.startswith((&#34;f&#34;, &#34;F&#34;)):
+                    return app.get_key_states(getattr(keys, &#34;K_&#34; + key.upper()))[0]
+                
+                key = key.lower()
+                if key == &#34;space&#34;:
+                    return app.get_key_states(keys.K_SPACE)[0]
+                elif key == &#34;shift&#34;:
+                    return any(app.get_key_states(keys.K_LSHIFT, keys.K_RSHIFT))
+                elif key == &#34;escape&#34;:
+                    return app.get_key_states(keys.K_ESCAPE)[0]
+                elif key == &#34;enter&#34;:
+                    return app.get_key_states(keys.K_RETURN)[0]
+                elif key in (&#34;ctrl&#34;, &#34;strg&#34;):
+                    return any(app.get_key_states(keys.K_LCTRL, keys.K_RCTRL))
+                elif key == &#34;left&#34;:
+                    return app.get_key_states(keys.K_LEFT)[0]
+                elif key == &#34;right&#34;:
+                    return app.get_key_states(keys.K_RIGHT)[0]
+                elif key == &#34;up&#34;:
+                    return app.get_key_states(keys.K_UP)[0]
+                elif key == &#34;down&#34;:
+                    return app.get_key_states(keys.K_DOWN)[0]
+                elif key == &#34;meta&#34;:
+                    return any(app.get_key_states(keys.K_LMETA, keys.K_RMETA))
+                elif key == &#34;alt&#34;:
+                    return app.get_key_states(keys.K_LALT)[0]
+                elif key == &#34;alt gr&#34;:
+                    return app.get_key_states(keys.K_RALT)[0]
+                elif key == &#34;backspace&#34;:
+                    return app.get_key_states(keys.K_BACKSPACE)[0]
+                elif key == &#34;delete&#34;:
+                    return app.get_key_states(keys.K_DELETE)[0]
+                elif key == &#34;insert&#34;:
+                    return app.get_key_states(keys.K_INSERT)[0]
+                elif key == &#34;tab&#34;:
+                    return app.get_key_states(keys.K_TAB)[0]
+                elif key == &#34;print&#34;:
+                    return app.get_key_states(keys.K_PRINT)[0]
+                
+            raise ValueError(&#34;invalid key: %s&#34; % key)
+        
+        return app.get_key_states(key)[0]
+    
+    @staticmethod
+    def is_mouse_button_pressed(button: _MouseButton) -&gt; bool:
+        &#34;&#34;&#34;Returns if the given mouse button is pressed.
+        Existing values are 1 (left), 2 (mouse wheel click), 3 (right).
+
+        Args:
+            button (_MouseButton): A Mousebutton value 1, 2 or 3.
+
+        Raises:
+            ValueError: if the given mouse button is not existing
+
+        Returns:
+            bool: True if the given mouse button is pressed, otherwise False.
+        &#34;&#34;&#34;
+        button -= 1
+        if button not in (0, 1, 2):
+            raise ValueError(&#34;The only valid mouse buttons are: 1, 2, 3&#34;)
+        app = Application.get_app()
+        states = app.get_mouse_states()
+        buttons = states.buttons
+        return buttons[button] != 0
+    
+    @staticmethod
+    def get_mouse_wheel() -&gt; int:
+        &#34;&#34;&#34;How far the mouse wheel was moved between the current and last frame.
+        Negative values mean the mouse wheel was moved downwards, positive values 
+        mean the mouse wheel was moved upwards
+
+        Returns:
+            int: an integer indicating whether the mouse wheel was moved and how far
+        &#34;&#34;&#34;
+        return Application.get_app().get_mouse_states().mouse_wheel
+    
+    @staticmethod
+    def get_mouse_position() -&gt; Tuple[int, int]:
+        &#34;&#34;&#34;Return the mouse position (in cells). This function might return odd numbers if the cursor has left the window.
+        To ensure that the mouse position is correct you can check that using PyGreenfoot.is_mouse_in_window().
+
+        Returns:
+            Tuple[int, int]: the coordinates of the mouse cursor in the form (x, y)
+        &#34;&#34;&#34;
+        app = Application.get_app()
+        pos = pygame.mouse.get_pos()
+        dp = app.delta_pos
+        pos = (pos[0] - dp[0], pos[1] - dp[1])
+        return pos[0] // app.current_world.cell_size, pos[1] // app.current_world.cell_size
+    
+    @staticmethod
+    def is_mouse_in_window() -&gt; bool:
+        &#34;&#34;&#34;Checks whether the mouse is within the window or not.
+
+        Returns:
+            bool: True if the mouse is hovering over the window, otherwise False.
+        &#34;&#34;&#34;
+        return Application.get_app().is_mouse_in_window()
+    
+    @staticmethod
+    def set_game_frames(fps: int) -&gt; None:
+        &#34;&#34;&#34;sets the fps limit for the application
+
+        Args:
+            fps (int): the new limit (defaults to 60)
+        &#34;&#34;&#34;
+        Application.get_app().fps = fps
+        
+    @staticmethod
+    def set_world(world: &#34;World&#34;) -&gt; None:
+        &#34;&#34;&#34;Set the active world
+
+        Args:
+            world (World): the world instance that shall be get active
+        &#34;&#34;&#34;
+        Application.get_app().current_world = world</code></pre>
+</details>
+<h3>Static methods</h3>
+<dl>
+<dt id="pygreenfoot.pygreenfoot.PyGreenfoot.get_mouse_position"><code class="name flex">
+<span>def <span class="ident">get_mouse_position</span></span>(<span>) ‑> Tuple[int, int]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the mouse position (in cells). This function might return odd numbers if the cursor has left the window.
+To ensure that the mouse position is correct you can check that using PyGreenfoot.is_mouse_in_window().</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Tuple[int, int]</code></dt>
+<dd>the coordinates of the mouse cursor in the form (x, y)</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_mouse_position() -&gt; Tuple[int, int]:
+    &#34;&#34;&#34;Return the mouse position (in cells). This function might return odd numbers if the cursor has left the window.
+    To ensure that the mouse position is correct you can check that using PyGreenfoot.is_mouse_in_window().
+
+    Returns:
+        Tuple[int, int]: the coordinates of the mouse cursor in the form (x, y)
+    &#34;&#34;&#34;
+    app = Application.get_app()
+    pos = pygame.mouse.get_pos()
+    dp = app.delta_pos
+    pos = (pos[0] - dp[0], pos[1] - dp[1])
+    return pos[0] // app.current_world.cell_size, pos[1] // app.current_world.cell_size</code></pre>
+</details>
+</dd>
+<dt id="pygreenfoot.pygreenfoot.PyGreenfoot.get_mouse_wheel"><code class="name flex">
+<span>def <span class="ident">get_mouse_wheel</span></span>(<span>) ‑> int</span>
+</code></dt>
+<dd>
+<div class="desc"><p>How far the mouse wheel was moved between the current and last frame.
+Negative values mean the mouse wheel was moved downwards, positive values
+mean the mouse wheel was moved upwards</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>int</code></dt>
+<dd>an integer indicating whether the mouse wheel was moved and how far</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_mouse_wheel() -&gt; int:
+    &#34;&#34;&#34;How far the mouse wheel was moved between the current and last frame.
+    Negative values mean the mouse wheel was moved downwards, positive values 
+    mean the mouse wheel was moved upwards
+
+    Returns:
+        int: an integer indicating whether the mouse wheel was moved and how far
+    &#34;&#34;&#34;
+    return Application.get_app().get_mouse_states().mouse_wheel</code></pre>
+</details>
+</dd>
+<dt id="pygreenfoot.pygreenfoot.PyGreenfoot.is_key_pressed"><code class="name flex">
+<span>def <span class="ident">is_key_pressed</span></span>(<span>key: Union[str, int]) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Is the given key pressed?</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>key</code></strong> :&ensp;<code>_Key</code></dt>
+<dd>the key to check for. can be either a specific string or a pygreenfoot.keys constant. When the key is an alphabetic key upper case letters require shift to be pressed. While lower key letters require shift not to pressed.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>bool</code></dt>
+<dd>True if the given key is pressed, otherwise False</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def is_key_pressed(key: _Key) -&gt; bool:  # sourcery skip: low-code-quality
+    &#34;&#34;&#34;Is the given key pressed?
+
+    Args:
+        key (_Key): the key to check for. can be either a specific string or a pygreenfoot.keys constant. When the key is an alphabetic key upper case letters require shift to be pressed. While lower key letters require shift not to pressed.
+
+    Returns:
+        bool: True if the given key is pressed, otherwise False
+    &#34;&#34;&#34;
+    app = Application.get_app()
+    if isinstance(key, str):
+        if len(key) == 1:
+            if key.isdigit() or key.islower():
+                return app.get_key_states(getattr(keys, &#34;K_&#34; + key))[0]
+            elif key.isupper():
+                shift = any(app.get_key_states(keys.K_LSHIFT, keys.K_RSHIFT))
+                return shift and app.get_key_states(getattr(keys, &#34;K_&#34; + key.lower()))[0]
+            elif key == &#34;.&#34;:
+                return app.get_key_states(keys.K_PERIOD)[0]
+            elif key == &#34;,&#34;:
+                return app.get_key_states(keys.K_COMMA)[0]
+            elif key == &#34;-&#34;:
+                return app.get_key_states(keys.K_MINUS)[0]
+            elif key == &#34;#&#34;:
+                return app.get_key_states(keys.K_HASH)[0]
+            elif key == &#34;&lt;&#34;:
+                return app.get_key_states(keys.K_LESS)[0]
+            elif key == &#34;^&#34;:
+                return app.get_key_states(keys.K_CARET)[0]
+        else:
+            if len(key) in range(2, 4) and key.startswith((&#34;f&#34;, &#34;F&#34;)):
+                return app.get_key_states(getattr(keys, &#34;K_&#34; + key.upper()))[0]
+            
+            key = key.lower()
+            if key == &#34;space&#34;:
+                return app.get_key_states(keys.K_SPACE)[0]
+            elif key == &#34;shift&#34;:
+                return any(app.get_key_states(keys.K_LSHIFT, keys.K_RSHIFT))
+            elif key == &#34;escape&#34;:
+                return app.get_key_states(keys.K_ESCAPE)[0]
+            elif key == &#34;enter&#34;:
+                return app.get_key_states(keys.K_RETURN)[0]
+            elif key in (&#34;ctrl&#34;, &#34;strg&#34;):
+                return any(app.get_key_states(keys.K_LCTRL, keys.K_RCTRL))
+            elif key == &#34;left&#34;:
+                return app.get_key_states(keys.K_LEFT)[0]
+            elif key == &#34;right&#34;:
+                return app.get_key_states(keys.K_RIGHT)[0]
+            elif key == &#34;up&#34;:
+                return app.get_key_states(keys.K_UP)[0]
+            elif key == &#34;down&#34;:
+                return app.get_key_states(keys.K_DOWN)[0]
+            elif key == &#34;meta&#34;:
+                return any(app.get_key_states(keys.K_LMETA, keys.K_RMETA))
+            elif key == &#34;alt&#34;:
+                return app.get_key_states(keys.K_LALT)[0]
+            elif key == &#34;alt gr&#34;:
+                return app.get_key_states(keys.K_RALT)[0]
+            elif key == &#34;backspace&#34;:
+                return app.get_key_states(keys.K_BACKSPACE)[0]
+            elif key == &#34;delete&#34;:
+                return app.get_key_states(keys.K_DELETE)[0]
+            elif key == &#34;insert&#34;:
+                return app.get_key_states(keys.K_INSERT)[0]
+            elif key == &#34;tab&#34;:
+                return app.get_key_states(keys.K_TAB)[0]
+            elif key == &#34;print&#34;:
+                return app.get_key_states(keys.K_PRINT)[0]
+            
+        raise ValueError(&#34;invalid key: %s&#34; % key)
+    
+    return app.get_key_states(key)[0]</code></pre>
+</details>
+</dd>
+<dt id="pygreenfoot.pygreenfoot.PyGreenfoot.is_mouse_button_pressed"><code class="name flex">
+<span>def <span class="ident">is_mouse_button_pressed</span></span>(<span>button: int) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns if the given mouse button is pressed.
+Existing values are 1 (left), 2 (mouse wheel click), 3 (right).</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>button</code></strong> :&ensp;<code>_MouseButton</code></dt>
+<dd>A Mousebutton value 1, 2 or 3.</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>ValueError</code></dt>
+<dd>if the given mouse button is not existing</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>bool</code></dt>
+<dd>True if the given mouse button is pressed, otherwise False.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def is_mouse_button_pressed(button: _MouseButton) -&gt; bool:
+    &#34;&#34;&#34;Returns if the given mouse button is pressed.
+    Existing values are 1 (left), 2 (mouse wheel click), 3 (right).
+
+    Args:
+        button (_MouseButton): A Mousebutton value 1, 2 or 3.
+
+    Raises:
+        ValueError: if the given mouse button is not existing
+
+    Returns:
+        bool: True if the given mouse button is pressed, otherwise False.
+    &#34;&#34;&#34;
+    button -= 1
+    if button not in (0, 1, 2):
+        raise ValueError(&#34;The only valid mouse buttons are: 1, 2, 3&#34;)
+    app = Application.get_app()
+    states = app.get_mouse_states()
+    buttons = states.buttons
+    return buttons[button] != 0</code></pre>
+</details>
+</dd>
+<dt id="pygreenfoot.pygreenfoot.PyGreenfoot.is_mouse_in_window"><code class="name flex">
+<span>def <span class="ident">is_mouse_in_window</span></span>(<span>) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Checks whether the mouse is within the window or not.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>bool</code></dt>
+<dd>True if the mouse is hovering over the window, otherwise False.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def is_mouse_in_window() -&gt; bool:
+    &#34;&#34;&#34;Checks whether the mouse is within the window or not.
+
+    Returns:
+        bool: True if the mouse is hovering over the window, otherwise False.
+    &#34;&#34;&#34;
+    return Application.get_app().is_mouse_in_window()</code></pre>
+</details>
+</dd>
+<dt id="pygreenfoot.pygreenfoot.PyGreenfoot.set_game_frames"><code class="name flex">
+<span>def <span class="ident">set_game_frames</span></span>(<span>fps: int) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>sets the fps limit for the application</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>fps</code></strong> :&ensp;<code>int</code></dt>
+<dd>the new limit (defaults to 60)</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def set_game_frames(fps: int) -&gt; None:
+    &#34;&#34;&#34;sets the fps limit for the application
+
+    Args:
+        fps (int): the new limit (defaults to 60)
+    &#34;&#34;&#34;
+    Application.get_app().fps = fps</code></pre>
+</details>
+</dd>
+<dt id="pygreenfoot.pygreenfoot.PyGreenfoot.set_world"><code class="name flex">
+<span>def <span class="ident">set_world</span></span>(<span>world: World) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set the active world</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>world</code></strong> :&ensp;<code>World</code></dt>
+<dd>the world instance that shall be get active</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def set_world(world: &#34;World&#34;) -&gt; None:
+    &#34;&#34;&#34;Set the active world
+
+    Args:
+        world (World): the world instance that shall be get active
+    &#34;&#34;&#34;
+    Application.get_app().current_world = world</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="pygreenfoot" href="index.html">pygreenfoot</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="pygreenfoot.pygreenfoot.PyGreenfoot" href="#pygreenfoot.pygreenfoot.PyGreenfoot">PyGreenfoot</a></code></h4>
+<ul class="">
+<li><code><a title="pygreenfoot.pygreenfoot.PyGreenfoot.get_mouse_position" href="#pygreenfoot.pygreenfoot.PyGreenfoot.get_mouse_position">get_mouse_position</a></code></li>
+<li><code><a title="pygreenfoot.pygreenfoot.PyGreenfoot.get_mouse_wheel" href="#pygreenfoot.pygreenfoot.PyGreenfoot.get_mouse_wheel">get_mouse_wheel</a></code></li>
+<li><code><a title="pygreenfoot.pygreenfoot.PyGreenfoot.is_key_pressed" href="#pygreenfoot.pygreenfoot.PyGreenfoot.is_key_pressed">is_key_pressed</a></code></li>
+<li><code><a title="pygreenfoot.pygreenfoot.PyGreenfoot.is_mouse_button_pressed" href="#pygreenfoot.pygreenfoot.PyGreenfoot.is_mouse_button_pressed">is_mouse_button_pressed</a></code></li>
+<li><code><a title="pygreenfoot.pygreenfoot.PyGreenfoot.is_mouse_in_window" href="#pygreenfoot.pygreenfoot.PyGreenfoot.is_mouse_in_window">is_mouse_in_window</a></code></li>
+<li><code><a title="pygreenfoot.pygreenfoot.PyGreenfoot.set_game_frames" href="#pygreenfoot.pygreenfoot.PyGreenfoot.set_game_frames">set_game_frames</a></code></li>
+<li><code><a title="pygreenfoot.pygreenfoot.PyGreenfoot.set_world" href="#pygreenfoot.pygreenfoot.PyGreenfoot.set_world">set_world</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>
