@@ -8,7 +8,7 @@ or use pip: `pip install git+https://github.com/TobisMa/pyGreenfoot`
 Install the project using the ps1 script for the desired solution or use the `pygreenfoot-v**.zip` file from the release and move the pygreenfoot folder to your python site-packages folder.
 
 ### Create a world
-wordl.py:
+world.py:
 ```py
 from pygreenfoot import World
 
