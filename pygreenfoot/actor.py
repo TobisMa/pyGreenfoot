@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from math import atan2, cos, degrees, radians, sin
-from typing import TYPE_CHECKING, Generator, List, Optional, Type, Union
+from typing import TYPE_CHECKING, Generator, List, Optional, Type, Union, overload
 
 import pygame
 
@@ -8,7 +8,7 @@ from pygreenfoot import get_resource_path
 
 from .image import Image
 from .math_helper import FULL_DEGREES_ANGLE, limit_value
-from .__types import _ActorType
+from .__types import _ActorType, _WorldType
 
 if TYPE_CHECKING:
     from .application import Application
@@ -65,7 +65,11 @@ class Actor(metaclass=ABCMeta):
         """
         raise NotImplementedError("act method needs to be implemented in subclasses of pygreenfoot.Actor")
     
-    def get_world(self) -> "World":
+    @overload
+    def get_world(self) -> World: ...
+    @overload
+    def get_world(self, world_type: Type[_WorldType]) -> _WorldType: ...
+    def get_world(self, world_type = World):
         """Get the current active world
 
         Returns:
