@@ -28,7 +28,7 @@
 </summary>
 <pre><code class="python">from abc import ABCMeta, abstractmethod
 from math import atan2, cos, degrees, radians, sin
-from typing import TYPE_CHECKING, Generator, List, Optional, Type, Union
+from typing import TYPE_CHECKING, Generator, List, Optional, Type, Union, overload
 
 import pygame
 
@@ -36,7 +36,7 @@ from pygreenfoot import get_resource_path
 
 from .image import Image
 from .math_helper import FULL_DEGREES_ANGLE, limit_value
-from .__types import _ActorType
+from .__types import _ActorType, _WorldType
 
 if TYPE_CHECKING:
     from .application import Application
@@ -93,7 +93,11 @@ class Actor(metaclass=ABCMeta):
         &#34;&#34;&#34;
         raise NotImplementedError(&#34;act method needs to be implemented in subclasses of pygreenfoot.Actor&#34;)
     
-    def get_world(self) -&gt; &#34;World&#34;:
+    @overload
+    def get_world(self) -&gt; &#34;World&#34;: ...
+    @overload
+    def get_world(self, world_type: Type[_WorldType]) -&gt; _WorldType: ...
+    def get_world(self, world_type: Optional[Type[_WorldType]] = None) -&gt; _WorldType:
         &#34;&#34;&#34;Get the current active world
 
         Returns:
@@ -232,7 +236,9 @@ class Actor(metaclass=ABCMeta):
                 yield a
     
     def get_actors_in_range(self, radius: int, type_: Optional[Type[_ActorType]] = None) -&gt; List[_ActorType]:
-        &#34;&#34;&#34;Returns a list of all actors within range of this one of type type_. None is treated as wildcard&#34;&#34;&#34;
+        &#34;&#34;&#34;
+        Returns a list of all actors within range of this one of type `type_`. None is treated as wildcard
+        &#34;&#34;&#34;
         return list(self.get_actors_in_range_generator(radius, type_))
         
     def get_actors_in_range_generator(self, radius: int, type_: Optional[Type[_ActorType]] = None) -&gt; Generator[_ActorType, None, None]:
@@ -469,7 +475,11 @@ and overriding the <code>act</code> method</p>
         &#34;&#34;&#34;
         raise NotImplementedError(&#34;act method needs to be implemented in subclasses of pygreenfoot.Actor&#34;)
     
-    def get_world(self) -&gt; &#34;World&#34;:
+    @overload
+    def get_world(self) -&gt; &#34;World&#34;: ...
+    @overload
+    def get_world(self, world_type: Type[_WorldType]) -&gt; _WorldType: ...
+    def get_world(self, world_type: Optional[Type[_WorldType]] = None) -&gt; _WorldType:
         &#34;&#34;&#34;Get the current active world
 
         Returns:
@@ -608,7 +618,9 @@ and overriding the <code>act</code> method</p>
                 yield a
     
     def get_actors_in_range(self, radius: int, type_: Optional[Type[_ActorType]] = None) -&gt; List[_ActorType]:
-        &#34;&#34;&#34;Returns a list of all actors within range of this one of type type_. None is treated as wildcard&#34;&#34;&#34;
+        &#34;&#34;&#34;
+        Returns a list of all actors within range of this one of type `type_`. None is treated as wildcard
+        &#34;&#34;&#34;
         return list(self.get_actors_in_range_generator(radius, type_))
         
     def get_actors_in_range_generator(self, radius: int, type_: Optional[Type[_ActorType]] = None) -&gt; Generator[_ActorType, None, None]:
@@ -886,13 +898,15 @@ def act(self) -&gt; None:
 <span>def <span class="ident">get_actors_in_range</span></span>(<span>self, radius: int, type_: Optional[Type[~_ActorType]] = None) ‑> List[~_ActorType]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Returns a list of all actors within range of this one of type type_. None is treated as wildcard</p></div>
+<div class="desc"><p>Returns a list of all actors within range of this one of type <code>type_</code>. None is treated as wildcard</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get_actors_in_range(self, radius: int, type_: Optional[Type[_ActorType]] = None) -&gt; List[_ActorType]:
-    &#34;&#34;&#34;Returns a list of all actors within range of this one of type type_. None is treated as wildcard&#34;&#34;&#34;
+    &#34;&#34;&#34;
+    Returns a list of all actors within range of this one of type `type_`. None is treated as wildcard
+    &#34;&#34;&#34;
     return list(self.get_actors_in_range_generator(radius, type_))</code></pre>
 </details>
 </dd>
@@ -1086,7 +1100,7 @@ x or y is less than or equals the specified cells</p>
 </details>
 </dd>
 <dt id="pygreenfoot.actor.Actor.get_world"><code class="name flex">
-<span>def <span class="ident">get_world</span></span>(<span>self) ‑> World</span>
+<span>def <span class="ident">get_world</span></span>(<span>self, world_type: Optional[Type[~_WorldType]] = None) ‑> ~_WorldType</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Get the current active world</p>
@@ -1099,7 +1113,7 @@ x or y is less than or equals the specified cells</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get_world(self) -&gt; &#34;World&#34;:
+<pre><code class="python">def get_world(self, world_type: Optional[Type[_WorldType]] = None) -&gt; _WorldType:
     &#34;&#34;&#34;Get the current active world
 
     Returns:

@@ -110,22 +110,27 @@ class World(metaclass=ABCMeta):
         &#34;&#34;&#34;
         return self.__cell_size
     
+    def _check_world_time(self) -&gt; bool:
+        &#34;&#34;&#34;
+        Returns True if the next frame shall be exexcuted
+
+        Returns:
+            bool: True if the next act_cycle shall be exexcuted or False if the world time still needs to be awaited
+        &#34;&#34;&#34;
+        return time() - self.__last_time &lt;= self.world_speed
+    
     def _calc_frame(self) -&gt; None:
         &#34;&#34;&#34;
         Runs the act cylces if necessary
         &#34;&#34;&#34;
-        cur_time = time()
-        if cur_time - self.__last_time &lt;= self.world_speed:
-            return
-        
-        elif self.running:
+        if self.running and self._check_world_time():
             self.__act_cycle()
             self.repaint()
+            self.__last_time = time()
             
         elif not self.running and self.__app.get_key_states(keys.K_SPACE)[0]:
             self.running = True
         
-        self.__last_time = time()
                 
     def repaint(self, only_background: bool = False) -&gt; None:
         &#34;&#34;&#34;
@@ -469,22 +474,27 @@ class World(metaclass=ABCMeta):
         &#34;&#34;&#34;
         return self.__cell_size
     
+    def _check_world_time(self) -&gt; bool:
+        &#34;&#34;&#34;
+        Returns True if the next frame shall be exexcuted
+
+        Returns:
+            bool: True if the next act_cycle shall be exexcuted or False if the world time still needs to be awaited
+        &#34;&#34;&#34;
+        return time() - self.__last_time &lt;= self.world_speed
+    
     def _calc_frame(self) -&gt; None:
         &#34;&#34;&#34;
         Runs the act cylces if necessary
         &#34;&#34;&#34;
-        cur_time = time()
-        if cur_time - self.__last_time &lt;= self.world_speed:
-            return
-        
-        elif self.running:
+        if self.running and self._check_world_time():
             self.__act_cycle()
             self.repaint()
+            self.__last_time = time()
             
         elif not self.running and self.__app.get_key_states(keys.K_SPACE)[0]:
             self.running = True
         
-        self.__last_time = time()
                 
     def repaint(self, only_background: bool = False) -&gt; None:
         &#34;&#34;&#34;

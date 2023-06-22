@@ -141,7 +141,7 @@ class Application:
         """Initialize the application
 
         Raises:
-            RuntimeError: When no starting scene is given
+            RuntimeError: When no starting world is given
         """
         if self.__world is None:
             raise RuntimeError("Scene has to be set before running the application")
@@ -550,7 +550,7 @@ class Application:
                     exit(-1)
                 first_world = world # type: ignore
         
-        app.current_world = first_world() # type: ignore
+        app.current_world = first_world()  # type: ignore
         
         if app.__config["generateDiagram"]:
             t = threading.Thread(

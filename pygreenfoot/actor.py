@@ -66,10 +66,10 @@ class Actor(metaclass=ABCMeta):
         raise NotImplementedError("act method needs to be implemented in subclasses of pygreenfoot.Actor")
     
     @overload
-    def get_world(self) -> World: ...
+    def get_world(self) -> "World": ...
     @overload
     def get_world(self, world_type: Type[_WorldType]) -> _WorldType: ...
-    def get_world(self, world_type = World):
+    def get_world(self, world_type: Optional[Type[_WorldType]] = None) -> _WorldType:
         """Get the current active world
 
         Returns:
@@ -208,7 +208,9 @@ class Actor(metaclass=ABCMeta):
                 yield a
     
     def get_actors_in_range(self, radius: int, type_: Optional[Type[_ActorType]] = None) -> List[_ActorType]:
-        """Returns a list of all actors within range of this one of type type_. None is treated as wildcard"""
+        """
+        Returns a list of all actors within range of this one of type `type_`. None is treated as wildcard
+        """
         return list(self.get_actors_in_range_generator(radius, type_))
         
     def get_actors_in_range_generator(self, radius: int, type_: Optional[Type[_ActorType]] = None) -> Generator[_ActorType, None, None]:
