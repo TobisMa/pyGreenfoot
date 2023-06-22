@@ -82,22 +82,27 @@ class World(metaclass=ABCMeta):
         """
         return self.__cell_size
     
+    def _check_world_time(self) -> bool:
+        """
+        Returns True if the next frame shall be exexcuted
+
+        Returns:
+            bool: True if the next act_cycle shall be exexcuted or False if the world time still needs to be awaited
+        """
+        return time() >= self.world_speed + self.__last_time
+    
     def _calc_frame(self) -> None:
         """
         Runs the act cylces if necessary
         """
-        cur_time = time()
-        if cur_time - self.__last_time <= self.world_speed:
-            return
-        
-        elif self.running:
+        if self.running and self._check_world_time():
             self.__act_cycle()
             self.repaint()
+            self.__last_time = time()
             
         elif not self.running and self.__app.get_key_states(keys.K_SPACE)[0]:
             self.running = True
         
-        self.__last_time = time()
                 
     def repaint(self, only_background: bool = False) -> None:
         """

@@ -44,7 +44,7 @@ def _screen_update(f):
 
 class InitActor(Actor):
     
-    &#34;&#34;&#34;
+    &#34;&#34;&#34;py
     The InitActor class provides an actor for teaching. 
     It provides an init method to put your code in and 
     executes this method excactly once. This actor refreshes the screen
@@ -71,6 +71,7 @@ class InitActor(Actor):
     
     def act(self) -&gt; None:
         if self.__iter == 1:
+            print(&#34;Run init&#34;)
             self.init()
         if self.__iter &lt;= 2:
             self.__iter += 1
@@ -96,7 +97,8 @@ class InitActor(Actor):
 <span>(</span><span>rotation: int = 0, image: Optional[<a title="pygreenfoot.image.Image" href="../image.html#pygreenfoot.image.Image">Image</a>] = None)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>The InitActor class provides an actor for teaching.
+<div class="desc"><p>py
+The InitActor class provides an actor for teaching.
 It provides an init method to put your code in and
 executes this method excactly once. This actor refreshes the screen
 as soon as this actor caused a screen change as opposed to the normal
@@ -114,7 +116,7 @@ actors.</p>
 </summary>
 <pre><code class="python">class InitActor(Actor):
     
-    &#34;&#34;&#34;
+    &#34;&#34;&#34;py
     The InitActor class provides an actor for teaching. 
     It provides an init method to put your code in and 
     executes this method excactly once. This actor refreshes the screen
@@ -141,6 +143,7 @@ actors.</p>
     
     def act(self) -&gt; None:
         if self.__iter == 1:
+            print(&#34;Run init&#34;)
             self.init()
         if self.__iter &lt;= 2:
             self.__iter += 1
