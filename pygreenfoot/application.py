@@ -328,7 +328,7 @@ class Application:
         
         if act_cycle:
             self.current_world._calc_frame()
-        else:
+        elif self.current_world._check_world_time():
             self.current_world.repaint()
         
         if not self.__running:

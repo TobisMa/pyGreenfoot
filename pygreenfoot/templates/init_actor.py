@@ -34,16 +34,20 @@ class InitActor(Actor):
         Actor.__init__(self, rotation, image)
         self.__iter: int = 0
 
-        for m in self.__screen_update_functions:
-            setattr(self, m, _screen_update(getattr(self, m)))
+        # for m in self.__screen_update_functions:
+        #     setattr(self, m, _screen_update(getattr(self, m)))
 
     @abstractmethod
     def init(self) -> None:
         raise NotImplementedError("subclasses of InitActor must override the init method")
     
     def act(self) -> None:
-        if self.__iter == 1:
+        if self.__iter == 0:
+            for m in self.__screen_update_functions:
+                setattr(self, m, _screen_update(getattr(self, m)))
+        elif self.__iter == 1:
             self.init()
+            
         if self.__iter <= 2:
             self.__iter += 1
 

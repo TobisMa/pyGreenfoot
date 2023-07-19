@@ -1,3 +1,6 @@
+"""
+Test
+"""
 import builtins
 import os
 from functools import cache
@@ -8,14 +11,19 @@ from importlib_resources import files
 
 # block message of pygame
 __orig_print = print
-builtins.print = lambda *args, **kwargs : None
+builtins.print = lambda *args, **kwargs: None
 import pygame
 
 builtins.print = __orig_print
 
 
 def get_module_str_import(module_str: str) -> Type:
-    importstr = "from " + '.'.join(module_str.split(".")[:-1]) + " import " + module_str.split(".")[-1]
+    importstr = (
+        "from "
+        + ".".join(module_str.split(".")[:-1])
+        + " import "
+        + module_str.split(".")[-1]
+    )
     exec(importstr)
     return eval(module_str.split(".")[-1])
 
@@ -27,7 +35,7 @@ def get_resource_path(file: str, type_: str) -> str:
 
     Args:
         file (str): the filename (may include folders)
-        type_ (str): the resource type. If it is something else than 'image' or 'sound' this 
+        type_ (str): the resource type. If it is something else than 'image' or 'sound' this
         function assumes in the cwd exists an folder of type_ in which the resource is to be found
 
     Raises:
@@ -45,19 +53,24 @@ def get_resource_path(file: str, type_: str) -> str:
     else:
         folder = type_
         subfolder = None
-        
+
     path = os.path.join(folder, file)
     if os.access(path, os.R_OK):
         return path
-    
+
     if subfolder is not None:
-        path = files("pygreenfoot").joinpath(subfolder).joinpath(file).as_posix()  # TODO test on other platforms than windows
+        path = (
+            files("pygreenfoot").joinpath(subfolder).joinpath(file).as_posix()
+        )  # TODO test on other platforms than windows
         if os.access(path, os.R_OK):
             return path
-    
-    raise FileNotFoundError("Resource not found %r with assumed type %s" % (file, type_))
+
+    raise FileNotFoundError(
+        "Resource not found %r with assumed type %s" % (file, type_)
+    )
 
 
+pygame.font.init()
 from . import keys
 
 # assigning the values to the key elements in keys
