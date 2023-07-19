@@ -2,8 +2,7 @@ from abc import ABCMeta
 from collections import defaultdict
 from functools import cached_property
 from time import time
-from typing import (DefaultDict, Dict, Generator, List, Optional, Set, Tuple,
-                    Type, Union)
+from typing import DefaultDict, Dict, Generator, List, Optional, Set, Tuple, Type, Union
 
 import pygame
 
@@ -16,13 +15,32 @@ from .__types import _ActorType
 
 
 class World(metaclass=ABCMeta):
-    
-    __slots__ = ("__size", "world_bounding", "__cell_size", "__objects", "__texts",
-                 "__existing_object_types", "__act_order", "__paint_order", "__world_speed"
-                 "__background", "__canvas", "__half_cell", "__app", "running", "__last_time")
-    
-    def __init__(self, width: int, height: int, cell_size: int, world_bounding: bool = True) -> None:
+    __slots__ = (
+        "__size",
+        "world_bounding",
+        "__cell_size",
+        "__objects",
+        "__texts",
+        "__existing_object_types",
+        "__act_order",
+        "__paint_order",
+        "__world_speed" "__background",
+        "__canvas",
+        "__half_cell",
+        "__app",
+        "running",
+        "__last_time",
+    )
+
+    DEFAULT_FONT: Font = Font(
+        Font.get_default_font(), 26
+    )  # pygame.font initialized in __init__.py
+
+    def __init__(
+        self, width: int, height: int, cell_size: int, world_bounding: bool = True
+    ) -> None:
         from .application import Application
+
         self.__size = (width, height)
         self.__cell_size: int = cell_size
         self.world_bounding: bool = world_bounding
@@ -31,14 +49,16 @@ class World(metaclass=ABCMeta):
         self.__objects: DefaultDict[Type[Actor], Set[Actor]] = defaultdict(set)
         self.__existing_object_types = set()
         self.__background: Optional[Image] = None
-        self.__canvas: pygame.surface.Surface = pygame.Surface((width * cell_size, height * cell_size))
+        self.__canvas: pygame.surface.Surface = pygame.Surface(
+            (width * cell_size, height * cell_size)
+        )
         self.__half_cell: int = self.__cell_size // 2
         self.__app = Application.get_app()
         self.__texts: Dict[Tuple[int, int], Tuple[Text, Tuple[int, int]]] = {}
         self.running: bool = True
         self.world_speed: float = self.__app.default_world_speed
         self.__last_time = time()
-        
+
     def add_to_world(self, game_object: "Actor", x: int, y: int) -> None:
         """Adds an actor to this world instance
 
@@ -54,7 +74,7 @@ class World(metaclass=ABCMeta):
         self.__existing_object_types.add(type(game_object))
         game_object.set_position(x, y)
         game_object.on_world_add(self)
-        
+
     @cached_property
     def width(self) -> int:
         """width of this world instance
@@ -63,7 +83,7 @@ class World(metaclass=ABCMeta):
             int: the world width in cells
         """
         return int(self.__size[0])
-    
+
     @cached_property
     def height(self) -> int:
         """height of this world instance
@@ -72,7 +92,7 @@ class World(metaclass=ABCMeta):
             int: the world height in cells
         """
         return int(self.__size[1])
-    
+
     @cached_property
     def cell_size(self) -> int:
         """how large one cell (always quadratic) is in pixel
@@ -81,7 +101,7 @@ class World(metaclass=ABCMeta):
             int: the width and height of the cell
         """
         return self.__cell_size
-    
+
     def _check_world_time(self) -> bool:
         """
         Returns True if the next frame shall be exexcuted
@@ -90,7 +110,7 @@ class World(metaclass=ABCMeta):
             bool: True if the next act_cycle shall be exexcuted or False if the world time still needs to be awaited
         """
         return time() >= self.world_speed + self.__last_time
-    
+
     def _calc_frame(self) -> None:
         """
         Runs the act cylces if necessary
@@ -99,35 +119,34 @@ class World(metaclass=ABCMeta):
             self.__act_cycle()
             self.repaint()
             self.__last_time = time()
-            
+
         elif not self.running and self.__app.get_key_states(keys.K_SPACE)[0]:
             self.running = True
-        
-                
+
     def repaint(self, only_background: bool = False) -> None:
         """
         Redraws the whole world
         """
         if self.__background is not None:
             self.__canvas.blit(self.__background._surface, (0, 0))
-        
+
         if only_background:
             return
-        
+
         done: Set[Type[Actor]] = set()
         for object_type in self.__paint_order:
             done.add(object_type)
             for game_object in self.__objects[object_type]:
                 game_object.repaint()
-        
+
         for object_type in set(self.__objects) - done:
             done.add(object_type)
             for game_object in self.__objects[object_type]:
                 game_object.repaint()
-        
+
         for text, pos in self.__texts.values():
             self.__canvas.blit(text._surface, pos)
-                
+
     def __act_cycle(self) -> None:
         self.act()
         done: Set[Type[Actor]] = set()
@@ -135,13 +154,12 @@ class World(metaclass=ABCMeta):
             done.add(object_type)
             for game_object in self.__objects[object_type]:
                 game_object.act()
-        
+
         for object_type in set(self.__objects) - done:
             done.add(object_type)
             for game_object in self.__objects[object_type]:
                 game_object.act()
-            
-    
+
     def act(self) -> None:
         """
         Called once per frame by the main application.
@@ -149,7 +167,7 @@ class World(metaclass=ABCMeta):
         The default does nothing
         """
         pass
-    
+
     def set_act_order(self, *act_order: Type[Actor]) -> None:
         """Sets the order in which the actor's act methods are called
 
@@ -158,7 +176,7 @@ class World(metaclass=ABCMeta):
                 It is not possible to influence the draw order of two actors with the same type.
         """
         self.__act_order = list(act_order)
-        
+
     def get_act_order(self) -> List[Type[Actor]]:
         """Returns the current set act order
 
@@ -166,7 +184,7 @@ class World(metaclass=ABCMeta):
             List[Type[Actor]]: the order the objects will be sorted. Types of actors which are not within the returned list will be drawn in an random order.
         """
         return self.__act_order
-    
+
     def set_paint_order(self, *paint_order: Type[Actor]) -> None:
         """Sets the paint order of actor types. It is not possible to influence the draw order of two actors with the same type
 
@@ -174,7 +192,7 @@ class World(metaclass=ABCMeta):
             paint_order (Iterable[Type[Actor]]): an iterable of types of actors
         """
         self.__paint_order = list(paint_order)
-        
+
     def get_paint_order(self) -> List[Type[Actor]]:
         """Returns the paint order
 
@@ -183,9 +201,13 @@ class World(metaclass=ABCMeta):
                 be drawn after all listed types at an certain point within each frame
         """
         return self.__paint_order
-    
-    def set_background(self, filename_or_image: Union[str, pygame.Surface], scale_to_cell_size: bool = False) -> None:
-        """Set an background image for the world. If the image is too small for the world it will be repeated in vertical 
+
+    def set_background(
+        self,
+        filename_or_image: Union[str, pygame.Surface],
+        scale_to_cell_size: bool = False,
+    ) -> None:
+        """Set an background image for the world. If the image is too small for the world it will be repeated in vertical
         and horizontal direction until it covers all cells of the world.
 
         Args:
@@ -199,20 +221,20 @@ class World(metaclass=ABCMeta):
             path = get_resource_path(filename_or_image, "image")
 
             image: pygame.surface.Surface = pygame.image.load(path)
-            
+
         else:
             image: pygame.surface.Surface = filename_or_image
-        
+
         bg = pygame.Surface((self.width * self.cell_size, self.height * self.cell_size))
         wr = range(0, self.cell_size * self.width + self.cell_size, image.get_width())
         hr = range(0, self.cell_size * self.height + self.cell_size, image.get_height())
-        
+
         for x in wr:
             for y in hr:
                 bg.blit(image.copy(), (x, y))
-        
+
         self.__background = Image(bg)
-        
+
     def get_background_image(self) -> Image:
         """Returns the rendered background image
 
@@ -220,11 +242,13 @@ class World(metaclass=ABCMeta):
             Image: the background image drawn on the surface
         """
         if self.__background is None:
-            s = pygame.Surface((self.__cell_size * self.width, self.__cell_size * self.height))
+            s = pygame.Surface(
+                (self.__cell_size * self.width, self.__cell_size * self.height)
+            )
             s.fill(Color.WHITE._pygame)
             return Image(s)
         return self.__background
-            
+
     def get_color_at(self, x: int, y: int) -> Color:
         """Return the color at the center of the cell (x, y). Objects drawn on the background are considered.
 
@@ -237,10 +261,13 @@ class World(metaclass=ABCMeta):
         """
         return Color.from_pygame_color(
             self.__canvas.get_at(  # type: ignore
-                (x * self.__cell_size + self.__half_cell, y * self.__cell_size + self.__half_cell)
+                (
+                    x * self.__cell_size + self.__half_cell,
+                    y * self.__cell_size + self.__half_cell,
+                )
             )
         )
-    
+
     def get_actors(self, type_: Optional[Type[_ActorType]] = None) -> List[_ActorType]:
         """Return all actors currently existing in the world
 
@@ -251,8 +278,10 @@ class World(metaclass=ABCMeta):
             List[Actor]: the actors having type type_ or all actors within the world in case type_=None
         """
         return list(self.get_actors_generator(type_))
-        
-    def get_actors_generator(self, type_: Optional[Type[_ActorType]] = None) -> Generator[_ActorType, None, None]:
+
+    def get_actors_generator(
+        self, type_: Optional[Type[_ActorType]] = None
+    ) -> Generator[_ActorType, None, None]:
         """
         the same as get_actors but returns a generator object
         """
@@ -261,8 +290,10 @@ class World(metaclass=ABCMeta):
                 yield from actor_set  # type: ignore
         else:
             yield from self.__objects[type_]  # type: ignore
-                
-    def get_objects_at(self, x: int, y: int, type_: Optional[Type[_ActorType]] = None) -> List[_ActorType]:
+
+    def get_objects_at(
+        self, x: int, y: int, type_: Optional[Type[_ActorType]] = None
+    ) -> List[_ActorType]:
         """Return all objects at the position (x, y) having the type type_
 
         Args:
@@ -274,20 +305,27 @@ class World(metaclass=ABCMeta):
             List[Actor]: a list of all actors at the position (x, y) having the type type_ or just all types if type_ is None
         """
         return list(self.get_objects_at_generator(x, y, type_))
-    
-    def get_objects_at_generator(self, x: int, y: int, type_: Optional[Type[_ActorType]] = None) -> Generator[_ActorType, None, None]:        
+
+    def get_objects_at_generator(
+        self, x: int, y: int, type_: Optional[Type[_ActorType]] = None
+    ) -> Generator[_ActorType, None, None]:
         """
         The same as get_objects_at but returns a generator
         """
-        area = pygame.Rect(x * self.__cell_size, y * self.__cell_size, self.__cell_size, self.__cell_size)
+        area = pygame.Rect(
+            x * self.__cell_size,
+            y * self.__cell_size,
+            self.__cell_size,
+            self.__cell_size,
+        )
         if type_ is None:
             for actor_type in self.__objects:
-                yield from self.get_objects_at_generator(x, y, actor_type) # type: ignore
+                yield from self.get_objects_at_generator(x, y, actor_type)  # type: ignore
         else:
             for actor in self.__objects[type_]:
                 if actor._rect.colliderect(area):
                     yield actor  # type: ignore
-                    
+
     def remove_from_world(self, *actors: Actor) -> None:
         """
         Removes the given actor(s) from the world
@@ -295,7 +333,7 @@ class World(metaclass=ABCMeta):
         for actor in actors:
             actor.on_world_remove()
             self.__objects[type(actor)].remove(actor)
-                        
+
     def number_of_actors(self) -> int:
         """Counts the actors existing currently in this world
 
@@ -315,23 +353,21 @@ class World(metaclass=ABCMeta):
         if text is None:
             self.__texts.pop((x, y), None)
             return
-        
+
         if isinstance(text, str):
-            font = Font(Font.get_default_font(), 26)
+            font = World.DEFAULT_FONT
             width, height = font._pygame.size(text)
         else:
             width, height = text.font._pygame.size(text.display_text)
-            
+
         px: int = x * self.__cell_size + self.__half_cell - width // 2
         py: int = y * self.__cell_size + self.__half_cell - height // 2
-        
+
         if isinstance(text, str):
             text: Text = font.get_text(text, Color(0, 0, 0), True)  # type: ignore
-            
+
         self.__texts[(x, y)] = text, (px, py)
-            
-            
-        
+
     def get_text_at(self, x: int, y: int) -> Optional[str]:
         """Returns the text at the cell (x, y)
 
@@ -344,14 +380,16 @@ class World(metaclass=ABCMeta):
         """
         value = self.__texts.get((x, y))
         return None if value is None else value[0].display_text
-    
+
     @property
     def _rect(self) -> pygame.Rect:
         """
         pygame.Rect of the world
         """
-        return pygame.Rect(0, 0, self.width * self.cell_size, self.height * self.cell_size)
-    
+        return pygame.Rect(
+            0, 0, self.width * self.cell_size, self.height * self.cell_size
+        )
+
     @property
     def _surface(self) -> pygame.surface.Surface:
         """
