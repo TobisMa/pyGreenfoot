@@ -87,4 +87,4 @@ from .pygreenfoot import PyGreenfoot
 from .sound import Sound
 from .world import World
 
-__version__ = "1.6.8"
+__version__ = "1.6.9"
