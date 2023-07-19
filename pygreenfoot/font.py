@@ -1,4 +1,4 @@
-from typing import Any, Tuple, Union
+from typing import Any, Tuple, Union, Dict
 import pygame
 
 from .color import Color
@@ -23,6 +23,7 @@ class Font:
     """
 
     __slots__ = ("__font", "__fontname", "__size")
+    pygame_fonts: Dict[Tuple[str, int, bool, bool, bool, bool], pygame.font.Font] = {}
 
     def __init__(
         self,
@@ -31,13 +32,15 @@ class Font:
         bold: bool = False,
         italic: bool = False,
         underline: bool = False,
+        strike_through: bool = False,
     ) -> None:
-        self.__font: pygame.font.Font = pygame.font.Font(name, size)
+        self.__font: pygame.font.Font = Font.get_pygame_font(name, size)
         self.__fontname: str = name
         self.__size = size
         self.bold = bold
         self.italic = italic
         self.underline = underline
+        self.strike_through = strike_through
 
     @property
     def font_name(self) -> str:
@@ -62,7 +65,15 @@ class Font:
 
     @italic.setter
     def italic(self, value: bool) -> None:
-        self.__font.set_italic(value)
+        # self.__font.set_italic(value)
+        self.__font = Font.get_pygame_font(
+            self.__fontname,
+            self.__size,
+            self.bold,
+            value,
+            self.underline,
+            self.strike_through,
+        )
 
     @property
     def bold(self) -> bool:
@@ -73,7 +84,15 @@ class Font:
 
     @bold.setter
     def bold(self, value: bool) -> None:
-        self.__font.set_bold(value)
+        # self.__font.set_bold(value)
+        self.__font = Font.get_pygame_font(
+            self.__fontname,
+            self.__size,
+            value,
+            self.italic,
+            self.underline,
+            self.strike_through,
+        )
 
     @property
     def underline(self) -> bool:
@@ -84,7 +103,34 @@ class Font:
 
     @underline.setter
     def underline(self, value: bool) -> None:
-        self.__font.set_underline(value)
+        # self.__font.set_underline(value)
+        self.__font = Font.get_pygame_font(
+            self.__fontname,
+            self.__size,
+            self.bold,
+            self.italic,
+            value,
+            self.strike_through,
+        )
+
+    @property
+    def strike_through(self) -> bool:
+        """
+        if the font is stroken-through
+        """
+        return self.__font.get_strikethrough()
+
+    @strike_through.setter
+    def strike_through(self, value: bool) -> None:
+        # self.__font.set_strikethrough(value)
+        self.__font = Font.get_pygame_font(
+            self.__fontname,
+            self.__size,
+            self.bold,
+            self.italic,
+            self.underline,
+            value,
+        )
 
     def copy(self) -> "Font":
         """
@@ -93,7 +139,14 @@ class Font:
         Returns:
             Font: the new font
         """
-        return Font(self.__fontname, self.size, self.bold, self.italic, self.underline)
+        return Font(
+            self.__fontname,
+            self.size,
+            self.bold,
+            self.italic,
+            self.underline,
+            self.strike_through,
+        )
 
     def get_text(
         self, text: str, color: Color = Color.BLACK, antialias: bool = True
@@ -118,13 +171,6 @@ class Font:
         """
         return self.__font
 
-    @staticmethod
-    def get_default_font() -> str:
-        """
-        Returns the systems default font
-        """
-        return pygame.font.get_default_font()
-
     def _text_size(self, text: str) -> Tuple[int, int]:
         """
         Returns the measurement of text using this font in px
@@ -136,6 +182,47 @@ class Font:
             Tuple[int, int]: the size of the text in (width, height)
         """
         return self.__font.size(text)
+
+    @staticmethod
+    def get_default_font() -> str:
+        """
+        Returns the systems default font
+        """
+        return pygame.font.get_default_font()
+
+    @staticmethod
+    def get_pygame_font(
+        name: str,
+        size: int,
+        bold: bool = False,
+        italic: bool = False,
+        underline: bool = False,
+        strike_through: bool = False,
+    ) -> pygame.font.Font:
+        """
+        Returns the pygame font with the according properties
+
+        Args:
+            name (str): font name
+            size (int): font size
+            bold (bool): bold font? Defaults to False.
+            italic (bool): italic font? Defaults to False.
+            underline (bool): underlined font? Defaults to False.
+
+        Returns:
+            pygame.font.Font: the pygame font with the according sizes
+        """
+        properties = (name, size, bold, italic, underline, strike_through)
+
+        if Font.pygame_fonts.get(properties) is None:
+            f = pygame.font.Font(name, size)
+            f.set_bold(bold)
+            f.set_italic(italic)
+            f.set_underline(underline)
+            f.set_strikethrough(strike_through)
+            Font.pygame_fonts[properties] = f
+            return f
+        return Font.pygame_fonts[properties]
 
 
 class Text:
@@ -179,7 +266,7 @@ class Text:
     @display_text.setter
     def display_text(self, value: Any) -> None:
         self.__display_text = str(value)
-        self.__surface: pygame.surface.Surface = self.font._pygame.render(
+        self.__surface = self.font._pygame.render(
             self.__display_text, True, self.color._pygame
         )
 
