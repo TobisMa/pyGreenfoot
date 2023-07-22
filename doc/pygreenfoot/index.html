@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>pygreenfoot API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="Test" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,11 +22,15 @@
 <h1 class="title">Package <code>pygreenfoot</code></h1>
 </header>
 <section id="section-intro">
+<p>Test</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">import builtins
+<pre><code class="python">&#34;&#34;&#34;
+Test
+&#34;&#34;&#34;
+import builtins
 import os
 from functools import cache
 from typing import Type
@@ -36,14 +40,19 @@ from importlib_resources import files
 
 # block message of pygame
 __orig_print = print
-builtins.print = lambda *args, **kwargs : None
+builtins.print = lambda *args, **kwargs: None
 import pygame
 
 builtins.print = __orig_print
 
 
 def get_module_str_import(module_str: str) -&gt; Type:
-    importstr = &#34;from &#34; + &#39;.&#39;.join(module_str.split(&#34;.&#34;)[:-1]) + &#34; import &#34; + module_str.split(&#34;.&#34;)[-1]
+    importstr = (
+        &#34;from &#34;
+        + &#34;.&#34;.join(module_str.split(&#34;.&#34;)[:-1])
+        + &#34; import &#34;
+        + module_str.split(&#34;.&#34;)[-1]
+    )
     exec(importstr)
     return eval(module_str.split(&#34;.&#34;)[-1])
 
@@ -55,7 +64,7 @@ def get_resource_path(file: str, type_: str) -&gt; str:
 
     Args:
         file (str): the filename (may include folders)
-        type_ (str): the resource type. If it is something else than &#39;image&#39; or &#39;sound&#39; this 
+        type_ (str): the resource type. If it is something else than &#39;image&#39; or &#39;sound&#39; this
         function assumes in the cwd exists an folder of type_ in which the resource is to be found
 
     Raises:
@@ -73,19 +82,24 @@ def get_resource_path(file: str, type_: str) -&gt; str:
     else:
         folder = type_
         subfolder = None
-        
+
     path = os.path.join(folder, file)
     if os.access(path, os.R_OK):
         return path
-    
+
     if subfolder is not None:
-        path = files(&#34;pygreenfoot&#34;).joinpath(subfolder).joinpath(file).as_posix()  # TODO test on other platforms than windows
+        path = (
+            files(&#34;pygreenfoot&#34;).joinpath(subfolder).joinpath(file).as_posix()
+        )  # TODO test on other platforms than windows
         if os.access(path, os.R_OK):
             return path
-    
-    raise FileNotFoundError(&#34;Resource not found %r with assumed type %s&#34; % (file, type_))
+
+    raise FileNotFoundError(
+        &#34;Resource not found %r with assumed type %s&#34; % (file, type_)
+    )
 
 
+pygame.font.init()
 from . import keys
 
 # assigning the values to the key elements in keys
@@ -102,7 +116,7 @@ from .pygreenfoot import PyGreenfoot
 from .sound import Sound
 from .world import World
 
-__version__ = &#34;1.6.7&#34;</code></pre>
+__version__ = &#34;1.6.9&#34;</code></pre>
 </details>
 </section>
 <section>
@@ -177,7 +191,12 @@ __version__ = &#34;1.6.7&#34;</code></pre>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get_module_str_import(module_str: str) -&gt; Type:
-    importstr = &#34;from &#34; + &#39;.&#39;.join(module_str.split(&#34;.&#34;)[:-1]) + &#34; import &#34; + module_str.split(&#34;.&#34;)[-1]
+    importstr = (
+        &#34;from &#34;
+        + &#34;.&#34;.join(module_str.split(&#34;.&#34;)[:-1])
+        + &#34; import &#34;
+        + module_str.split(&#34;.&#34;)[-1]
+    )
     exec(importstr)
     return eval(module_str.split(&#34;.&#34;)[-1])</code></pre>
 </details>
@@ -192,7 +211,7 @@ __version__ = &#34;1.6.7&#34;</code></pre>
 <dt><strong><code>file</code></strong> :&ensp;<code>str</code></dt>
 <dd>the filename (may include folders)</dd>
 <dt><strong><code>type_</code></strong> :&ensp;<code>str</code></dt>
-<dd>the resource type. If it is something else than 'image' or 'sound' this </dd>
+<dd>the resource type. If it is something else than 'image' or 'sound' this</dd>
 </dl>
 <p>function assumes in the cwd exists an folder of type_ in which the resource is to be found</p>
 <h2 id="raises">Raises</h2>
@@ -216,7 +235,7 @@ def get_resource_path(file: str, type_: str) -&gt; str:
 
     Args:
         file (str): the filename (may include folders)
-        type_ (str): the resource type. If it is something else than &#39;image&#39; or &#39;sound&#39; this 
+        type_ (str): the resource type. If it is something else than &#39;image&#39; or &#39;sound&#39; this
         function assumes in the cwd exists an folder of type_ in which the resource is to be found
 
     Raises:
@@ -234,17 +253,21 @@ def get_resource_path(file: str, type_: str) -&gt; str:
     else:
         folder = type_
         subfolder = None
-        
+
     path = os.path.join(folder, file)
     if os.access(path, os.R_OK):
         return path
-    
+
     if subfolder is not None:
-        path = files(&#34;pygreenfoot&#34;).joinpath(subfolder).joinpath(file).as_posix()  # TODO test on other platforms than windows
+        path = (
+            files(&#34;pygreenfoot&#34;).joinpath(subfolder).joinpath(file).as_posix()
+        )  # TODO test on other platforms than windows
         if os.access(path, os.R_OK):
             return path
-    
-    raise FileNotFoundError(&#34;Resource not found %r with assumed type %s&#34; % (file, type_))</code></pre>
+
+    raise FileNotFoundError(
+        &#34;Resource not found %r with assumed type %s&#34; % (file, type_)
+    )</code></pre>
 </details>
 </dd>
 </dl>
