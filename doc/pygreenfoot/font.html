@@ -26,7 +26,7 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from typing import Any, Tuple, Union
+<pre><code class="python">from typing import Any, Tuple, Union, Dict
 import pygame
 
 from .color import Color
@@ -40,83 +40,145 @@ FontType = Union[
         Tuple[int, str, bool, bool],
         Tuple[int, str, bool, bool, bool],
     ],
-    &#34;Font&#34;
+    &#34;Font&#34;,
 ]
 
 
 class Font:
-    
+
     &#34;&#34;&#34;
     pygreenfoot&#39;s class for fonts
     &#34;&#34;&#34;
-    
+
     __slots__ = (&#34;__font&#34;, &#34;__fontname&#34;, &#34;__size&#34;)
-    
-    def __init__(self, name: str, size: int = 11, bold: bool = False, italic: bool = False, underline: bool = False) -&gt; None:
-        self.__font: pygame.font.Font = pygame.font.Font(name, size)
+    pygame_fonts: Dict[Tuple[str, int, bool, bool, bool, bool], pygame.font.Font] = {}
+
+    def __init__(
+        self,
+        name: str,
+        size: int = 11,
+        bold: bool = False,
+        italic: bool = False,
+        underline: bool = False,
+        strike_through: bool = False,
+    ) -&gt; None:
+        self.__font: pygame.font.Font = Font.get_pygame_font(name, size)
         self.__fontname: str = name
         self.__size = size
         self.bold = bold
         self.italic = italic
         self.underline = underline
-        
+        self.strike_through = strike_through
+
     @property
     def font_name(self) -&gt; str:
         &#34;&#34;&#34;
         The font&#39;s name
         &#34;&#34;&#34;
         return self.__fontname
-    
+
     @property
     def size(self) -&gt; int:
         &#34;&#34;&#34;
         The font&#39;s size
         &#34;&#34;&#34;
         return self.__size
-    
+
     @property
     def italic(self) -&gt; bool:
         &#34;&#34;&#34;
         if the font is italic
         &#34;&#34;&#34;
         return self.__font.get_italic()
-    
+
     @italic.setter
     def italic(self, value: bool) -&gt; None:
         self.__font.set_italic(value)
-    
+        # self.__font = Font.get_pygame_font(
+        #     self.__fontname,
+        #     self.__size,
+        #     self.bold,
+        #     value,
+        #     self.underline,
+        #     self.strike_through,
+        # )
+
     @property
     def bold(self) -&gt; bool:
         &#34;&#34;&#34;
         if the font is bold
         &#34;&#34;&#34;
         return self.__font.get_bold()
-    
+
     @bold.setter
     def bold(self, value: bool) -&gt; None:
-        self.__font.set_bold(value)
-        
+        # self.__font.set_bold(value)
+        self.__font = Font.get_pygame_font(
+            self.__fontname,
+            self.__size,
+            value,
+            self.italic,
+            self.underline,
+            self.strike_through,
+        )
+
     @property
     def underline(self) -&gt; bool:
         &#34;&#34;&#34;
         if the font is underlined
         &#34;&#34;&#34;
         return self.__font.get_underline()
-    
+
     @underline.setter
     def underline(self, value: bool) -&gt; None:
-        self.__font.set_underline(value)
-        
+        # self.__font.set_underline(value)
+        self.__font = Font.get_pygame_font(
+            self.__fontname,
+            self.__size,
+            self.bold,
+            self.italic,
+            value,
+            self.strike_through,
+        )
+
+    @property
+    def strike_through(self) -&gt; bool:
+        &#34;&#34;&#34;
+        if the font is stroken-through
+        &#34;&#34;&#34;
+        return self.__font.get_strikethrough()
+
+    @strike_through.setter
+    def strike_through(self, value: bool) -&gt; None:
+        # self.__font.set_strikethrough(value)
+        self.__font = Font.get_pygame_font(
+            self.__fontname,
+            self.__size,
+            self.bold,
+            self.italic,
+            self.underline,
+            value,
+        )
+
     def copy(self) -&gt; &#34;Font&#34;:
         &#34;&#34;&#34;
-        Copies the font by instantiating a Font object with the same properties 
+        Copies the font by instantiating a Font object with the same properties
 
         Returns:
             Font: the new font
         &#34;&#34;&#34;
-        return Font(self.__fontname, self.size, self.bold, self.italic, self.underline)
-    
-    def get_text(self, text: str, color: Color = Color.BLACK, antialias: bool = True) -&gt; &#34;Text&#34;:
+        return Font(
+            self.__fontname,
+            self.size,
+            self.bold,
+            self.italic,
+            self.underline,
+            self.strike_through,
+        )
+
+    def get_text(
+        self, text: str, color: Color = Color.BLACK, antialias: bool = True
+    ) -&gt; &#34;Text&#34;:
         &#34;&#34;&#34;
         Returns a pygreenfoot.Text object by using this font
 
@@ -129,21 +191,14 @@ class Font:
             Text: the Text object using above properties
         &#34;&#34;&#34;
         return Text(self, text, color, antialias)
-    
+
     @property
     def _pygame(self) -&gt; pygame.font.Font:
         &#34;&#34;&#34;
         The pygame font object of this font
         &#34;&#34;&#34;
         return self.__font
-        
-    @staticmethod
-    def get_default_font() -&gt; str:
-        &#34;&#34;&#34;
-        Returns the systems default font
-        &#34;&#34;&#34;
-        return pygame.font.get_default_font()
-    
+
     def _text_size(self, text: str) -&gt; Tuple[int, int]:
         &#34;&#34;&#34;
         Returns the measurement of text using this font in px
@@ -155,48 +210,119 @@ class Font:
             Tuple[int, int]: the size of the text in (width, height)
         &#34;&#34;&#34;
         return self.__font.size(text)
-    
+
+    @staticmethod
+    def get_default_font() -&gt; str:
+        &#34;&#34;&#34;
+        Returns the systems default font
+        &#34;&#34;&#34;
+        return pygame.font.get_default_font()
+
+    @staticmethod
+    def get_pygame_font(
+        name: str,
+        size: int,
+        bold: bool = False,
+        italic: bool = False,
+        underline: bool = False,
+        strike_through: bool = False,
+    ) -&gt; pygame.font.Font:
+        &#34;&#34;&#34;
+        Returns the pygame font with the according properties
+
+        Args:
+            name (str): font name
+            size (int): font size
+            bold (bool): bold font? Defaults to False.
+            italic (bool): italic font? Defaults to False.
+            underline (bool): underlined font? Defaults to False.
+
+        Returns:
+            pygame.font.Font: the pygame font with the according sizes
+        &#34;&#34;&#34;
+        properties = (name, size, bold, italic, underline, strike_through)
+
+        if Font.pygame_fonts.get(properties) is None:
+            f = pygame.font.Font(name, size)
+            f.set_bold(bold)
+            f.set_italic(italic)
+            f.set_underline(underline)
+            f.set_strikethrough(strike_through)
+            Font.pygame_fonts[properties] = f
+            return f
+        return Font.pygame_fonts[properties]
+
 
 class Text:
-    
+
     &#34;&#34;&#34;
     Class to easily have rendered text on screen with a font and other settings.
     &#34;&#34;&#34;
-    
-    __slots__ = (&#34;__display_text&#34;, &#34;font&#34;, &#34;color&#34;, &#34;__surface&#34;, &#34;antialias&#34;)
-    
-    def __init__(self, font: Union[
-        Union[
-            Tuple[int, str, bool, bool, bool],
-            Tuple[int, str, bool, bool],
-            Tuple[int, str, bool],
-            Tuple[int, str],
+
+    __slots__ = (
+        &#34;__display_text&#34;,
+        &#34;__font&#34;,
+        &#34;color&#34;,
+        &#34;__surface&#34;,
+        &#34;antialias&#34;,
+        &#34;__update&#34;,
+    )
+
+    def __init__(
+        self,
+        font: Union[
+            Union[
+                Tuple[int, str, bool, bool, bool],
+                Tuple[int, str, bool, bool],
+                Tuple[int, str, bool],
+                Tuple[int, str],
+            ],
+            &#34;Font&#34;,
         ],
-        &#34;Font&#34;
-    ], display_text: Any, color: Color, antialias: bool = True) -&gt; None:
-        self.font: Font = font if isinstance(font, Font) else Font(*font)  # type: ignore
+        display_text: Any,
+        color: Color,
+        antialias: bool = True,
+    ) -&gt; None:
+        self.__font: Font = font if isinstance(font, Font) else Font(*font)  # type: ignore
         self.color: Color = color
         self.antialias: bool = antialias
         self.__display_text: str = str(display_text)
-        self.__surface: pygame.surface.Surface = self.font._pygame.render(display_text, True, color._pygame)
-        
+        self.__surface: pygame.surface.Surface = self.font._pygame.render(
+            display_text, True, color._pygame
+        )
+        self.__update = False
+
+    @property
+    def font(self) -&gt; Font:
+        self.__update = True
+        return self.__font
+
+    @font.setter
+    def font(self, f: Font) -&gt; None:
+        self.__update = True
+        self.__font = f
+
     @property
     def display_text(self) -&gt; str:
         &#34;&#34;&#34;
         The text which will be shown
         &#34;&#34;&#34;
         return self.__display_text
-    
+
     @display_text.setter
     def display_text(self, value: Any) -&gt; None:
         self.__display_text = str(value)
-        self.__surface: pygame.surface.Surface = self.font._pygame.render(self.__display_text, True, self.color._pygame)
-    
+        self.__update = True
+
     @property
     def _surface(self) -&gt; pygame.surface.Surface:
         &#34;&#34;&#34;
         The surface with the text on
         &#34;&#34;&#34;
+        if self.__update:
+            self.__surface = self.font._pygame.render(
+                self.__display_text, True, self.color._pygame
+            )
         return self.__surface</code></pre>
 </details>
 </section>
@@ -211,7 +337,7 @@ class Text:
 <dl>
 <dt id="pygreenfoot.font.Font"><code class="flex name class">
 <span>class <span class="ident">Font</span></span>
-<span>(</span><span>name: str, size: int = 11, bold: bool = False, italic: bool = False, underline: bool = False)</span>
+<span>(</span><span>name: str, size: int = 11, bold: bool = False, italic: bool = False, underline: bool = False, strike_through: bool = False)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>pygreenfoot's class for fonts</p></div>
@@ -220,78 +346,140 @@ class Text:
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Font:
-    
+
     &#34;&#34;&#34;
     pygreenfoot&#39;s class for fonts
     &#34;&#34;&#34;
-    
+
     __slots__ = (&#34;__font&#34;, &#34;__fontname&#34;, &#34;__size&#34;)
-    
-    def __init__(self, name: str, size: int = 11, bold: bool = False, italic: bool = False, underline: bool = False) -&gt; None:
-        self.__font: pygame.font.Font = pygame.font.Font(name, size)
+    pygame_fonts: Dict[Tuple[str, int, bool, bool, bool, bool], pygame.font.Font] = {}
+
+    def __init__(
+        self,
+        name: str,
+        size: int = 11,
+        bold: bool = False,
+        italic: bool = False,
+        underline: bool = False,
+        strike_through: bool = False,
+    ) -&gt; None:
+        self.__font: pygame.font.Font = Font.get_pygame_font(name, size)
         self.__fontname: str = name
         self.__size = size
         self.bold = bold
         self.italic = italic
         self.underline = underline
-        
+        self.strike_through = strike_through
+
     @property
     def font_name(self) -&gt; str:
         &#34;&#34;&#34;
         The font&#39;s name
         &#34;&#34;&#34;
         return self.__fontname
-    
+
     @property
     def size(self) -&gt; int:
         &#34;&#34;&#34;
         The font&#39;s size
         &#34;&#34;&#34;
         return self.__size
-    
+
     @property
     def italic(self) -&gt; bool:
         &#34;&#34;&#34;
         if the font is italic
         &#34;&#34;&#34;
         return self.__font.get_italic()
-    
+
     @italic.setter
     def italic(self, value: bool) -&gt; None:
         self.__font.set_italic(value)
-    
+        # self.__font = Font.get_pygame_font(
+        #     self.__fontname,
+        #     self.__size,
+        #     self.bold,
+        #     value,
+        #     self.underline,
+        #     self.strike_through,
+        # )
+
     @property
     def bold(self) -&gt; bool:
         &#34;&#34;&#34;
         if the font is bold
         &#34;&#34;&#34;
         return self.__font.get_bold()
-    
+
     @bold.setter
     def bold(self, value: bool) -&gt; None:
-        self.__font.set_bold(value)
-        
+        # self.__font.set_bold(value)
+        self.__font = Font.get_pygame_font(
+            self.__fontname,
+            self.__size,
+            value,
+            self.italic,
+            self.underline,
+            self.strike_through,
+        )
+
     @property
     def underline(self) -&gt; bool:
         &#34;&#34;&#34;
         if the font is underlined
         &#34;&#34;&#34;
         return self.__font.get_underline()
-    
+
     @underline.setter
     def underline(self, value: bool) -&gt; None:
-        self.__font.set_underline(value)
-        
+        # self.__font.set_underline(value)
+        self.__font = Font.get_pygame_font(
+            self.__fontname,
+            self.__size,
+            self.bold,
+            self.italic,
+            value,
+            self.strike_through,
+        )
+
+    @property
+    def strike_through(self) -&gt; bool:
+        &#34;&#34;&#34;
+        if the font is stroken-through
+        &#34;&#34;&#34;
+        return self.__font.get_strikethrough()
+
+    @strike_through.setter
+    def strike_through(self, value: bool) -&gt; None:
+        # self.__font.set_strikethrough(value)
+        self.__font = Font.get_pygame_font(
+            self.__fontname,
+            self.__size,
+            self.bold,
+            self.italic,
+            self.underline,
+            value,
+        )
+
     def copy(self) -&gt; &#34;Font&#34;:
         &#34;&#34;&#34;
-        Copies the font by instantiating a Font object with the same properties 
+        Copies the font by instantiating a Font object with the same properties
 
         Returns:
             Font: the new font
         &#34;&#34;&#34;
-        return Font(self.__fontname, self.size, self.bold, self.italic, self.underline)
-    
-    def get_text(self, text: str, color: Color = Color.BLACK, antialias: bool = True) -&gt; &#34;Text&#34;:
+        return Font(
+            self.__fontname,
+            self.size,
+            self.bold,
+            self.italic,
+            self.underline,
+            self.strike_through,
+        )
+
+    def get_text(
+        self, text: str, color: Color = Color.BLACK, antialias: bool = True
+    ) -&gt; &#34;Text&#34;:
         &#34;&#34;&#34;
         Returns a pygreenfoot.Text object by using this font
 
@@ -304,21 +492,14 @@ class Text:
             Text: the Text object using above properties
         &#34;&#34;&#34;
         return Text(self, text, color, antialias)
-    
+
     @property
     def _pygame(self) -&gt; pygame.font.Font:
         &#34;&#34;&#34;
         The pygame font object of this font
         &#34;&#34;&#34;
         return self.__font
-        
-    @staticmethod
-    def get_default_font() -&gt; str:
-        &#34;&#34;&#34;
-        Returns the systems default font
-        &#34;&#34;&#34;
-        return pygame.font.get_default_font()
-    
+
     def _text_size(self, text: str) -&gt; Tuple[int, int]:
         &#34;&#34;&#34;
         Returns the measurement of text using this font in px
@@ -329,8 +510,56 @@ class Text:
         Returns:
             Tuple[int, int]: the size of the text in (width, height)
         &#34;&#34;&#34;
-        return self.__font.size(text)</code></pre>
+        return self.__font.size(text)
+
+    @staticmethod
+    def get_default_font() -&gt; str:
+        &#34;&#34;&#34;
+        Returns the systems default font
+        &#34;&#34;&#34;
+        return pygame.font.get_default_font()
+
+    @staticmethod
+    def get_pygame_font(
+        name: str,
+        size: int,
+        bold: bool = False,
+        italic: bool = False,
+        underline: bool = False,
+        strike_through: bool = False,
+    ) -&gt; pygame.font.Font:
+        &#34;&#34;&#34;
+        Returns the pygame font with the according properties
+
+        Args:
+            name (str): font name
+            size (int): font size
+            bold (bool): bold font? Defaults to False.
+            italic (bool): italic font? Defaults to False.
+            underline (bool): underlined font? Defaults to False.
+
+        Returns:
+            pygame.font.Font: the pygame font with the according sizes
+        &#34;&#34;&#34;
+        properties = (name, size, bold, italic, underline, strike_through)
+
+        if Font.pygame_fonts.get(properties) is None:
+            f = pygame.font.Font(name, size)
+            f.set_bold(bold)
+            f.set_italic(italic)
+            f.set_underline(underline)
+            f.set_strikethrough(strike_through)
+            Font.pygame_fonts[properties] = f
+            return f
+        return Font.pygame_fonts[properties]</code></pre>
 </details>
+<h3>Class variables</h3>
+<dl>
+<dt id="pygreenfoot.font.Font.pygame_fonts"><code class="name">var <span class="ident">pygame_fonts</span> : Dict[Tuple[str, int, bool, bool, bool, bool], pygame.font.Font]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
 <h3>Static methods</h3>
 <dl>
 <dt id="pygreenfoot.font.Font.get_default_font"><code class="name flex">
@@ -348,6 +577,68 @@ def get_default_font() -&gt; str:
     Returns the systems default font
     &#34;&#34;&#34;
     return pygame.font.get_default_font()</code></pre>
+</details>
+</dd>
+<dt id="pygreenfoot.font.Font.get_pygame_font"><code class="name flex">
+<span>def <span class="ident">get_pygame_font</span></span>(<span>name: str, size: int, bold: bool = False, italic: bool = False, underline: bool = False, strike_through: bool = False) ‑> pygame.font.Font</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns the pygame font with the according properties</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>name</code></strong> :&ensp;<code>str</code></dt>
+<dd>font name</dd>
+<dt><strong><code>size</code></strong> :&ensp;<code>int</code></dt>
+<dd>font size</dd>
+<dt><strong><code>bold</code></strong> :&ensp;<code>bool</code></dt>
+<dd>bold font? Defaults to False.</dd>
+<dt><strong><code>italic</code></strong> :&ensp;<code>bool</code></dt>
+<dd>italic font? Defaults to False.</dd>
+<dt><strong><code>underline</code></strong> :&ensp;<code>bool</code></dt>
+<dd>underlined font? Defaults to False.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>pygame.font.Font</code></dt>
+<dd>the pygame font with the according sizes</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_pygame_font(
+    name: str,
+    size: int,
+    bold: bool = False,
+    italic: bool = False,
+    underline: bool = False,
+    strike_through: bool = False,
+) -&gt; pygame.font.Font:
+    &#34;&#34;&#34;
+    Returns the pygame font with the according properties
+
+    Args:
+        name (str): font name
+        size (int): font size
+        bold (bool): bold font? Defaults to False.
+        italic (bool): italic font? Defaults to False.
+        underline (bool): underlined font? Defaults to False.
+
+    Returns:
+        pygame.font.Font: the pygame font with the according sizes
+    &#34;&#34;&#34;
+    properties = (name, size, bold, italic, underline, strike_through)
+
+    if Font.pygame_fonts.get(properties) is None:
+        f = pygame.font.Font(name, size)
+        f.set_bold(bold)
+        f.set_italic(italic)
+        f.set_underline(underline)
+        f.set_strikethrough(strike_through)
+        Font.pygame_fonts[properties] = f
+        return f
+    return Font.pygame_fonts[properties]</code></pre>
 </details>
 </dd>
 </dl>
@@ -413,6 +704,21 @@ def size(self) -&gt; int:
     return self.__size</code></pre>
 </details>
 </dd>
+<dt id="pygreenfoot.font.Font.strike_through"><code class="name">var <span class="ident">strike_through</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>if the font is stroken-through</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def strike_through(self) -&gt; bool:
+    &#34;&#34;&#34;
+    if the font is stroken-through
+    &#34;&#34;&#34;
+    return self.__font.get_strikethrough()</code></pre>
+</details>
+</dd>
 <dt id="pygreenfoot.font.Font.underline"><code class="name">var <span class="ident">underline</span> : bool</code></dt>
 <dd>
 <div class="desc"><p>if the font is underlined</p></div>
@@ -435,7 +741,7 @@ def underline(self) -&gt; bool:
 <span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="pygreenfoot.font.Font" href="#pygreenfoot.font.Font">Font</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Copies the font by instantiating a Font object with the same properties </p>
+<div class="desc"><p>Copies the font by instantiating a Font object with the same properties</p>
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><code><a title="pygreenfoot.font.Font" href="#pygreenfoot.font.Font">Font</a></code></dt>
@@ -447,12 +753,19 @@ def underline(self) -&gt; bool:
 </summary>
 <pre><code class="python">def copy(self) -&gt; &#34;Font&#34;:
     &#34;&#34;&#34;
-    Copies the font by instantiating a Font object with the same properties 
+    Copies the font by instantiating a Font object with the same properties
 
     Returns:
         Font: the new font
     &#34;&#34;&#34;
-    return Font(self.__fontname, self.size, self.bold, self.italic, self.underline)</code></pre>
+    return Font(
+        self.__fontname,
+        self.size,
+        self.bold,
+        self.italic,
+        self.underline,
+        self.strike_through,
+    )</code></pre>
 </details>
 </dd>
 <dt id="pygreenfoot.font.Font.get_text"><code class="name flex">
@@ -478,7 +791,9 @@ def underline(self) -&gt; bool:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get_text(self, text: str, color: Color = Color.BLACK, antialias: bool = True) -&gt; &#34;Text&#34;:
+<pre><code class="python">def get_text(
+    self, text: str, color: Color = Color.BLACK, antialias: bool = True
+) -&gt; &#34;Text&#34;:
     &#34;&#34;&#34;
     Returns a pygreenfoot.Text object by using this font
 
@@ -506,45 +821,75 @@ def underline(self) -&gt; bool:
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Text:
-    
+
     &#34;&#34;&#34;
     Class to easily have rendered text on screen with a font and other settings.
     &#34;&#34;&#34;
-    
-    __slots__ = (&#34;__display_text&#34;, &#34;font&#34;, &#34;color&#34;, &#34;__surface&#34;, &#34;antialias&#34;)
-    
-    def __init__(self, font: Union[
-        Union[
-            Tuple[int, str, bool, bool, bool],
-            Tuple[int, str, bool, bool],
-            Tuple[int, str, bool],
-            Tuple[int, str],
+
+    __slots__ = (
+        &#34;__display_text&#34;,
+        &#34;__font&#34;,
+        &#34;color&#34;,
+        &#34;__surface&#34;,
+        &#34;antialias&#34;,
+        &#34;__update&#34;,
+    )
+
+    def __init__(
+        self,
+        font: Union[
+            Union[
+                Tuple[int, str, bool, bool, bool],
+                Tuple[int, str, bool, bool],
+                Tuple[int, str, bool],
+                Tuple[int, str],
+            ],
+            &#34;Font&#34;,
         ],
-        &#34;Font&#34;
-    ], display_text: Any, color: Color, antialias: bool = True) -&gt; None:
-        self.font: Font = font if isinstance(font, Font) else Font(*font)  # type: ignore
+        display_text: Any,
+        color: Color,
+        antialias: bool = True,
+    ) -&gt; None:
+        self.__font: Font = font if isinstance(font, Font) else Font(*font)  # type: ignore
         self.color: Color = color
         self.antialias: bool = antialias
         self.__display_text: str = str(display_text)
-        self.__surface: pygame.surface.Surface = self.font._pygame.render(display_text, True, color._pygame)
-        
+        self.__surface: pygame.surface.Surface = self.font._pygame.render(
+            display_text, True, color._pygame
+        )
+        self.__update = False
+
+    @property
+    def font(self) -&gt; Font:
+        self.__update = True
+        return self.__font
+
+    @font.setter
+    def font(self, f: Font) -&gt; None:
+        self.__update = True
+        self.__font = f
+
     @property
     def display_text(self) -&gt; str:
         &#34;&#34;&#34;
         The text which will be shown
         &#34;&#34;&#34;
         return self.__display_text
-    
+
     @display_text.setter
     def display_text(self, value: Any) -&gt; None:
         self.__display_text = str(value)
-        self.__surface: pygame.surface.Surface = self.font._pygame.render(self.__display_text, True, self.color._pygame)
-    
+        self.__update = True
+
     @property
     def _surface(self) -&gt; pygame.surface.Surface:
         &#34;&#34;&#34;
         The surface with the text on
         &#34;&#34;&#34;
+        if self.__update:
+            self.__surface = self.font._pygame.render(
+                self.__display_text, True, self.color._pygame
+            )
         return self.__surface</code></pre>
 </details>
 <h3>Instance variables</h3>
@@ -572,9 +917,18 @@ def display_text(self) -&gt; str:
     return self.__display_text</code></pre>
 </details>
 </dd>
-<dt id="pygreenfoot.font.Text.font"><code class="name">var <span class="ident">font</span></code></dt>
+<dt id="pygreenfoot.font.Text.font"><code class="name">var <span class="ident">font</span> : <a title="pygreenfoot.font.Font" href="#pygreenfoot.font.Font">Font</a></code></dt>
 <dd>
-<div class="desc"><p>Return an attribute of instance, which is of type owner.</p></div>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def font(self) -&gt; Font:
+    self.__update = True
+    return self.__font</code></pre>
+</details>
 </dd>
 </dl>
 </dd>
@@ -601,9 +955,12 @@ def display_text(self) -&gt; str:
 <li><code><a title="pygreenfoot.font.Font.copy" href="#pygreenfoot.font.Font.copy">copy</a></code></li>
 <li><code><a title="pygreenfoot.font.Font.font_name" href="#pygreenfoot.font.Font.font_name">font_name</a></code></li>
 <li><code><a title="pygreenfoot.font.Font.get_default_font" href="#pygreenfoot.font.Font.get_default_font">get_default_font</a></code></li>
+<li><code><a title="pygreenfoot.font.Font.get_pygame_font" href="#pygreenfoot.font.Font.get_pygame_font">get_pygame_font</a></code></li>
 <li><code><a title="pygreenfoot.font.Font.get_text" href="#pygreenfoot.font.Font.get_text">get_text</a></code></li>
 <li><code><a title="pygreenfoot.font.Font.italic" href="#pygreenfoot.font.Font.italic">italic</a></code></li>
+<li><code><a title="pygreenfoot.font.Font.pygame_fonts" href="#pygreenfoot.font.Font.pygame_fonts">pygame_fonts</a></code></li>
 <li><code><a title="pygreenfoot.font.Font.size" href="#pygreenfoot.font.Font.size">size</a></code></li>
+<li><code><a title="pygreenfoot.font.Font.strike_through" href="#pygreenfoot.font.Font.strike_through">strike_through</a></code></li>
 <li><code><a title="pygreenfoot.font.Font.underline" href="#pygreenfoot.font.Font.underline">underline</a></code></li>
 </ul>
 </li>

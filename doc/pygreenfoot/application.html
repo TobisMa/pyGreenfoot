@@ -29,7 +29,18 @@
 <pre><code class="python">import os
 import sys
 import threading
-from typing import Any, Callable, DefaultDict, Dict, List, Optional, Tuple, Type, TypeVar, Union
+from typing import (
+    Any,
+    Callable,
+    DefaultDict,
+    Dict,
+    List,
+    Optional,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+)
 
 import pygame
 from pygreenfoot import get_module_str_import, get_resource_path
@@ -45,44 +56,51 @@ from .world import World
 from .math_helper import limit_value
 
 
-os.environ[&#39;SDL_VIDEO_CENTERED&#39;] = &#39;1&#39;
+os.environ[&#34;SDL_VIDEO_CENTERED&#34;] = &#34;1&#34;
 pygame.init()
 
 FirstWorld = TypeVar(&#34;FirstWorld&#34;, bound=World)
 
+
 def bool_(value: str) -&gt; Union[str, bool]:
-    if value.lower() == &#34;true&#34;: 
+    if value.lower() == &#34;true&#34;:
         return True
     elif value.lower() == &#34;false&#34;:
         return False
     raise TypeError(&#34;Invalid boolean value &#39;%s&#39;&#34; % value)
 
+
 def signed_int(value: str) -&gt; int:
     v = int(value)
-    if v &lt; 0: 
+    if v &lt; 0:
         raise TypeError(&#34;Negative integer value &#39;%s&#39;&#34;)
     return v
+
 
 def none_value(value) -&gt; bool:
     return value.lower() in (&#34;none&#34;, &#34;null&#34;, &#34;unset&#34;)
 
+
 def optional_signed_int(value: str) -&gt; Optional[int]:
     return None if none_value(value) else signed_int(value)
 
+
 def signed_float(value) -&gt; float:
     v = float(value)
-    if v &lt; 0: 
+    if v &lt; 0:
         raise TypeError(&#34;Negative integer value &#39;%s&#39;&#34;)
     return v
 
+
 def window_mode(value):
-    return  _pygame_screen_modes[value.upper()]
+    return _pygame_screen_modes[value.upper()]
+
 
 _pygame_screen_modes = {
     &#34;RESIZABLE&#34;: pygame.RESIZABLE,
     &#34;FULLSCREEN&#34;: pygame.FULLSCREEN,
     &#34;BORDERLESS&#34;: pygame.NOFRAME,
-    &#34;FIXED&#34;: 0  # NOTE: apparently, no constant for the default exists
+    &#34;FIXED&#34;: 0,  # NOTE: apparently, no constant for the default exists
 }
 
 _config_key_converter: Dict[str, Callable[[str], Any]] = {
@@ -101,22 +119,38 @@ _config_key_converter: Dict[str, Callable[[str], Any]] = {
     &#34;windowModeStartUp&#34;: window_mode,
     &#34;firstWorld&#34;: str,
     &#34;title&#34;: str,
-    &#34;icon&#34;: str
+    &#34;icon&#34;: str,
 }
 
 
 class Application:
-    
-    __slots__ = (&#34;__screen&#34;, &#34;__world&#34;, &#34;__running&#34;, &#34;__keys&#34;, &#34;__mouse_in_window&#34;, &#34;__size&#34;,
-                 &#34;__mouse_down&#34;, &#34;__clock&#34;, &#34;__fps_limit&#34;, &#34;__mouse_wheel&#34;, &#34;__scrollbar&#34;,
-                 &#34;__delta_size&#34;, &#34;__delta_move&#34;, &#34;show_scrollbar&#34;, &#34;__scrollbar_rects&#34;,
-                 &#34;__maximized&#34;, &#34;__window_exposed&#34;, &#34;__config&#34;, &#34;scrollbar_color&#34;)
-    
+    __slots__ = (
+        &#34;__screen&#34;,
+        &#34;__world&#34;,
+        &#34;__running&#34;,
+        &#34;__keys&#34;,
+        &#34;__mouse_in_window&#34;,
+        &#34;__size&#34;,
+        &#34;__mouse_down&#34;,
+        &#34;__clock&#34;,
+        &#34;__fps_limit&#34;,
+        &#34;__mouse_wheel&#34;,
+        &#34;__scrollbar&#34;,
+        &#34;__delta_size&#34;,
+        &#34;__delta_move&#34;,
+        &#34;show_scrollbar&#34;,
+        &#34;__scrollbar_rects&#34;,
+        &#34;__maximized&#34;,
+        &#34;__window_exposed&#34;,
+        &#34;__config&#34;,
+        &#34;scrollbar_color&#34;,
+    )
+
     __instance: Optional[&#34;Application&#34;] = None
     __pygame_info = pygame.display.Info()
     __sw = __pygame_info.current_w
     __sh = __pygame_info.current_h
-    
+
     DEFAULT_CONFIG = {
         &#34;generateDiagram&#34;: True,
         &#34;generateImage&#34;: True,
@@ -133,17 +167,17 @@ class Application:
         &#34;windowStartUpMode&#34;: pygame.SRCALPHA,
         &#34;firstWorld&#34;: None,
         &#34;title&#34;: &#34;PyGreenfoot Game&#34;,
-        &#34;icon&#34;: &#34;wizard.png&#34;
+        &#34;icon&#34;: &#34;wizard.png&#34;,
     }
     CONFIG_FILENAME = &#34;pygreenfoot.config&#34;
     CONFIG_DELIMITER = &#34;=&#34;
-    
+
     def __new__(cls) -&gt; &#34;Application&#34;:
         if Application.__instance is None:
             Application.__instance = super().__new__(cls)
             return Application.__instance
         raise RuntimeError(&#34;No new instances of Application are allowed&#34;)
-    
+
     def __init__(self) -&gt; None:
         self.__running: bool = False
         self.__world: Optional[World] = None
@@ -159,34 +193,37 @@ class Application:
         self.scrollbar_color: Color = Color(128, 128, 128)
         self.show_scrollbar: List[bool] = [True, True]
         self.__scrollbar: Tuple[bool, bool] = (False, False)
-        self.__scrollbar_rects: Tuple[pygame.rect.Rect, pygame.rect.Rect] = (pygame.rect.Rect(0, 0, 0, 10), pygame.rect.Rect(0, 0, 10, 0))
+        self.__scrollbar_rects: Tuple[pygame.rect.Rect, pygame.rect.Rect] = (
+            pygame.rect.Rect(0, 0, 0, 10),
+            pygame.rect.Rect(0, 0, 10, 0),
+        )
         self.__size: Tuple[int, int] = (0, 0)
         self.__maximized: bool = False
         self.__window_exposed: int = 0
         self.__config = Application.DEFAULT_CONFIG
-        
+
     def start(self) -&gt; None:
         &#34;&#34;&#34;Initialize the application
 
         Raises:
-            RuntimeError: When no starting scene is given
+            RuntimeError: When no starting world is given
         &#34;&#34;&#34;
         if self.__world is None:
             raise RuntimeError(&#34;Scene has to be set before running the application&#34;)
         self.__running = True
         self.__update_screen()
         self.__handle_events()
-        
+
     def stop(self, stop_sounds: bool = True) -&gt; None:
         &#34;&#34;&#34;
-        Stops the application and clean ups pygame. This forces no exit of the python process. 
+        Stops the application and clean ups pygame. This forces no exit of the python process.
         Everthing after the main function will be executed
         &#34;&#34;&#34;
         self.__running = False
         if stop_sounds:
             Sound.stop_all()
         pygame.quit()
-        
+
     def __update_screen(self) -&gt; None:
         &#34;&#34;&#34;
         Updates the screen and reconfigures the scrollbars
@@ -194,24 +231,24 @@ class Application:
         world = self.current_world
         aw = world.width * world.cell_size if world else Application.__sw // 2
         ah = world.height * world.cell_size if world else Application.__sh // 2
-        
+
         if self.__config.get(&#34;windowWidth&#34;):
             w = self.__config[&#34;windowWidth&#34;]
         else:
             w = min(aw, Application.__sw)
-    
+
         if self.__config.get(&#34;windowHeight&#34;):
             h = self.__config[&#34;windowHeight&#34;]
         else:
             h = min(ah, Application.__sh - 50)
 
         self.__screen = pygame.display.set_mode((w, h), self.__config[&#34;windowMode&#34;] | pygame.SRCALPHA)  # type: ignore
-        
+
         if not self.__maximized:
             self.__size = self.__screen.get_size()
-            
+
         self.__calc_scrollbars()
-            
+
     def __calc_scrollbars(self) -&gt; None:
         &#34;&#34;&#34;
         Recalculates if scrollbars are needed
@@ -219,12 +256,12 @@ class Application:
         if self.current_world:
             world_surface = self.current_world._surface
             screen_width, screen_height = self.__screen.get_size()
-            
+
             self.__scrollbar = (
                 screen_width &lt; world_surface.get_width(),
-                screen_height &lt; world_surface.get_height()
+                screen_height &lt; world_surface.get_height(),
             )
-            
+
             if self.__maximized:
                 # fixing world position if scrollbars get lost on resize
                 if not self.__scrollbar[0]:
@@ -233,7 +270,7 @@ class Application:
                 if not self.__scrollbar[1]:
                     self.__scrollbar_rects[1].y = 0
                     self.__make_scrollbar_x(world_surface, screen_height, True)
-        
+
     @property
     def current_world(self) -&gt; World:
         &#34;&#34;&#34;the world which is displayed in the window
@@ -254,14 +291,14 @@ class Application:
             raise RuntimeError(&#34;world cannot be set to None&#34;)
         elif not isinstance(world, World):
             raise RuntimeError(&#34;world instance has to inherit from World&#34;)
-        
+
         self.__world = world
         self.__update_screen()
-        
+
     @property
     def fps(self) -&gt; int:
         &#34;&#34;&#34;The fps limit for the game.
-        This value can be configured in the `pygreenfoot.config` 
+        This value can be configured in the `pygreenfoot.config`
         file for initial setup or later through accessing this property.
         The value defaults to 60.
 
@@ -269,13 +306,13 @@ class Application:
             int: the current set fps limit
         &#34;&#34;&#34;
         return self.__fps_limit
-    
+
     @fps.setter
     def fps(self, fps_limit: int) -&gt; None:
         if fps_limit &lt;= 0:
             raise ValueError(&#34;fps limit must be greater than 0&#34;)
         self.__fps_limit = fps_limit
-        
+
     def is_running(self) -&gt; bool:
         &#34;&#34;&#34;An boolean indicating if the application is simulating a world
 
@@ -283,7 +320,7 @@ class Application:
             bool: True if the application is running, otherwise False
         &#34;&#34;&#34;
         return self.__running
-    
+
     def __handle_events(self) -&gt; None:
         &#34;&#34;&#34;
         Handle close, key and mouse events as needed to provide data to the user
@@ -292,76 +329,76 @@ class Application:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.stop()
-                
+
             elif event.type == pygame.KEYDOWN:
                 self.__keys[event.key] = True
-                
+
             elif event.type == pygame.KEYUP:
                 self.__keys[event.key] = False
-                
+
             elif event.type == pygame.MOUSEWHEEL:
                 self.__mouse_wheel += event.y
-            
+
             elif event.type == pygame.WINDOWENTER:
                 self.__mouse_in_window = True
-            
+
             elif event.type == pygame.WINDOWLEAVE:
                 self.__mouse_in_window = False
-                
+
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 sr = self.__scrollbar_rects
                 if sr is None:
                     continue
-                
+
                 pos: Tuple[int, int] = event.pos
                 if sr[0].collidepoint(pos):
                     self.__mouse_down = 0
                 elif sr[1].collidepoint(pos):
                     self.__mouse_down = 1
-            
+
             elif self.__mouse_down is not None and event.type == pygame.MOUSEMOTION:
                 index = self.__mouse_down
                 if index == 0:
                     self.__scrollbar_rects[0].x += event.rel[0]
                 elif index == 1:
                     self.__scrollbar_rects[1].y += event.rel[1]
-                
+
             elif event.type == pygame.MOUSEBUTTONUP:
                 self.__mouse_down = None
-                
+
             elif event.type == pygame.ACTIVEEVENT:
                 if getattr(event, &#34;gain&#34;, -1) == 0 and self.__mouse_down is not None:
                     self.__mouse_down = None
-                    
+
             elif event.type == pygame.WINDOWSIZECHANGED:
                 self.__size = (event.x, event.y)
                 self.__calc_scrollbars()
-                
+
             elif event.type == pygame.WINDOWMAXIMIZED:
                 self.__maximized = True
                 self.__calc_scrollbars()
-                
+
             elif event.type == pygame.WINDOWMINIMIZED:
                 self.__maximized = False
-                
+
             elif event.type == pygame.WINDOWEXPOSED or self.__window_exposed:
                 self.__window_exposed += 1
-      
+
     def update(self, act_cycle: bool = True) -&gt; None:
         &#34;&#34;&#34;
         Needs to be called once for frame
         Handles the pygame events (and thus, prevents pygame from freezing) as well as updates the screen
         &#34;&#34;&#34;
         self.__handle_events()
-        
+
         if act_cycle:
             self.current_world._calc_frame()
-        else:
+        elif self.current_world._check_world_time():
             self.current_world.repaint()
-        
+
         if not self.__running:
             return
-            
+
         world_surf = self.current_world._surface
         self.__delta_size = pygame.math.Vector2(
             max(0, self.__screen.get_width() - world_surf.get_width()) // 2,
@@ -369,21 +406,31 @@ class Application:
         )
         self.__make_scrollbars()
         diff = self.__delta_move + self.__delta_size
-        
+
         self.__screen.blit(world_surf, diff)
-        
+
         if self.__scrollbar[0] and self.show_scrollbar[0]:
-            pygame.draw.rect(self.__screen, self.scrollbar_color._pygame, self.__scrollbar_rects[0], border_radius=3)
-        
+            pygame.draw.rect(
+                self.__screen,
+                self.scrollbar_color._pygame,
+                self.__scrollbar_rects[0],
+                border_radius=3,
+            )
+
         if self.__scrollbar[1] and self.show_scrollbar[1]:
-            pygame.draw.rect(self.__screen, self.scrollbar_color._pygame, self.__scrollbar_rects[1], border_radius=3)            
-        
+            pygame.draw.rect(
+                self.__screen,
+                self.scrollbar_color._pygame,
+                self.__scrollbar_rects[1],
+                border_radius=3,
+            )
+
         pygame.display.update()
-        
+
         self.__clock.tick(self.__fps_limit)
-        
+
         self.__screen.fill([0] * 3)
-        
+
     def __make_scrollbars(self, force=False) -&gt; None:
         &#34;&#34;&#34;
         Bundle method to call make_scrollbar functions
@@ -392,8 +439,10 @@ class Application:
         screen_width, screen_height = self.__size
         self.__make_scrollbar_x(world_surface, screen_width, force)
         self.__make_scrollbar_y(world_surface, screen_height, force)
-        
-    def __make_scrollbar_x(self, world_surf: pygame.surface.Surface, screen_width: int, force=False) -&gt; None:
+
+    def __make_scrollbar_x(
+        self, world_surf: pygame.surface.Surface, screen_width: int, force=False
+    ) -&gt; None:
         &#34;&#34;&#34;
         Calculates position of the world surfaces and the horizontal scrollbar
 
@@ -404,20 +453,21 @@ class Application:
         if self.__scrollbar[0] or force:
             vr = self.__scrollbar_rects[0]
             fraction_width = screen_width / (world_surf.get_width() + screen_width)
-            
+
             if fraction_width &gt;= 1:
                 return
-            
+
             vr.y = self.__screen.get_height() - 3 - vr.height
             vr.width = int(fraction_width * screen_width)
-            
+
             xmax = screen_width - vr.width
             vr.x = limit_value(vr.x, 0, xmax)
-            
+
             self.__delta_move.x = -vr.x / xmax * (world_surf.get_width() - screen_width)
-            
-    
-    def __make_scrollbar_y(self, world_surf: pygame.surface.Surface, screen_height: int, force=False) -&gt; None:
+
+    def __make_scrollbar_y(
+        self, world_surf: pygame.surface.Surface, screen_height: int, force=False
+    ) -&gt; None:
         &#34;&#34;&#34;
         Calculates the position of the world surfaces and the vertical scrollbar
 
@@ -428,19 +478,20 @@ class Application:
         if self.__scrollbar[1] or force:
             hr = self.__scrollbar_rects[1]
             fraction_height = screen_height / (world_surf.get_height() + screen_height)
-            
+
             if fraction_height &gt;= 1:
                 return
-            
+
             hr.x = self.__screen.get_width() - 3 - hr.width
             hr.height = int(fraction_height * screen_height)
-            
+
             ymax = screen_height - hr.height
             hr.y = limit_value(hr.y, 0, ymax)
-            
-            self.__delta_move.y = -hr.y / ymax * (world_surf.get_height() - screen_height)
-    
-                    
+
+            self.__delta_move.y = (
+                -hr.y / ymax * (world_surf.get_height() - screen_height)
+            )
+
     def get_key_states(self, *keys: int) -&gt; Tuple[bool, ...]:
         &#34;&#34;&#34;Return a series of boolean indictating if the given key at index is pressed (True) or released (False)
 
@@ -451,7 +502,7 @@ class Application:
             Tuple[bool, ...]: a tuple with the same length as the input data
         &#34;&#34;&#34;
         return tuple(self.__keys[k] for k in keys)
-    
+
     def get_mouse_states(self) -&gt; &#34;MouseInfo&#34;:
         &#34;&#34;&#34;
         Returns the mouse state in a MouseInfo object
@@ -460,13 +511,15 @@ class Application:
             MouseInfo: the mouse info object with the mouse states
         &#34;&#34;&#34;
         return MouseInfo(self.__mouse_wheel)
-    
+
     def read_config(self) -&gt; None:
         &#34;&#34;&#34;
         Parses the config file if provided
         &#34;&#34;&#34;
+
         def _unknown_key(value):
             raise TypeError(&#34;Key is unknown&#34;)
+
         cnf_file: str = os.path.join(&#34;.&#34;, Application.CONFIG_FILENAME)
         if not os.access(cnf_file, os.R_OK):
             print(&#34;INFO: No readable config file found&#34;)
@@ -476,7 +529,8 @@ class Application:
         with open(cnf_file, &#34;r&#34;) as f:
             for line in f:
                 line = line.lstrip().rstrip(&#34;\n&#34;)
-                if line.startswith(&#34;#&#34;): continue
+                if line.startswith(&#34;#&#34;):
+                    continue
                 if Application.CONFIG_DELIMITER not in line:
                     print(&#34;WARNING: No `=` in config file line&#34;)
                     continue
@@ -485,25 +539,25 @@ class Application:
                 try:
                     v = _config_key_converter.get(key, _unknown_key)(attr)
                 except TypeError as e:
-                    print(&#34;ERROR: %r: %s&#34; %(key, e.args))
+                    print(&#34;ERROR: %r: %s&#34; % (key, e.args))
                 else:
                     parsed[key] = v
         self.__config.update(parsed)
-        
+
     @property
     def image_folder(self) -&gt; str:
         &#34;&#34;&#34;
         Returns the relative path to the image folder in the cwd
         &#34;&#34;&#34;
         return self.__config[&#34;imageResourceFolder&#34;]
-    
+
     @property
     def sound_folder(self) -&gt; str:
         &#34;&#34;&#34;
         Returns the relative path to the sound folder in the cwd
         &#34;&#34;&#34;
         return self.__config[&#34;soundResourceFolder&#34;]
-    
+
     @property
     def default_world_speed(self) -&gt; float:
         &#34;&#34;&#34;
@@ -513,7 +567,7 @@ class Application:
             float: the world speed.
         &#34;&#34;&#34;
         return self.__config[&#34;defaultWorldSpeed&#34;]
-    
+
     @staticmethod
     def get_app() -&gt; &#34;Application&#34;:
         &#34;&#34;&#34;
@@ -525,7 +579,7 @@ class Application:
         if Application.__instance is None:
             Application.__instance = Application()
         return Application.__instance
-    
+
     def setup_folder(self):
         &#34;&#34;&#34;
         Creates the resource folders if necessary.
@@ -536,24 +590,22 @@ class Application:
 
         if not os.access(self.__config[&#34;soundResourceFolder&#34;], os.F_OK):
             os.mkdir(self.__config[&#34;soundResourceFolder&#34;], 0o444)
-            
+
     def apply_config(self) -&gt; None:
         &#34;&#34;&#34;
         Applies other config keys like fps limit or window caption
         &#34;&#34;&#34;
         self.setup_folder()
         self.__fps_limit = self.__config[&#34;fpsLimit&#34;]
-        pygame.display.set_caption(self.__config[&#34;title&#34;], )
+        pygame.display.set_caption(
+            self.__config[&#34;title&#34;],
+        )
         pygame.display.set_icon(
             Image.from_filename(
-                get_resource_path(
-                    self.__config[&#34;icon&#34;],
-                    &#34;image&#34;
-                )
+                get_resource_path(self.__config[&#34;icon&#34;], &#34;image&#34;)
             )._surface
         )
-        
-                
+
     @staticmethod
     def main(first_world: Optional[Type[FirstWorld]] = None) -&gt; None:
         &#34;&#34;&#34;
@@ -565,48 +617,60 @@ class Application:
         app = Application.get_app()
         app.read_config()
         app.apply_config()
-        
+
         if first_world is None:
             first_world_str = app.__config[&#34;firstWorld&#34;]
             try:
                 world = get_module_str_import(first_world_str)
             except ImportError:
-                print(&#34;World entry %r in pygreenfoot.config is invalid or does not exist&#34; % first_world_str, file=sys.stderr)
+                print(
+                    &#34;World entry %r in pygreenfoot.config is invalid or does not exist&#34;
+                    % first_world_str,
+                    file=sys.stderr,
+                )
             else:
                 if not issubclass(world, World):
-                    print(&#34;world entry %r in pygreenfoot.config does not inherit from pygreenfoot.World&#34; % first_world_str, file=sys.stderr)
+                    print(
+                        &#34;world entry %r in pygreenfoot.config does not inherit from pygreenfoot.World&#34;
+                        % first_world_str,
+                        file=sys.stderr,
+                    )
                     exit(-1)
-                first_world = world # type: ignore
-        
-        app.current_world = first_world() # type: ignore
-        
+                first_world = world  # type: ignore
+
+        app.current_world = first_world()  # type: ignore
+
         if app.__config[&#34;generateDiagram&#34;]:
             t = threading.Thread(
                 target=create_inheritance_tree,
                 kwargs={
                     &#34;ignore&#34;: [
                         app.__config[&#34;imageResourceFolder&#34;],
-                        app.__config[&#34;soundResourceFolder&#34;]
+                        app.__config[&#34;soundResourceFolder&#34;],
                     ],
                     &#34;output_dir&#34;: app.__config[&#34;diagramFolder&#34;],
                     &#34;output_file&#34;: app.__config[&#34;diagramFilename&#34;],
                     &#34;temp_file&#34;: app.__config[&#34;tempPlantumlFile&#34;],
-                    &#34;generate_image&#34;: app.__config[&#34;generateImage&#34;]
-                }
+                    &#34;generate_image&#34;: app.__config[&#34;generateImage&#34;],
+                },
             )
             t.start()
-            
+
         try:
             app.start()
             while app.is_running():
                 app.update()
-            
+
             app.quit()
-            
+
+        except pygame.error as e:
+            if app.is_running():
+                raise e
+
         finally:
             if app.__config[&#34;generateDiagram&#34;]:
                 t.join()  # type: ignore
-    
+
     def is_mouse_in_window(self) -&gt; bool:
         &#34;&#34;&#34;
         Check if the mouse is in the winow
@@ -615,14 +679,14 @@ class Application:
             bool: True if the mouse is in the winow else False
         &#34;&#34;&#34;
         return self.__mouse_in_window
-    
+
     def quit(self) -&gt; None:
         &#34;&#34;&#34;
-        Quits the game/application and forces exit of the python process. Use `app.stop()` when the python process shall continue.  
+        Quits the game/application and forces exit of the python process. Use `app.stop()` when the python process shall continue.
         &#34;&#34;&#34;
         self.stop(stop_sounds=True)
         exit(0)
-        
+
     def move_world(self, delta_x: int = 0, delta_y: int = 0) -&gt; None:
         &#34;&#34;&#34;
         Moves the world in px by moving the scrollbars by (delta_x, delta_y). Boundaries are automatically applied
@@ -633,7 +697,7 @@ class Application:
         &#34;&#34;&#34;
         self.__scrollbar_rects[0].x += delta_x
         self.__scrollbar_rects[1].y += delta_y
-        
+
     def set_world_position(self, x: int = 0, y: int = 0) -&gt; None:
         &#34;&#34;&#34;
         Sets the world position by setting the scrollbars Boundaries are applied automatically
@@ -644,7 +708,7 @@ class Application:
         &#34;&#34;&#34;
         self.__scrollbar_rects[0].x = x
         self.__scrollbar_rects[1].y = y
-        
+
     @property
     def delta_pos(self) -&gt; Tuple[int, int]:
         &#34;&#34;&#34;
@@ -674,7 +738,7 @@ class Application:
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def bool_(value: str) -&gt; Union[str, bool]:
-    if value.lower() == &#34;true&#34;: 
+    if value.lower() == &#34;true&#34;:
         return True
     elif value.lower() == &#34;false&#34;:
         return False
@@ -718,7 +782,7 @@ class Application:
 </summary>
 <pre><code class="python">def signed_float(value) -&gt; float:
     v = float(value)
-    if v &lt; 0: 
+    if v &lt; 0:
         raise TypeError(&#34;Negative integer value &#39;%s&#39;&#34;)
     return v</code></pre>
 </details>
@@ -734,7 +798,7 @@ class Application:
 </summary>
 <pre><code class="python">def signed_int(value: str) -&gt; int:
     v = int(value)
-    if v &lt; 0: 
+    if v &lt; 0:
         raise TypeError(&#34;Negative integer value &#39;%s&#39;&#34;)
     return v</code></pre>
 </details>
@@ -749,7 +813,7 @@ class Application:
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def window_mode(value):
-    return  _pygame_screen_modes[value.upper()]</code></pre>
+    return _pygame_screen_modes[value.upper()]</code></pre>
 </details>
 </dd>
 </dl>
@@ -767,17 +831,33 @@ class Application:
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Application:
-    
-    __slots__ = (&#34;__screen&#34;, &#34;__world&#34;, &#34;__running&#34;, &#34;__keys&#34;, &#34;__mouse_in_window&#34;, &#34;__size&#34;,
-                 &#34;__mouse_down&#34;, &#34;__clock&#34;, &#34;__fps_limit&#34;, &#34;__mouse_wheel&#34;, &#34;__scrollbar&#34;,
-                 &#34;__delta_size&#34;, &#34;__delta_move&#34;, &#34;show_scrollbar&#34;, &#34;__scrollbar_rects&#34;,
-                 &#34;__maximized&#34;, &#34;__window_exposed&#34;, &#34;__config&#34;, &#34;scrollbar_color&#34;)
-    
+    __slots__ = (
+        &#34;__screen&#34;,
+        &#34;__world&#34;,
+        &#34;__running&#34;,
+        &#34;__keys&#34;,
+        &#34;__mouse_in_window&#34;,
+        &#34;__size&#34;,
+        &#34;__mouse_down&#34;,
+        &#34;__clock&#34;,
+        &#34;__fps_limit&#34;,
+        &#34;__mouse_wheel&#34;,
+        &#34;__scrollbar&#34;,
+        &#34;__delta_size&#34;,
+        &#34;__delta_move&#34;,
+        &#34;show_scrollbar&#34;,
+        &#34;__scrollbar_rects&#34;,
+        &#34;__maximized&#34;,
+        &#34;__window_exposed&#34;,
+        &#34;__config&#34;,
+        &#34;scrollbar_color&#34;,
+    )
+
     __instance: Optional[&#34;Application&#34;] = None
     __pygame_info = pygame.display.Info()
     __sw = __pygame_info.current_w
     __sh = __pygame_info.current_h
-    
+
     DEFAULT_CONFIG = {
         &#34;generateDiagram&#34;: True,
         &#34;generateImage&#34;: True,
@@ -794,17 +874,17 @@ class Application:
         &#34;windowStartUpMode&#34;: pygame.SRCALPHA,
         &#34;firstWorld&#34;: None,
         &#34;title&#34;: &#34;PyGreenfoot Game&#34;,
-        &#34;icon&#34;: &#34;wizard.png&#34;
+        &#34;icon&#34;: &#34;wizard.png&#34;,
     }
     CONFIG_FILENAME = &#34;pygreenfoot.config&#34;
     CONFIG_DELIMITER = &#34;=&#34;
-    
+
     def __new__(cls) -&gt; &#34;Application&#34;:
         if Application.__instance is None:
             Application.__instance = super().__new__(cls)
             return Application.__instance
         raise RuntimeError(&#34;No new instances of Application are allowed&#34;)
-    
+
     def __init__(self) -&gt; None:
         self.__running: bool = False
         self.__world: Optional[World] = None
@@ -820,34 +900,37 @@ class Application:
         self.scrollbar_color: Color = Color(128, 128, 128)
         self.show_scrollbar: List[bool] = [True, True]
         self.__scrollbar: Tuple[bool, bool] = (False, False)
-        self.__scrollbar_rects: Tuple[pygame.rect.Rect, pygame.rect.Rect] = (pygame.rect.Rect(0, 0, 0, 10), pygame.rect.Rect(0, 0, 10, 0))
+        self.__scrollbar_rects: Tuple[pygame.rect.Rect, pygame.rect.Rect] = (
+            pygame.rect.Rect(0, 0, 0, 10),
+            pygame.rect.Rect(0, 0, 10, 0),
+        )
         self.__size: Tuple[int, int] = (0, 0)
         self.__maximized: bool = False
         self.__window_exposed: int = 0
         self.__config = Application.DEFAULT_CONFIG
-        
+
     def start(self) -&gt; None:
         &#34;&#34;&#34;Initialize the application
 
         Raises:
-            RuntimeError: When no starting scene is given
+            RuntimeError: When no starting world is given
         &#34;&#34;&#34;
         if self.__world is None:
             raise RuntimeError(&#34;Scene has to be set before running the application&#34;)
         self.__running = True
         self.__update_screen()
         self.__handle_events()
-        
+
     def stop(self, stop_sounds: bool = True) -&gt; None:
         &#34;&#34;&#34;
-        Stops the application and clean ups pygame. This forces no exit of the python process. 
+        Stops the application and clean ups pygame. This forces no exit of the python process.
         Everthing after the main function will be executed
         &#34;&#34;&#34;
         self.__running = False
         if stop_sounds:
             Sound.stop_all()
         pygame.quit()
-        
+
     def __update_screen(self) -&gt; None:
         &#34;&#34;&#34;
         Updates the screen and reconfigures the scrollbars
@@ -855,24 +938,24 @@ class Application:
         world = self.current_world
         aw = world.width * world.cell_size if world else Application.__sw // 2
         ah = world.height * world.cell_size if world else Application.__sh // 2
-        
+
         if self.__config.get(&#34;windowWidth&#34;):
             w = self.__config[&#34;windowWidth&#34;]
         else:
             w = min(aw, Application.__sw)
-    
+
         if self.__config.get(&#34;windowHeight&#34;):
             h = self.__config[&#34;windowHeight&#34;]
         else:
             h = min(ah, Application.__sh - 50)
 
         self.__screen = pygame.display.set_mode((w, h), self.__config[&#34;windowMode&#34;] | pygame.SRCALPHA)  # type: ignore
-        
+
         if not self.__maximized:
             self.__size = self.__screen.get_size()
-            
+
         self.__calc_scrollbars()
-            
+
     def __calc_scrollbars(self) -&gt; None:
         &#34;&#34;&#34;
         Recalculates if scrollbars are needed
@@ -880,12 +963,12 @@ class Application:
         if self.current_world:
             world_surface = self.current_world._surface
             screen_width, screen_height = self.__screen.get_size()
-            
+
             self.__scrollbar = (
                 screen_width &lt; world_surface.get_width(),
-                screen_height &lt; world_surface.get_height()
+                screen_height &lt; world_surface.get_height(),
             )
-            
+
             if self.__maximized:
                 # fixing world position if scrollbars get lost on resize
                 if not self.__scrollbar[0]:
@@ -894,7 +977,7 @@ class Application:
                 if not self.__scrollbar[1]:
                     self.__scrollbar_rects[1].y = 0
                     self.__make_scrollbar_x(world_surface, screen_height, True)
-        
+
     @property
     def current_world(self) -&gt; World:
         &#34;&#34;&#34;the world which is displayed in the window
@@ -915,14 +998,14 @@ class Application:
             raise RuntimeError(&#34;world cannot be set to None&#34;)
         elif not isinstance(world, World):
             raise RuntimeError(&#34;world instance has to inherit from World&#34;)
-        
+
         self.__world = world
         self.__update_screen()
-        
+
     @property
     def fps(self) -&gt; int:
         &#34;&#34;&#34;The fps limit for the game.
-        This value can be configured in the `pygreenfoot.config` 
+        This value can be configured in the `pygreenfoot.config`
         file for initial setup or later through accessing this property.
         The value defaults to 60.
 
@@ -930,13 +1013,13 @@ class Application:
             int: the current set fps limit
         &#34;&#34;&#34;
         return self.__fps_limit
-    
+
     @fps.setter
     def fps(self, fps_limit: int) -&gt; None:
         if fps_limit &lt;= 0:
             raise ValueError(&#34;fps limit must be greater than 0&#34;)
         self.__fps_limit = fps_limit
-        
+
     def is_running(self) -&gt; bool:
         &#34;&#34;&#34;An boolean indicating if the application is simulating a world
 
@@ -944,7 +1027,7 @@ class Application:
             bool: True if the application is running, otherwise False
         &#34;&#34;&#34;
         return self.__running
-    
+
     def __handle_events(self) -&gt; None:
         &#34;&#34;&#34;
         Handle close, key and mouse events as needed to provide data to the user
@@ -953,76 +1036,76 @@ class Application:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.stop()
-                
+
             elif event.type == pygame.KEYDOWN:
                 self.__keys[event.key] = True
-                
+
             elif event.type == pygame.KEYUP:
                 self.__keys[event.key] = False
-                
+
             elif event.type == pygame.MOUSEWHEEL:
                 self.__mouse_wheel += event.y
-            
+
             elif event.type == pygame.WINDOWENTER:
                 self.__mouse_in_window = True
-            
+
             elif event.type == pygame.WINDOWLEAVE:
                 self.__mouse_in_window = False
-                
+
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 sr = self.__scrollbar_rects
                 if sr is None:
                     continue
-                
+
                 pos: Tuple[int, int] = event.pos
                 if sr[0].collidepoint(pos):
                     self.__mouse_down = 0
                 elif sr[1].collidepoint(pos):
                     self.__mouse_down = 1
-            
+
             elif self.__mouse_down is not None and event.type == pygame.MOUSEMOTION:
                 index = self.__mouse_down
                 if index == 0:
                     self.__scrollbar_rects[0].x += event.rel[0]
                 elif index == 1:
                     self.__scrollbar_rects[1].y += event.rel[1]
-                
+
             elif event.type == pygame.MOUSEBUTTONUP:
                 self.__mouse_down = None
-                
+
             elif event.type == pygame.ACTIVEEVENT:
                 if getattr(event, &#34;gain&#34;, -1) == 0 and self.__mouse_down is not None:
                     self.__mouse_down = None
-                    
+
             elif event.type == pygame.WINDOWSIZECHANGED:
                 self.__size = (event.x, event.y)
                 self.__calc_scrollbars()
-                
+
             elif event.type == pygame.WINDOWMAXIMIZED:
                 self.__maximized = True
                 self.__calc_scrollbars()
-                
+
             elif event.type == pygame.WINDOWMINIMIZED:
                 self.__maximized = False
-                
+
             elif event.type == pygame.WINDOWEXPOSED or self.__window_exposed:
                 self.__window_exposed += 1
-      
+
     def update(self, act_cycle: bool = True) -&gt; None:
         &#34;&#34;&#34;
         Needs to be called once for frame
         Handles the pygame events (and thus, prevents pygame from freezing) as well as updates the screen
         &#34;&#34;&#34;
         self.__handle_events()
-        
+
         if act_cycle:
             self.current_world._calc_frame()
-        else:
+        elif self.current_world._check_world_time():
             self.current_world.repaint()
-        
+
         if not self.__running:
             return
-            
+
         world_surf = self.current_world._surface
         self.__delta_size = pygame.math.Vector2(
             max(0, self.__screen.get_width() - world_surf.get_width()) // 2,
@@ -1030,21 +1113,31 @@ class Application:
         )
         self.__make_scrollbars()
         diff = self.__delta_move + self.__delta_size
-        
+
         self.__screen.blit(world_surf, diff)
-        
+
         if self.__scrollbar[0] and self.show_scrollbar[0]:
-            pygame.draw.rect(self.__screen, self.scrollbar_color._pygame, self.__scrollbar_rects[0], border_radius=3)
-        
+            pygame.draw.rect(
+                self.__screen,
+                self.scrollbar_color._pygame,
+                self.__scrollbar_rects[0],
+                border_radius=3,
+            )
+
         if self.__scrollbar[1] and self.show_scrollbar[1]:
-            pygame.draw.rect(self.__screen, self.scrollbar_color._pygame, self.__scrollbar_rects[1], border_radius=3)            
-        
+            pygame.draw.rect(
+                self.__screen,
+                self.scrollbar_color._pygame,
+                self.__scrollbar_rects[1],
+                border_radius=3,
+            )
+
         pygame.display.update()
-        
+
         self.__clock.tick(self.__fps_limit)
-        
+
         self.__screen.fill([0] * 3)
-        
+
     def __make_scrollbars(self, force=False) -&gt; None:
         &#34;&#34;&#34;
         Bundle method to call make_scrollbar functions
@@ -1053,8 +1146,10 @@ class Application:
         screen_width, screen_height = self.__size
         self.__make_scrollbar_x(world_surface, screen_width, force)
         self.__make_scrollbar_y(world_surface, screen_height, force)
-        
-    def __make_scrollbar_x(self, world_surf: pygame.surface.Surface, screen_width: int, force=False) -&gt; None:
+
+    def __make_scrollbar_x(
+        self, world_surf: pygame.surface.Surface, screen_width: int, force=False
+    ) -&gt; None:
         &#34;&#34;&#34;
         Calculates position of the world surfaces and the horizontal scrollbar
 
@@ -1065,20 +1160,21 @@ class Application:
         if self.__scrollbar[0] or force:
             vr = self.__scrollbar_rects[0]
             fraction_width = screen_width / (world_surf.get_width() + screen_width)
-            
+
             if fraction_width &gt;= 1:
                 return
-            
+
             vr.y = self.__screen.get_height() - 3 - vr.height
             vr.width = int(fraction_width * screen_width)
-            
+
             xmax = screen_width - vr.width
             vr.x = limit_value(vr.x, 0, xmax)
-            
+
             self.__delta_move.x = -vr.x / xmax * (world_surf.get_width() - screen_width)
-            
-    
-    def __make_scrollbar_y(self, world_surf: pygame.surface.Surface, screen_height: int, force=False) -&gt; None:
+
+    def __make_scrollbar_y(
+        self, world_surf: pygame.surface.Surface, screen_height: int, force=False
+    ) -&gt; None:
         &#34;&#34;&#34;
         Calculates the position of the world surfaces and the vertical scrollbar
 
@@ -1089,19 +1185,20 @@ class Application:
         if self.__scrollbar[1] or force:
             hr = self.__scrollbar_rects[1]
             fraction_height = screen_height / (world_surf.get_height() + screen_height)
-            
+
             if fraction_height &gt;= 1:
                 return
-            
+
             hr.x = self.__screen.get_width() - 3 - hr.width
             hr.height = int(fraction_height * screen_height)
-            
+
             ymax = screen_height - hr.height
             hr.y = limit_value(hr.y, 0, ymax)
-            
-            self.__delta_move.y = -hr.y / ymax * (world_surf.get_height() - screen_height)
-    
-                    
+
+            self.__delta_move.y = (
+                -hr.y / ymax * (world_surf.get_height() - screen_height)
+            )
+
     def get_key_states(self, *keys: int) -&gt; Tuple[bool, ...]:
         &#34;&#34;&#34;Return a series of boolean indictating if the given key at index is pressed (True) or released (False)
 
@@ -1112,7 +1209,7 @@ class Application:
             Tuple[bool, ...]: a tuple with the same length as the input data
         &#34;&#34;&#34;
         return tuple(self.__keys[k] for k in keys)
-    
+
     def get_mouse_states(self) -&gt; &#34;MouseInfo&#34;:
         &#34;&#34;&#34;
         Returns the mouse state in a MouseInfo object
@@ -1121,13 +1218,15 @@ class Application:
             MouseInfo: the mouse info object with the mouse states
         &#34;&#34;&#34;
         return MouseInfo(self.__mouse_wheel)
-    
+
     def read_config(self) -&gt; None:
         &#34;&#34;&#34;
         Parses the config file if provided
         &#34;&#34;&#34;
+
         def _unknown_key(value):
             raise TypeError(&#34;Key is unknown&#34;)
+
         cnf_file: str = os.path.join(&#34;.&#34;, Application.CONFIG_FILENAME)
         if not os.access(cnf_file, os.R_OK):
             print(&#34;INFO: No readable config file found&#34;)
@@ -1137,7 +1236,8 @@ class Application:
         with open(cnf_file, &#34;r&#34;) as f:
             for line in f:
                 line = line.lstrip().rstrip(&#34;\n&#34;)
-                if line.startswith(&#34;#&#34;): continue
+                if line.startswith(&#34;#&#34;):
+                    continue
                 if Application.CONFIG_DELIMITER not in line:
                     print(&#34;WARNING: No `=` in config file line&#34;)
                     continue
@@ -1146,25 +1246,25 @@ class Application:
                 try:
                     v = _config_key_converter.get(key, _unknown_key)(attr)
                 except TypeError as e:
-                    print(&#34;ERROR: %r: %s&#34; %(key, e.args))
+                    print(&#34;ERROR: %r: %s&#34; % (key, e.args))
                 else:
                     parsed[key] = v
         self.__config.update(parsed)
-        
+
     @property
     def image_folder(self) -&gt; str:
         &#34;&#34;&#34;
         Returns the relative path to the image folder in the cwd
         &#34;&#34;&#34;
         return self.__config[&#34;imageResourceFolder&#34;]
-    
+
     @property
     def sound_folder(self) -&gt; str:
         &#34;&#34;&#34;
         Returns the relative path to the sound folder in the cwd
         &#34;&#34;&#34;
         return self.__config[&#34;soundResourceFolder&#34;]
-    
+
     @property
     def default_world_speed(self) -&gt; float:
         &#34;&#34;&#34;
@@ -1174,7 +1274,7 @@ class Application:
             float: the world speed.
         &#34;&#34;&#34;
         return self.__config[&#34;defaultWorldSpeed&#34;]
-    
+
     @staticmethod
     def get_app() -&gt; &#34;Application&#34;:
         &#34;&#34;&#34;
@@ -1186,7 +1286,7 @@ class Application:
         if Application.__instance is None:
             Application.__instance = Application()
         return Application.__instance
-    
+
     def setup_folder(self):
         &#34;&#34;&#34;
         Creates the resource folders if necessary.
@@ -1197,24 +1297,22 @@ class Application:
 
         if not os.access(self.__config[&#34;soundResourceFolder&#34;], os.F_OK):
             os.mkdir(self.__config[&#34;soundResourceFolder&#34;], 0o444)
-            
+
     def apply_config(self) -&gt; None:
         &#34;&#34;&#34;
         Applies other config keys like fps limit or window caption
         &#34;&#34;&#34;
         self.setup_folder()
         self.__fps_limit = self.__config[&#34;fpsLimit&#34;]
-        pygame.display.set_caption(self.__config[&#34;title&#34;], )
+        pygame.display.set_caption(
+            self.__config[&#34;title&#34;],
+        )
         pygame.display.set_icon(
             Image.from_filename(
-                get_resource_path(
-                    self.__config[&#34;icon&#34;],
-                    &#34;image&#34;
-                )
+                get_resource_path(self.__config[&#34;icon&#34;], &#34;image&#34;)
             )._surface
         )
-        
-                
+
     @staticmethod
     def main(first_world: Optional[Type[FirstWorld]] = None) -&gt; None:
         &#34;&#34;&#34;
@@ -1226,48 +1324,60 @@ class Application:
         app = Application.get_app()
         app.read_config()
         app.apply_config()
-        
+
         if first_world is None:
             first_world_str = app.__config[&#34;firstWorld&#34;]
             try:
                 world = get_module_str_import(first_world_str)
             except ImportError:
-                print(&#34;World entry %r in pygreenfoot.config is invalid or does not exist&#34; % first_world_str, file=sys.stderr)
+                print(
+                    &#34;World entry %r in pygreenfoot.config is invalid or does not exist&#34;
+                    % first_world_str,
+                    file=sys.stderr,
+                )
             else:
                 if not issubclass(world, World):
-                    print(&#34;world entry %r in pygreenfoot.config does not inherit from pygreenfoot.World&#34; % first_world_str, file=sys.stderr)
+                    print(
+                        &#34;world entry %r in pygreenfoot.config does not inherit from pygreenfoot.World&#34;
+                        % first_world_str,
+                        file=sys.stderr,
+                    )
                     exit(-1)
-                first_world = world # type: ignore
-        
-        app.current_world = first_world() # type: ignore
-        
+                first_world = world  # type: ignore
+
+        app.current_world = first_world()  # type: ignore
+
         if app.__config[&#34;generateDiagram&#34;]:
             t = threading.Thread(
                 target=create_inheritance_tree,
                 kwargs={
                     &#34;ignore&#34;: [
                         app.__config[&#34;imageResourceFolder&#34;],
-                        app.__config[&#34;soundResourceFolder&#34;]
+                        app.__config[&#34;soundResourceFolder&#34;],
                     ],
                     &#34;output_dir&#34;: app.__config[&#34;diagramFolder&#34;],
                     &#34;output_file&#34;: app.__config[&#34;diagramFilename&#34;],
                     &#34;temp_file&#34;: app.__config[&#34;tempPlantumlFile&#34;],
-                    &#34;generate_image&#34;: app.__config[&#34;generateImage&#34;]
-                }
+                    &#34;generate_image&#34;: app.__config[&#34;generateImage&#34;],
+                },
             )
             t.start()
-            
+
         try:
             app.start()
             while app.is_running():
                 app.update()
-            
+
             app.quit()
-            
+
+        except pygame.error as e:
+            if app.is_running():
+                raise e
+
         finally:
             if app.__config[&#34;generateDiagram&#34;]:
                 t.join()  # type: ignore
-    
+
     def is_mouse_in_window(self) -&gt; bool:
         &#34;&#34;&#34;
         Check if the mouse is in the winow
@@ -1276,14 +1386,14 @@ class Application:
             bool: True if the mouse is in the winow else False
         &#34;&#34;&#34;
         return self.__mouse_in_window
-    
+
     def quit(self) -&gt; None:
         &#34;&#34;&#34;
-        Quits the game/application and forces exit of the python process. Use `app.stop()` when the python process shall continue.  
+        Quits the game/application and forces exit of the python process. Use `app.stop()` when the python process shall continue.
         &#34;&#34;&#34;
         self.stop(stop_sounds=True)
         exit(0)
-        
+
     def move_world(self, delta_x: int = 0, delta_y: int = 0) -&gt; None:
         &#34;&#34;&#34;
         Moves the world in px by moving the scrollbars by (delta_x, delta_y). Boundaries are automatically applied
@@ -1294,7 +1404,7 @@ class Application:
         &#34;&#34;&#34;
         self.__scrollbar_rects[0].x += delta_x
         self.__scrollbar_rects[1].y += delta_y
-        
+
     def set_world_position(self, x: int = 0, y: int = 0) -&gt; None:
         &#34;&#34;&#34;
         Sets the world position by setting the scrollbars Boundaries are applied automatically
@@ -1305,7 +1415,7 @@ class Application:
         &#34;&#34;&#34;
         self.__scrollbar_rects[0].x = x
         self.__scrollbar_rects[1].y = y
-        
+
     @property
     def delta_pos(self) -&gt; Tuple[int, int]:
         &#34;&#34;&#34;
@@ -1386,44 +1496,56 @@ def main(first_world: Optional[Type[FirstWorld]] = None) -&gt; None:
     app = Application.get_app()
     app.read_config()
     app.apply_config()
-    
+
     if first_world is None:
         first_world_str = app.__config[&#34;firstWorld&#34;]
         try:
             world = get_module_str_import(first_world_str)
         except ImportError:
-            print(&#34;World entry %r in pygreenfoot.config is invalid or does not exist&#34; % first_world_str, file=sys.stderr)
+            print(
+                &#34;World entry %r in pygreenfoot.config is invalid or does not exist&#34;
+                % first_world_str,
+                file=sys.stderr,
+            )
         else:
             if not issubclass(world, World):
-                print(&#34;world entry %r in pygreenfoot.config does not inherit from pygreenfoot.World&#34; % first_world_str, file=sys.stderr)
+                print(
+                    &#34;world entry %r in pygreenfoot.config does not inherit from pygreenfoot.World&#34;
+                    % first_world_str,
+                    file=sys.stderr,
+                )
                 exit(-1)
-            first_world = world # type: ignore
-    
-    app.current_world = first_world() # type: ignore
-    
+            first_world = world  # type: ignore
+
+    app.current_world = first_world()  # type: ignore
+
     if app.__config[&#34;generateDiagram&#34;]:
         t = threading.Thread(
             target=create_inheritance_tree,
             kwargs={
                 &#34;ignore&#34;: [
                     app.__config[&#34;imageResourceFolder&#34;],
-                    app.__config[&#34;soundResourceFolder&#34;]
+                    app.__config[&#34;soundResourceFolder&#34;],
                 ],
                 &#34;output_dir&#34;: app.__config[&#34;diagramFolder&#34;],
                 &#34;output_file&#34;: app.__config[&#34;diagramFilename&#34;],
                 &#34;temp_file&#34;: app.__config[&#34;tempPlantumlFile&#34;],
-                &#34;generate_image&#34;: app.__config[&#34;generateImage&#34;]
-            }
+                &#34;generate_image&#34;: app.__config[&#34;generateImage&#34;],
+            },
         )
         t.start()
-        
+
     try:
         app.start()
         while app.is_running():
             app.update()
-        
+
         app.quit()
-        
+
+    except pygame.error as e:
+        if app.is_running():
+            raise e
+
     finally:
         if app.__config[&#34;generateDiagram&#34;]:
             t.join()  # type: ignore</code></pre>
@@ -1529,7 +1651,7 @@ The value defaults to 60.</p>
 <pre><code class="python">@property
 def fps(self) -&gt; int:
     &#34;&#34;&#34;The fps limit for the game.
-    This value can be configured in the `pygreenfoot.config` 
+    This value can be configured in the `pygreenfoot.config`
     file for initial setup or later through accessing this property.
     The value defaults to 60.
 
@@ -1595,13 +1717,12 @@ def sound_folder(self) -&gt; str:
     &#34;&#34;&#34;
     self.setup_folder()
     self.__fps_limit = self.__config[&#34;fpsLimit&#34;]
-    pygame.display.set_caption(self.__config[&#34;title&#34;], )
+    pygame.display.set_caption(
+        self.__config[&#34;title&#34;],
+    )
     pygame.display.set_icon(
         Image.from_filename(
-            get_resource_path(
-                self.__config[&#34;icon&#34;],
-                &#34;image&#34;
-            )
+            get_resource_path(self.__config[&#34;icon&#34;], &#34;image&#34;)
         )._surface
     )</code></pre>
 </details>
@@ -1747,7 +1868,7 @@ def sound_folder(self) -&gt; str:
 </summary>
 <pre><code class="python">def quit(self) -&gt; None:
     &#34;&#34;&#34;
-    Quits the game/application and forces exit of the python process. Use `app.stop()` when the python process shall continue.  
+    Quits the game/application and forces exit of the python process. Use `app.stop()` when the python process shall continue.
     &#34;&#34;&#34;
     self.stop(stop_sounds=True)
     exit(0)</code></pre>
@@ -1766,8 +1887,10 @@ def sound_folder(self) -&gt; str:
     &#34;&#34;&#34;
     Parses the config file if provided
     &#34;&#34;&#34;
+
     def _unknown_key(value):
         raise TypeError(&#34;Key is unknown&#34;)
+
     cnf_file: str = os.path.join(&#34;.&#34;, Application.CONFIG_FILENAME)
     if not os.access(cnf_file, os.R_OK):
         print(&#34;INFO: No readable config file found&#34;)
@@ -1777,7 +1900,8 @@ def sound_folder(self) -&gt; str:
     with open(cnf_file, &#34;r&#34;) as f:
         for line in f:
             line = line.lstrip().rstrip(&#34;\n&#34;)
-            if line.startswith(&#34;#&#34;): continue
+            if line.startswith(&#34;#&#34;):
+                continue
             if Application.CONFIG_DELIMITER not in line:
                 print(&#34;WARNING: No `=` in config file line&#34;)
                 continue
@@ -1786,7 +1910,7 @@ def sound_folder(self) -&gt; str:
             try:
                 v = _config_key_converter.get(key, _unknown_key)(attr)
             except TypeError as e:
-                print(&#34;ERROR: %r: %s&#34; %(key, e.args))
+                print(&#34;ERROR: %r: %s&#34; % (key, e.args))
             else:
                 parsed[key] = v
     self.__config.update(parsed)</code></pre>
@@ -1849,7 +1973,7 @@ def sound_folder(self) -&gt; str:
 <h2 id="raises">Raises</h2>
 <dl>
 <dt><code>RuntimeError</code></dt>
-<dd>When no starting scene is given</dd>
+<dd>When no starting world is given</dd>
 </dl></div>
 <details class="source">
 <summary>
@@ -1859,7 +1983,7 @@ def sound_folder(self) -&gt; str:
     &#34;&#34;&#34;Initialize the application
 
     Raises:
-        RuntimeError: When no starting scene is given
+        RuntimeError: When no starting world is given
     &#34;&#34;&#34;
     if self.__world is None:
         raise RuntimeError(&#34;Scene has to be set before running the application&#34;)
@@ -1880,7 +2004,7 @@ Everthing after the main function will be executed</p></div>
 </summary>
 <pre><code class="python">def stop(self, stop_sounds: bool = True) -&gt; None:
     &#34;&#34;&#34;
-    Stops the application and clean ups pygame. This forces no exit of the python process. 
+    Stops the application and clean ups pygame. This forces no exit of the python process.
     Everthing after the main function will be executed
     &#34;&#34;&#34;
     self.__running = False
@@ -1905,15 +2029,15 @@ Handles the pygame events (and thus, prevents pygame from freezing) as well as u
     Handles the pygame events (and thus, prevents pygame from freezing) as well as updates the screen
     &#34;&#34;&#34;
     self.__handle_events()
-    
+
     if act_cycle:
         self.current_world._calc_frame()
-    else:
+    elif self.current_world._check_world_time():
         self.current_world.repaint()
-    
+
     if not self.__running:
         return
-        
+
     world_surf = self.current_world._surface
     self.__delta_size = pygame.math.Vector2(
         max(0, self.__screen.get_width() - world_surf.get_width()) // 2,
@@ -1921,19 +2045,29 @@ Handles the pygame events (and thus, prevents pygame from freezing) as well as u
     )
     self.__make_scrollbars()
     diff = self.__delta_move + self.__delta_size
-    
+
     self.__screen.blit(world_surf, diff)
-    
+
     if self.__scrollbar[0] and self.show_scrollbar[0]:
-        pygame.draw.rect(self.__screen, self.scrollbar_color._pygame, self.__scrollbar_rects[0], border_radius=3)
-    
+        pygame.draw.rect(
+            self.__screen,
+            self.scrollbar_color._pygame,
+            self.__scrollbar_rects[0],
+            border_radius=3,
+        )
+
     if self.__scrollbar[1] and self.show_scrollbar[1]:
-        pygame.draw.rect(self.__screen, self.scrollbar_color._pygame, self.__scrollbar_rects[1], border_radius=3)            
-    
+        pygame.draw.rect(
+            self.__screen,
+            self.scrollbar_color._pygame,
+            self.__scrollbar_rects[1],
+            border_radius=3,
+        )
+
     pygame.display.update()
-    
+
     self.__clock.tick(self.__fps_limit)
-    
+
     self.__screen.fill([0] * 3)</code></pre>
 </details>
 </dd>

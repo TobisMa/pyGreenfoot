@@ -29,6 +29,7 @@
 <pre><code class="python">import os
 import ast
 from typing import Dict, List, Optional, Set
+
 try:
     from plantuml import PlantUML
 except ImportError:
@@ -38,26 +39,31 @@ else:
 
 
 class ClassRepresentation:
-    
     _classes: Dict[str, &#34;ClassRepresentation&#34;] = {}
-    
-    def __init__(self, name: str, methods: List[str] = ..., variables: List[str] = ..., bases: List[str] = ..., inner_clses: List[&#34;ClassRepresentation&#34;] = ...):
+
+    def __init__(
+        self,
+        name: str,
+        methods: List[str] = ...,
+        variables: List[str] = ...,
+        bases: List[str] = ...,
+        inner_clses: List[&#34;ClassRepresentation&#34;] = ...,
+    ):
         self.name = name
         self.methods = [] if methods is ... else methods
         self.variables = [] if variables is ... else variables
         self.bases = [] if bases is ... else bases
         self.inner_classes = [] if inner_clses is ... else inner_clses
-        
+
         self._classes[self.name] = self
-        
+
     def __repr__(self) -&gt; str:
         return f&#34;&#34;&#34;class {self.name} {{
 \t{(chr(10) + chr(9)).join(self.variables)}
 \t{(chr(10) + chr(9)).join(self.methods)}
 }}
 &#34;&#34;&#34;
-        
-        
+
     def __hash__(self) -&gt; int:
         return hash(self.name)
 
@@ -67,62 +73,61 @@ def create_inheritance_tree(
     output_dir: str = &#34;_structure&#34;,
     output_file: str = &#34;diagram.wsd&#34;,
     generate_image: bool = True,
-    temp_file: bool = False
+    temp_file: bool = False,
 ):
     print(ignore, output_dir, output_file, generate_image, temp_file)
     if ignore is None:
         ignore = []
-        
+
     inheritance_tree = {}
     for dir, dirs, files in os.walk(os.getcwd()):
         if dir.endswith((&#34;__pycache__&#34;, *ignore)):
             continue
-        
+
         for file in files:
             if not file.endswith(&#34;.py&#34;):
                 continue
-            
+
             file_path = os.path.join(dir, file)
             print(&#34;Parse File %r&#34; % file_path)
             with open(file_path, &#34;r&#34;) as f:
                 tree = ast.parse(f.read(), file, mode=&#34;exec&#34;)
-            
+
             # print(ast.dump(tree, indent=2))
             clses = get_class_from_ast(tree)
             for cls in clses:
                 inheritance_tree[cls.name] = set(cls.bases)
-    
+
     if not os.access(output_dir, os.W_OK):
         os.makedirs(output_dir)
 
-    out_path = os.path.join(output_dir, output_file) 
+    out_path = os.path.join(output_dir, output_file)
 
     with open(out_path + &#34;.wsd&#34;, &#34;w&#34;) as f:
         f.write(&#34;@startuml pyGreenfootClsDiagram\n\n&#34;)
         for name, cls in ClassRepresentation._classes.items():
             print(&#34;Writing class %r&#34; % name)
             f.write(repr(cls) + &#34;\n&#34;)
-        
+
         print(&#34;Generating arrows&#34;)
         f.write(generate_arrows(inheritance_tree))
         f.write(&#34;\n@enduml&#34;)
-        
+
     print(&#34;Successfully generated class diagramm&#34;)
     if not _plantuml:
         print(&#34;WARNING: Cannot generate image. No plantuml installed.&#34;)
         print(&#34;WARNING: Install by executin `python -m pip install plantuml`&#34;)
-        
+
     elif generate_image:
         pl = PlantUML(&#34;http://www.plantuml.com/plantuml/img/&#34;)
         print(&#34;Generating image using external server...&#34;)
         pl.processes_file(out_path + &#34;.wsd&#34;, out_path + &#34;.png&#34;)
         print(&#34;Successfully generated image&#34;)
-    
+
     if temp_file:
         os.remove(out_path + &#34;.wsd&#34;)
-    
 
-        
+
 def generate_arrows(tree: Dict[str, Set[str]]) -&gt; str:
     arrows = &#34;&#34;
     for cls, bases in tree.items():
@@ -130,16 +135,16 @@ def generate_arrows(tree: Dict[str, Set[str]]) -&gt; str:
             arrows += f&#34;{base} &lt;|-- {cls}\n&#34;
         arrows += &#34;\n&#34;
     return arrows
-            
+
 
 def get_class_from_ast(ast_module: ast.Module) -&gt; List[ClassRepresentation]:
     res = []
     for ast_node in ast_module.body:
         if isinstance(ast_node, ast.ClassDef):
             res.append(parse_ast_class(ast_node))
-            
+
         # TODO clsmethods
-        
+
     return res
 
 
@@ -147,7 +152,7 @@ def parse_ast_class(ast_node: ast.ClassDef) -&gt; &#34;ClassRepresentation&#34;:
     res = ClassRepresentation(ast_node.name)
     for ast_name in ast_node.bases:
         res.bases.append(ast.unparse(ast_name))
-    
+
     for ast_body_node in ast_node.body:
         if isinstance(ast_body_node, ast.FunctionDef):
             res.methods.append(get_function_repr(ast_body_node))
@@ -165,13 +170,13 @@ def get_instance_vars(ast_init_func_def: ast.FunctionDef) -&gt; List[str]:
                     expr = ast.unparse(target)
                     if expr.startswith(&#34;self.&#34;):
                         cls_vars.append(expr[5:])
-                        
+
         elif isinstance(stmt, ast.AnnAssign):
             if isinstance(stmt.target, ast.Attribute):
                 expr = ast.unparse(stmt.target)
                 if expr.startswith(&#34;self.&#34;):
                     cls_vars.append(expr[5:] + &#34;: &#34; + ast.unparse(stmt.annotation))
-                    
+
     for i, name in enumerate(cls_vars, start=0):
         if name.startswith(&#34;__&#34;):
             cls_vars[i] = &#34;- &#34; + name
@@ -181,7 +186,6 @@ def get_instance_vars(ast_init_func_def: ast.FunctionDef) -&gt; List[str]:
             cls_vars[i] = &#34;+ &#34; + name
     return cls_vars
 
-    
 
 def get_function_repr(ast_func: ast.FunctionDef) -&gt; str:
     r = &#34;&#34;
@@ -192,25 +196,25 @@ def get_function_repr(ast_func: ast.FunctionDef) -&gt; str:
         r += &#34;~&#34;
     else:
         r += &#34;+&#34;
-        
+
     for decorator in ast_func.decorator_list:
         unparsed = ast.unparse(decorator)
         if unparsed.endswith(&#34;method&#34;):
             unparsed = unparsed[:-6]
         r += f&#34; {{{unparsed}}}&#34;
-    
+
     r += &#34; &#34; + name + &#34;(&#34;
     args = ast_func.args
 
-    r += &#39;, &#39;.join(get_arg_repr(arg) for arg in args.posonlyargs)
-    if args.posonlyargs: 
+    r += &#34;, &#34;.join(get_arg_repr(arg) for arg in args.posonlyargs)
+    if args.posonlyargs:
         r += &#34;, /,&#34;
 
-    r += &#39;, &#39;.join(get_arg_repr(arg) for arg in args.args)
+    r += &#34;, &#34;.join(get_arg_repr(arg) for arg in args.args)
     if args.kwonlyargs:
         if r[-1] != &#34;(&#34;:
             r += &#34;, &#34;
-        r += &#34;*, &#34; + &#39;, &#39;.join(get_arg_repr(arg) for arg in args.kwonlyargs)
+        r += &#34;*, &#34; + &#34;, &#34;.join(get_arg_repr(arg) for arg in args.kwonlyargs)
 
     if args.kwarg:
         r += &#34;, **&#34; + get_arg_repr(args.kwarg)
@@ -251,57 +255,57 @@ def get_arg_repr(ast_arg: ast.arg) -&gt; str:
     output_dir: str = &#34;_structure&#34;,
     output_file: str = &#34;diagram.wsd&#34;,
     generate_image: bool = True,
-    temp_file: bool = False
+    temp_file: bool = False,
 ):
     print(ignore, output_dir, output_file, generate_image, temp_file)
     if ignore is None:
         ignore = []
-        
+
     inheritance_tree = {}
     for dir, dirs, files in os.walk(os.getcwd()):
         if dir.endswith((&#34;__pycache__&#34;, *ignore)):
             continue
-        
+
         for file in files:
             if not file.endswith(&#34;.py&#34;):
                 continue
-            
+
             file_path = os.path.join(dir, file)
             print(&#34;Parse File %r&#34; % file_path)
             with open(file_path, &#34;r&#34;) as f:
                 tree = ast.parse(f.read(), file, mode=&#34;exec&#34;)
-            
+
             # print(ast.dump(tree, indent=2))
             clses = get_class_from_ast(tree)
             for cls in clses:
                 inheritance_tree[cls.name] = set(cls.bases)
-    
+
     if not os.access(output_dir, os.W_OK):
         os.makedirs(output_dir)
 
-    out_path = os.path.join(output_dir, output_file) 
+    out_path = os.path.join(output_dir, output_file)
 
     with open(out_path + &#34;.wsd&#34;, &#34;w&#34;) as f:
         f.write(&#34;@startuml pyGreenfootClsDiagram\n\n&#34;)
         for name, cls in ClassRepresentation._classes.items():
             print(&#34;Writing class %r&#34; % name)
             f.write(repr(cls) + &#34;\n&#34;)
-        
+
         print(&#34;Generating arrows&#34;)
         f.write(generate_arrows(inheritance_tree))
         f.write(&#34;\n@enduml&#34;)
-        
+
     print(&#34;Successfully generated class diagramm&#34;)
     if not _plantuml:
         print(&#34;WARNING: Cannot generate image. No plantuml installed.&#34;)
         print(&#34;WARNING: Install by executin `python -m pip install plantuml`&#34;)
-        
+
     elif generate_image:
         pl = PlantUML(&#34;http://www.plantuml.com/plantuml/img/&#34;)
         print(&#34;Generating image using external server...&#34;)
         pl.processes_file(out_path + &#34;.wsd&#34;, out_path + &#34;.png&#34;)
         print(&#34;Successfully generated image&#34;)
-    
+
     if temp_file:
         os.remove(out_path + &#34;.wsd&#34;)</code></pre>
 </details>
@@ -354,9 +358,9 @@ def get_arg_repr(ast_arg: ast.arg) -&gt; str:
     for ast_node in ast_module.body:
         if isinstance(ast_node, ast.ClassDef):
             res.append(parse_ast_class(ast_node))
-            
+
         # TODO clsmethods
-        
+
     return res</code></pre>
 </details>
 </dd>
@@ -378,25 +382,25 @@ def get_arg_repr(ast_arg: ast.arg) -&gt; str:
         r += &#34;~&#34;
     else:
         r += &#34;+&#34;
-        
+
     for decorator in ast_func.decorator_list:
         unparsed = ast.unparse(decorator)
         if unparsed.endswith(&#34;method&#34;):
             unparsed = unparsed[:-6]
         r += f&#34; {{{unparsed}}}&#34;
-    
+
     r += &#34; &#34; + name + &#34;(&#34;
     args = ast_func.args
 
-    r += &#39;, &#39;.join(get_arg_repr(arg) for arg in args.posonlyargs)
-    if args.posonlyargs: 
+    r += &#34;, &#34;.join(get_arg_repr(arg) for arg in args.posonlyargs)
+    if args.posonlyargs:
         r += &#34;, /,&#34;
 
-    r += &#39;, &#39;.join(get_arg_repr(arg) for arg in args.args)
+    r += &#34;, &#34;.join(get_arg_repr(arg) for arg in args.args)
     if args.kwonlyargs:
         if r[-1] != &#34;(&#34;:
             r += &#34;, &#34;
-        r += &#34;*, &#34; + &#39;, &#39;.join(get_arg_repr(arg) for arg in args.kwonlyargs)
+        r += &#34;*, &#34; + &#34;, &#34;.join(get_arg_repr(arg) for arg in args.kwonlyargs)
 
     if args.kwarg:
         r += &#34;, **&#34; + get_arg_repr(args.kwarg)
@@ -427,13 +431,13 @@ def get_arg_repr(ast_arg: ast.arg) -&gt; str:
                     expr = ast.unparse(target)
                     if expr.startswith(&#34;self.&#34;):
                         cls_vars.append(expr[5:])
-                        
+
         elif isinstance(stmt, ast.AnnAssign):
             if isinstance(stmt.target, ast.Attribute):
                 expr = ast.unparse(stmt.target)
                 if expr.startswith(&#34;self.&#34;):
                     cls_vars.append(expr[5:] + &#34;: &#34; + ast.unparse(stmt.annotation))
-                    
+
     for i, name in enumerate(cls_vars, start=0):
         if name.startswith(&#34;__&#34;):
             cls_vars[i] = &#34;- &#34; + name
@@ -457,7 +461,7 @@ def get_arg_repr(ast_arg: ast.arg) -&gt; str:
     res = ClassRepresentation(ast_node.name)
     for ast_name in ast_node.bases:
         res.bases.append(ast.unparse(ast_name))
-    
+
     for ast_body_node in ast_node.body:
         if isinstance(ast_body_node, ast.FunctionDef):
             res.methods.append(get_function_repr(ast_body_node))
@@ -482,26 +486,31 @@ def get_arg_repr(ast_arg: ast.arg) -&gt; str:
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class ClassRepresentation:
-    
     _classes: Dict[str, &#34;ClassRepresentation&#34;] = {}
-    
-    def __init__(self, name: str, methods: List[str] = ..., variables: List[str] = ..., bases: List[str] = ..., inner_clses: List[&#34;ClassRepresentation&#34;] = ...):
+
+    def __init__(
+        self,
+        name: str,
+        methods: List[str] = ...,
+        variables: List[str] = ...,
+        bases: List[str] = ...,
+        inner_clses: List[&#34;ClassRepresentation&#34;] = ...,
+    ):
         self.name = name
         self.methods = [] if methods is ... else methods
         self.variables = [] if variables is ... else variables
         self.bases = [] if bases is ... else bases
         self.inner_classes = [] if inner_clses is ... else inner_clses
-        
+
         self._classes[self.name] = self
-        
+
     def __repr__(self) -&gt; str:
         return f&#34;&#34;&#34;class {self.name} {{
 \t{(chr(10) + chr(9)).join(self.variables)}
 \t{(chr(10) + chr(9)).join(self.methods)}
 }}
 &#34;&#34;&#34;
-        
-        
+
     def __hash__(self) -&gt; int:
         return hash(self.name)</code></pre>
 </details>
