@@ -231,7 +231,14 @@ class Text:
     Class to easily have rendered text on screen with a font and other settings.
     """
 
-    __slots__ = ("__display_text", "font", "color", "__surface", "antialias")
+    __slots__ = (
+        "__display_text",
+        "__font",
+        "color",
+        "__surface",
+        "antialias",
+        "__update",
+    )
 
     def __init__(
         self,
@@ -248,13 +255,24 @@ class Text:
         color: Color,
         antialias: bool = True,
     ) -> None:
-        self.font: Font = font if isinstance(font, Font) else Font(*font)  # type: ignore
+        self.__font: Font = font if isinstance(font, Font) else Font(*font)  # type: ignore
         self.color: Color = color
         self.antialias: bool = antialias
         self.__display_text: str = str(display_text)
         self.__surface: pygame.surface.Surface = self.font._pygame.render(
             display_text, True, color._pygame
         )
+        self.__update = False
+
+    @property
+    def font(self) -> Font:
+        self.__update = True
+        return self.__font
+
+    @font.setter
+    def font(self, f: Font) -> None:
+        self.__update = True
+        self.__font = f
 
     @property
     def display_text(self) -> str:
@@ -266,13 +284,15 @@ class Text:
     @display_text.setter
     def display_text(self, value: Any) -> None:
         self.__display_text = str(value)
-        self.__surface = self.font._pygame.render(
-            self.__display_text, True, self.color._pygame
-        )
+        self.__update = True
 
     @property
     def _surface(self) -> pygame.surface.Surface:
         """
         The surface with the text on
         """
+        if self.__update:
+            self.__surface = self.font._pygame.render(
+                self.__display_text, True, self.color._pygame
+            )
         return self.__surface
