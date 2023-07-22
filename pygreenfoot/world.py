@@ -129,6 +129,8 @@ class World(metaclass=ABCMeta):
         """
         if self.__background is not None:
             self.__canvas.blit(self.__background._surface, (0, 0))
+        else:
+            self.__canvas.fill([0, 0, 0])
 
         if only_background:
             return
