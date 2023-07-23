@@ -7,10 +7,11 @@ FONTS = pygame.font.get_fonts()
 
 FontType = Union[
     Union[
-        Tuple[int, str],
-        Tuple[int, str, bool],
-        Tuple[int, str, bool, bool],
-        Tuple[int, str, bool, bool, bool],
+        Tuple[str, int],
+        Tuple[str, int, bool],
+        Tuple[str, int, bool, bool],
+        Tuple[str, int, bool, bool, bool],
+        Tuple[str, int, bool, bool, bool, bool],
     ],
     "Font",
 ]
@@ -242,15 +243,7 @@ class Text:
 
     def __init__(
         self,
-        font: Union[
-            Union[
-                Tuple[int, str, bool, bool, bool],
-                Tuple[int, str, bool, bool],
-                Tuple[int, str, bool],
-                Tuple[int, str],
-            ],
-            "Font",
-        ],
+        font: FontType,
         display_text: Any,
         color: Color,
         antialias: bool = True,
