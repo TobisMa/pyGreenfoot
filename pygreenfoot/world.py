@@ -2,7 +2,18 @@ from abc import ABCMeta
 from collections import defaultdict
 from functools import cached_property
 from time import time
-from typing import DefaultDict, Dict, Generator, List, Optional, Set, Tuple, Type, Union
+from typing import (
+    DefaultDict,
+    Dict,
+    Generator,
+    Iterable,
+    List,
+    Optional,
+    Set,
+    Tuple,
+    Type,
+    Union,
+)
 
 import pygame
 
@@ -287,11 +298,28 @@ class World(metaclass=ABCMeta):
         """
         the same as get_actors but returns a generator object
         """
-        if type_ is None:
+        if type_ is None or type_ == Actor:
             for actor_set in self.__objects.values():
                 yield from actor_set  # type: ignore
         else:
-            yield from self.__objects[type_]  # type: ignore
+            bases = self._get_subclasses(type_)
+            for base in bases:
+                yield from self.__objects[base]  # type: ignore
+
+    def _get_subclasses(self, type_: Type[Actor]) -> Generator[Type[Actor], None, None]:
+        """
+        Retrieves the subclasses of a given superclass type_
+
+        Args:
+            type_ (Type[ActorType_]): common base class of subclasses
+
+        Returns:
+            Generator[Type[Actor], None, None]: a generator of all the subclasses having type_ somewhere above them in their inheritance tree
+        """
+        yield type_
+        for subclass in type_.__subclasses__():
+            if issubclass(subclass, Actor):
+                yield from self._get_subclasses(subclass)
 
     def get_objects_at(
         self, x: int, y: int, type_: Optional[Type[_ActorType]] = None
