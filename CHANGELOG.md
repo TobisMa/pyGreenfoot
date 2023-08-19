@@ -1,5 +1,7 @@
 ## Changes since last release:
 
-- fixed background in worlds
-- better requirements
-- versioning within the package
+- added documentation
+- better font handling (memory; especially linux)
+- corrected/better type hints
+- fixing method with interacting between actors
+- when using methods like touch and intersect, check for subclasses as well
