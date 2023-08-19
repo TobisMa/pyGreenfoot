@@ -224,7 +224,9 @@ class Actor(metaclass=ABCMeta):
         """
         actors = self.get_world().get_actors_generator(type_)
         for a in actors:
-            if a._rect.colliderect(self._rect):
+            if a == self:
+                continue
+            elif a._rect.colliderect(self._rect):
                 yield a
 
     def get_actors_in_range(
@@ -245,6 +247,8 @@ class Actor(metaclass=ABCMeta):
         """
         actors = self.get_world().get_actors_generator(type_)
         for a in actors:
+            if a == self:
+                continue
             dx = a.x - self.x
             dx *= dx
             dy = a.y - self.y
@@ -319,7 +323,9 @@ class Actor(metaclass=ABCMeta):
         else:
             actors = self.get_world().get_actors(type_)
             for a in actors:
-                if abs(a.x - self.x) <= cells or abs(a.y - self.y) <= cells:
+                if a == self:
+                    continue
+                elif abs(a.x - self.x) <= cells or abs(a.y - self.y) <= cells:
                     yield a
 
     def is_at_edge(self) -> bool:
