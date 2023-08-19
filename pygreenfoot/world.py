@@ -302,9 +302,9 @@ class World(metaclass=ABCMeta):
             for actor_set in self.__objects.values():
                 yield from actor_set  # type: ignore
         else:
-            bases = self._get_subclasses(type_)
-            for base in bases:
-                yield from self.__objects[base]  # type: ignore
+            subclasses = self._get_subclasses(type_)
+            for subclass in subclasses:
+                yield from self.__objects[subclass]  # type: ignore
 
     def _get_subclasses(self, type_: Type[Actor]) -> Generator[Type[Actor], None, None]:
         """
@@ -352,9 +352,10 @@ class World(metaclass=ABCMeta):
             for actor_type in self.__objects:
                 yield from self.get_objects_at_generator(x, y, actor_type)  # type: ignore
         else:
-            for actor in self.__objects[type_]:
-                if actor._rect.colliderect(area):
-                    yield actor  # type: ignore
+            for subclass in self._get_subclasses(type_):
+                for actor in self.__objects[subclass]:
+                    if actor._rect.colliderect(area):
+                        yield actor  # type: ignore
 
     def remove_from_world(self, *actors: Actor) -> None:
         """
