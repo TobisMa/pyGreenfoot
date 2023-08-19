@@ -154,8 +154,16 @@ class Actor(metaclass=ABCMeta):
             return
 
         if world.world_bounding:
-            self.__pos[0] = limit_value(self.__pos[0], 0, world.width - 1)
-            self.__pos[1] = limit_value(self.__pos[1], 0, world.height - 1)
+            self.__pos[0] = limit_value(
+                self.__pos[0],
+                0,
+                world.width - self.__image.width // self.get_world().cell_size,
+            )
+            self.__pos[1] = limit_value(
+                self.__pos[1],
+                0,
+                world.height - self.__image.height // self.get_world().cell_size,
+            )
 
     @property
     def rotation(self) -> float:
