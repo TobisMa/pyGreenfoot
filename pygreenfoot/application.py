@@ -92,6 +92,7 @@ _config_key_converter: Dict[str, Callable[[str], Any]] = {
     "firstWorld": str,
     "title": str,
     "icon": str,
+    "vsync": bool_
 }
 
 
@@ -140,6 +141,7 @@ class Application:
         "firstWorld": None,
         "title": "PyGreenfoot Game",
         "icon": "wizard.png",
+        "vsync": False
     }
     CONFIG_FILENAME = "pygreenfoot.config"
     CONFIG_DELIMITER = "="
@@ -214,7 +216,7 @@ class Application:
         else:
             h = min(ah, Application.__sh - 50)
 
-        self.__screen = pygame.display.set_mode((w, h), self.__config["windowMode"] | pygame.SRCALPHA)  # type: ignore
+        self.__screen = pygame.display.set_mode((w, h), self.__config["windowMode"] | pygame.SRCALPHA, vsync=self.__config["vsync"])  # type: ignore
 
         if not self.__maximized:
             self.__size = self.__screen.get_size()
