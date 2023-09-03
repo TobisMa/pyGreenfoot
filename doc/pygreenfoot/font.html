@@ -35,10 +35,11 @@ FONTS = pygame.font.get_fonts()
 
 FontType = Union[
     Union[
-        Tuple[int, str],
-        Tuple[int, str, bool],
-        Tuple[int, str, bool, bool],
-        Tuple[int, str, bool, bool, bool],
+        Tuple[str, int],
+        Tuple[str, int, bool],
+        Tuple[str, int, bool, bool],
+        Tuple[str, int, bool, bool, bool],
+        Tuple[str, int, bool, bool, bool, bool],
     ],
     &#34;Font&#34;,
 ]
@@ -93,15 +94,15 @@ class Font:
 
     @italic.setter
     def italic(self, value: bool) -&gt; None:
-        self.__font.set_italic(value)
-        # self.__font = Font.get_pygame_font(
-        #     self.__fontname,
-        #     self.__size,
-        #     self.bold,
-        #     value,
-        #     self.underline,
-        #     self.strike_through,
-        # )
+        # self.__font.set_italic(value)
+        self.__font = Font.get_pygame_font(
+            self.__fontname,
+            self.__size,
+            self.bold,
+            value,
+            self.underline,
+            self.strike_through,
+        )
 
     @property
     def bold(self) -&gt; bool:
@@ -270,15 +271,7 @@ class Text:
 
     def __init__(
         self,
-        font: Union[
-            Union[
-                Tuple[int, str, bool, bool, bool],
-                Tuple[int, str, bool, bool],
-                Tuple[int, str, bool],
-                Tuple[int, str],
-            ],
-            &#34;Font&#34;,
-        ],
+        font: FontType,
         display_text: Any,
         color: Color,
         antialias: bool = True,
@@ -394,15 +387,15 @@ class Text:
 
     @italic.setter
     def italic(self, value: bool) -&gt; None:
-        self.__font.set_italic(value)
-        # self.__font = Font.get_pygame_font(
-        #     self.__fontname,
-        #     self.__size,
-        #     self.bold,
-        #     value,
-        #     self.underline,
-        #     self.strike_through,
-        # )
+        # self.__font.set_italic(value)
+        self.__font = Font.get_pygame_font(
+            self.__fontname,
+            self.__size,
+            self.bold,
+            value,
+            self.underline,
+            self.strike_through,
+        )
 
     @property
     def bold(self) -&gt; bool:
@@ -812,7 +805,7 @@ def underline(self) -&gt; bool:
 </dd>
 <dt id="pygreenfoot.font.Text"><code class="flex name class">
 <span>class <span class="ident">Text</span></span>
-<span>(</span><span>font: Union[Tuple[int, str], Tuple[int, str, bool], Tuple[int, str, bool, bool], Tuple[int, str, bool, bool, bool], ForwardRef('<a title="pygreenfoot.font.Font" href="#pygreenfoot.font.Font">Font</a>')], display_text: Any, color: <a title="pygreenfoot.color.Color" href="color.html#pygreenfoot.color.Color">Color</a>, antialias: bool = True)</span>
+<span>(</span><span>font: Union[Tuple[str, int], Tuple[str, int, bool], Tuple[str, int, bool, bool], Tuple[str, int, bool, bool, bool], Tuple[str, int, bool, bool, bool, bool], ForwardRef('<a title="pygreenfoot.font.Font" href="#pygreenfoot.font.Font">Font</a>')], display_text: Any, color: <a title="pygreenfoot.color.Color" href="color.html#pygreenfoot.color.Color">Color</a>, antialias: bool = True)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Class to easily have rendered text on screen with a font and other settings.</p></div>
@@ -837,15 +830,7 @@ def underline(self) -&gt; bool:
 
     def __init__(
         self,
-        font: Union[
-            Union[
-                Tuple[int, str, bool, bool, bool],
-                Tuple[int, str, bool, bool],
-                Tuple[int, str, bool],
-                Tuple[int, str],
-            ],
-            &#34;Font&#34;,
-        ],
+        font: FontType,
         display_text: Any,
         color: Color,
         antialias: bool = True,

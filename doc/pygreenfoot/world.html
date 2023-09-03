@@ -30,7 +30,18 @@
 from collections import defaultdict
 from functools import cached_property
 from time import time
-from typing import DefaultDict, Dict, Generator, List, Optional, Set, Tuple, Type, Union
+from typing import (
+    DefaultDict,
+    Dict,
+    Generator,
+    Iterable,
+    List,
+    Optional,
+    Set,
+    Tuple,
+    Type,
+    Union,
+)
 
 import pygame
 
@@ -315,11 +326,28 @@ class World(metaclass=ABCMeta):
         &#34;&#34;&#34;
         the same as get_actors but returns a generator object
         &#34;&#34;&#34;
-        if type_ is None:
+        if type_ is None or type_ == Actor:
             for actor_set in self.__objects.values():
                 yield from actor_set  # type: ignore
         else:
-            yield from self.__objects[type_]  # type: ignore
+            subclasses = self._get_subclasses(type_)
+            for subclass in subclasses:
+                yield from self.__objects[subclass]  # type: ignore
+
+    def _get_subclasses(self, type_: Type[Actor]) -&gt; Generator[Type[Actor], None, None]:
+        &#34;&#34;&#34;
+        Retrieves the subclasses of a given superclass type_
+
+        Args:
+            type_ (Type[ActorType_]): common base class of subclasses
+
+        Returns:
+            Generator[Type[Actor], None, None]: a generator of all the subclasses having type_ somewhere above them in their inheritance tree
+        &#34;&#34;&#34;
+        yield type_
+        for subclass in type_.__subclasses__():
+            if issubclass(subclass, Actor):
+                yield from self._get_subclasses(subclass)
 
     def get_objects_at(
         self, x: int, y: int, type_: Optional[Type[_ActorType]] = None
@@ -352,9 +380,10 @@ class World(metaclass=ABCMeta):
             for actor_type in self.__objects:
                 yield from self.get_objects_at_generator(x, y, actor_type)  # type: ignore
         else:
-            for actor in self.__objects[type_]:
-                if actor._rect.colliderect(area):
-                    yield actor  # type: ignore
+            for subclass in self._get_subclasses(type_):
+                for actor in self.__objects[subclass]:
+                    if actor._rect.colliderect(area):
+                        yield actor  # type: ignore
 
     def remove_from_world(self, *actors: Actor) -&gt; None:
         &#34;&#34;&#34;
@@ -720,11 +749,28 @@ class World(metaclass=ABCMeta):
         &#34;&#34;&#34;
         the same as get_actors but returns a generator object
         &#34;&#34;&#34;
-        if type_ is None:
+        if type_ is None or type_ == Actor:
             for actor_set in self.__objects.values():
                 yield from actor_set  # type: ignore
         else:
-            yield from self.__objects[type_]  # type: ignore
+            subclasses = self._get_subclasses(type_)
+            for subclass in subclasses:
+                yield from self.__objects[subclass]  # type: ignore
+
+    def _get_subclasses(self, type_: Type[Actor]) -&gt; Generator[Type[Actor], None, None]:
+        &#34;&#34;&#34;
+        Retrieves the subclasses of a given superclass type_
+
+        Args:
+            type_ (Type[ActorType_]): common base class of subclasses
+
+        Returns:
+            Generator[Type[Actor], None, None]: a generator of all the subclasses having type_ somewhere above them in their inheritance tree
+        &#34;&#34;&#34;
+        yield type_
+        for subclass in type_.__subclasses__():
+            if issubclass(subclass, Actor):
+                yield from self._get_subclasses(subclass)
 
     def get_objects_at(
         self, x: int, y: int, type_: Optional[Type[_ActorType]] = None
@@ -757,9 +803,10 @@ class World(metaclass=ABCMeta):
             for actor_type in self.__objects:
                 yield from self.get_objects_at_generator(x, y, actor_type)  # type: ignore
         else:
-            for actor in self.__objects[type_]:
-                if actor._rect.colliderect(area):
-                    yield actor  # type: ignore
+            for subclass in self._get_subclasses(type_):
+                for actor in self.__objects[subclass]:
+                    if actor._rect.colliderect(area):
+                        yield actor  # type: ignore
 
     def remove_from_world(self, *actors: Actor) -&gt; None:
         &#34;&#34;&#34;
@@ -1109,11 +1156,13 @@ The default does nothing</p></div>
     &#34;&#34;&#34;
     the same as get_actors but returns a generator object
     &#34;&#34;&#34;
-    if type_ is None:
+    if type_ is None or type_ == Actor:
         for actor_set in self.__objects.values():
             yield from actor_set  # type: ignore
     else:
-        yield from self.__objects[type_]  # type: ignore</code></pre>
+        subclasses = self._get_subclasses(type_)
+        for subclass in subclasses:
+            yield from self.__objects[subclass]  # type: ignore</code></pre>
 </details>
 </dd>
 <dt id="pygreenfoot.world.World.get_background_image"><code class="name flex">
@@ -1250,9 +1299,10 @@ The default does nothing</p></div>
         for actor_type in self.__objects:
             yield from self.get_objects_at_generator(x, y, actor_type)  # type: ignore
     else:
-        for actor in self.__objects[type_]:
-            if actor._rect.colliderect(area):
-                yield actor  # type: ignore</code></pre>
+        for subclass in self._get_subclasses(type_):
+            for actor in self.__objects[subclass]:
+                if actor._rect.colliderect(area):
+                    yield actor  # type: ignore</code></pre>
 </details>
 </dd>
 <dt id="pygreenfoot.world.World.get_paint_order"><code class="name flex">
